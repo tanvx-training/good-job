@@ -1,0 +1,30 @@
+package com.goodjob.industry.repository;
+
+import com.goodjob.industry.entity.Industry;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+/**
+ * Repository for Industry entity.
+ */
+@Repository
+public interface IndustryRepository extends JpaRepository<Industry, Integer> {
+
+    /**
+     * Find an industry by its name.
+     *
+     * @param name the industry name
+     * @return the industry if found
+     */
+    Optional<Industry> findByName(String name);
+
+    /**
+     * Check if an industry with the given name exists.
+     *
+     * @param name the industry name
+     * @return true if exists, false otherwise
+     */
+    boolean existsByName(String name);
+} 

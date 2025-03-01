@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: job-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+  
+  # Retry configuration for config server
+  config:
+    fail-fast: true
+    retry:
+      max-attempts: 20
+      max-interval: 15000
+      initial-interval: 10000 

@@ -1,0 +1,56 @@
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        http:
+        grpc:
+    jaeger:
+      protocols:
+        thrift_http:
+        grpc:
+        thrift_binary:
+        thrift_compact:
+    zipkin:
+
+ingester:
+  max_block_duration: 5m               # cut the headblock when this much time passes
+  max_block_bytes: 268435456           # 256MB cut the headblock when it hits this size
+  trace_idle_period: 10s               # allow this much inactivity from a trace before flushing it
+  flush_check_period: 1s               # how often to check for idle traces
+
+compactor:
+  compaction:
+    compaction_window: 1h              # blocks in this time window will be compacted together
+    max_compaction_objects: 1000000    # maximum number of traces in a compacted block
+    block_retention: 168h              # 7 days
+    compacted_block_retention: 24h     # 1 day
+
+storage:
+  trace:
+    backend: local                     # backend configuration to use
+    block:
+      bloom_filter_false_positive: .05 # bloom filter false positive rate
+      index_downsample_bytes: 1000     # number of bytes per index record
+      encoding: zstd                   # block encoding/compression (options: none, gzip, lz4-64k, lz4-256k, lz4-1M, lz4, snappy, zstd, s2)
+    wal:
+      path: /tmp/tempo/wal             # where to store the wal locally
+      encoding: snappy                 # wal encoding/compression (options: none, gzip, lz4-64k, lz4-256k, lz4-1M, lz4, snappy, zstd, s2)
+    local:
+      path: /tmp/tempo/blocks
+    pool:
+      max_workers: 100                 # worker pool determines the number of parallel requests to the object store backend
+      queue_depth: 10000
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+  storage:
+    path: /tmp/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true 
