@@ -93,11 +93,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
     private Claims extractClaims(String token) {
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
+        return Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public static class Config {

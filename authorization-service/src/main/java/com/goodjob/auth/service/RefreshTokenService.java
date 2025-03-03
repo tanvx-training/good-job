@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,6 +56,7 @@ public class RefreshTokenService {
                 .user(user)
                 .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
                 .token(UUID.randomUUID().toString())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         return refreshTokenRepository.save(refreshToken);
@@ -67,7 +69,7 @@ public class RefreshTokenService {
      * @return the verified refresh token
      */
     public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.isExpired()) {
+        if (Instant.now().isAfter(token.getExpiryDate())) {
             refreshTokenRepository.delete(token);
             throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new login request");
         }

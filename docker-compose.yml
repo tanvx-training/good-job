@@ -26,22 +26,21 @@ services:
   #############################################################
   # DATABASE & CACHING SERVICES
   #############################################################
-  
+
   # PostgreSQL - Primary relational database for microservices
   postgres:
     image: postgres:15-alpine
-    container_name: postgres
+    container_name: postgres-1
     restart: always
-    env_file: .env
+#    env_file: .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-goodjob}
       PGDATA: /var/lib/postgresql/data
     volumes:
       - postgres-data:/var/lib/postgresql/data
       # Initialize multiple databases for different services
-      - ./docker/config/postgres/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
+#      - ./docker/config/postgres/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
     ports:
       - "5432:5432"
     networks:
@@ -52,20 +51,20 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-  
+
   # MongoDB - NoSQL database for document-oriented data
   mongodb:
     image: mongo:6.0
-    container_name: mongodb
+    container_name: mongodb-1
     restart: always
-    env_file: .env
+#    env_file: .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-admin}
     volumes:
       - mongodb-data:/data/db
       # Initialize multiple databases for different services
-      - ./docker/config/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+#      - ./docker/config/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     ports:
       - "27017:27017"
     networks:
@@ -76,14 +75,14 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-  
+
   # Redis - In-memory data structure store for caching and session management
   redis:
     image: redis:7-alpine
     container_name: redis
     restart: always
     command: redis-server --requirepass ${REDIS_PASSWORD:-redis} --appendonly yes
-    env_file: .env
+#    env_file: .env
     volumes:
       - redis-data:/data
     ports:
@@ -95,16 +94,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  
+
   #############################################################
   # EVENT STREAMING & MESSAGING SERVICES
   #############################################################
-  
+
   # ZooKeeper - Centralized service for maintaining configuration information
   # Required for Kafka cluster coordination
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
-    container_name: zookeeper
+    container_name: zookeeper-1
     restart: always
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -122,11 +121,11 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-  
+
   # Kafka Broker 1 - Distributed event streaming platform (node 1)
   kafka1:
     image: confluentinc/cp-kafka:7.3.2
-    container_name: kafka1
+    container_name: kafka-1
     restart: always
     depends_on:
       zookeeper:
@@ -158,11 +157,11 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-  
+
   # Kafka Broker 2 - Distributed event streaming platform (node 2)
   kafka2:
     image: confluentinc/cp-kafka:7.3.2
-    container_name: kafka2
+    container_name: kafka-2
     restart: always
     depends_on:
       zookeeper:
@@ -194,11 +193,11 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-  
+
   # Kafka Broker 3 - Distributed event streaming platform (node 3)
   kafka3:
     image: confluentinc/cp-kafka:7.3.2
-    container_name: kafka3
+    container_name: kafka-3
     restart: always
     depends_on:
       zookeeper:
@@ -230,7 +229,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-  
+
   # Kafka UI - Web UI for Apache Kafka
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -249,7 +248,7 @@ services:
     networks:
       - backend-network
       - monitoring-network
-  
+
   # Debezium - Change Data Capture for PostgreSQL
   # Captures database changes and publishes them to Kafka
   debezium:
@@ -275,11 +274,11 @@ services:
       - "8083:8083"
     networks:
       - backend-network
-  
+
   #############################################################
   # OBSERVABILITY STACK (MONITORING, LOGGING, TRACING)
   #############################################################
-  
+
   # Prometheus - Metrics collection and monitoring system
   prometheus:
     image: prom/prometheus:v2.45.0
@@ -305,7 +304,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-  
+
   # Loki - Log aggregation system
   loki:
     image: grafana/loki:2.8.3
@@ -325,7 +324,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-  
+
   # Promtail - Log collector for Loki
   promtail:
     image: grafana/promtail:2.8.3
@@ -340,7 +339,7 @@ services:
       - monitoring-network
     depends_on:
       - loki
-  
+
   # Tempo - Distributed tracing backend
   tempo:
     image: grafana/tempo:2.2.0
@@ -363,7 +362,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-  
+
   # Grafana - Visualization and dashboard platform
   grafana:
     image: grafana/grafana:10.1.0
@@ -393,7 +392,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-  
+
   # Node Exporter - Exports hardware and OS metrics
   node-exporter:
     image: prom/node-exporter:v1.6.0
@@ -417,7 +416,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-  
+
   # cAdvisor - Container monitoring
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.1
@@ -438,7 +437,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-  
+
   # Kafka Exporter - Exports Kafka metrics to Prometheus
   kafka-exporter:
     image: danielqsj/kafka-exporter:latest
@@ -457,7 +456,7 @@ services:
       - kafka1
       - kafka2
       - kafka3
-  
+
   # PostgreSQL Exporter - Exports PostgreSQL metrics to Prometheus
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:v0.13.1
@@ -472,7 +471,7 @@ services:
       - monitoring-network
     depends_on:
       - postgres
-  
+
   # Redis Exporter - Exports Redis metrics to Prometheus
   redis-exporter:
     image: oliver006/redis_exporter:v1.51.0
@@ -488,7 +487,7 @@ services:
       - monitoring-network
     depends_on:
       - redis
-  
+
   # MongoDB Exporter - Exports MongoDB metrics to Prometheus
   mongodb-exporter:
     image: percona/mongodb_exporter:0.37.0
@@ -502,4 +501,8 @@ services:
       - backend-network
       - monitoring-network
     depends_on:
-      - mongodb 
+      - mongodb
+
+  #############################################################
+  # MICROSERVICES
+  #############################################################

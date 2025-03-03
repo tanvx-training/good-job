@@ -49,16 +49,19 @@ public class DatabaseInitializer implements CommandLineRunner {
             Role userRole = Role.builder()
                     .name("USER")
                     .description("Regular user role with basic permissions")
+                    .createdAt(LocalDateTime.now())
                     .build();
             
             Role adminRole = Role.builder()
                     .name("ADMIN")
                     .description("Administrator role with full permissions")
+                    .createdAt(LocalDateTime.now())
                     .build();
             
             Role recruiterRole = Role.builder()
                     .name("RECRUITER")
                     .description("Recruiter role with job posting permissions")
+                    .createdAt(LocalDateTime.now())
                     .build();
             
             roleRepository.save(userRole);
@@ -97,8 +100,8 @@ public class DatabaseInitializer implements CommandLineRunner {
                     .accountNonExpired(true)
                     .accountNonLocked(true)
                     .credentialsNonExpired(true)
-                    .createdAt(LocalDateTime.now())
                     .roles(adminRoles)
+                    .createdAt(LocalDateTime.now())
                     .build();
             
             userRepository.save(adminUser);

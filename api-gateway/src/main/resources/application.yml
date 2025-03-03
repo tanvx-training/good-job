@@ -1,89 +1,9 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: api-gateway
   cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: authorization-service
-          uri: lb://authorization-service
-          predicates:
-            - Path=/api/auth/**
-          filters:
-            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
-        - id: benefit-service
-          uri: lb://benefit-service
-          predicates:
-            - Path=/api/benefits/**
-          filters:
-            - RewritePath=/api/benefits/(?<segment>.*), /$\{segment}
-            - JwtAuthenticationFilter
-        - id: industry-service
-          uri: lb://industry-service
-          predicates:
-            - Path=/api/industries/**
-          filters:
-            - RewritePath=/api/industries/(?<segment>.*), /$\{segment}
-            - JwtAuthenticationFilter
-        - id: speciality-service
-          uri: lb://speciality-service
-          predicates:
-            - Path=/api/specialities/**
-          filters:
-            - RewritePath=/api/specialities/(?<segment>.*), /$\{segment}
-            - JwtAuthenticationFilter
-        - id: job-service
-          uri: lb://job-service
-          predicates:
-            - Path=/api/jobs/**
-          filters:
-            - RewritePath=/api/jobs/(?<segment>.*), /$\{segment}
-            - JwtAuthenticationFilter
-        - id: posting-service
-          uri: lb://posting-service
-          predicates:
-            - Path=/api/postings/**
-          filters:
-            - RewritePath=/api/postings/(?<segment>.*), /$\{segment}
-            - JwtAuthenticationFilter
-        - id: company-service
-          uri: lb://company-service
-          predicates:
-            - Path=/api/companies/**
-          filters:
-            - RewritePath=/api/companies/(?<segment>.*), /$\{segment}
-            - JwtAuthenticationFilter
-        - id: skill-service
-          uri: lb://skill-service
-          predicates:
-            - Path=/api/skills/**
-          filters:
-            - RewritePath=/api/skills/(?<segment>.*), /$\{segment}
-            - JwtAuthenticationFilter
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    prefer-ip-address: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
-
-jwt:
-  secret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437 
+    config:
+      uri: http://localhost:8888
+      fail-fast: true
+  config:
+    import: "optional:configserver:"

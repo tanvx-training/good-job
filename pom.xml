@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
+        <version>3.2.0</version>
         <relativePath/>
     </parent>
 
@@ -16,22 +16,22 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>good-job</name>
-    <description>LinkedIn-like project using Spring Boot and Microservices</description>
+    <description>Good Job Platform - Job Search and Recruitment Platform</description>
 
     <modules>
         <module>common-lib</module>
         <module>eureka-server</module>
-        <module>api-gateway</module>
         <module>config-server</module>
+        <module>api-gateway</module>
         <module>authorization-service</module>
-        <module>benefit-service</module>
         <module>candidate-service</module>
-        <module>industry-service</module>
-        <module>speciality-service</module>
+        <module>company-service</module>
         <module>job-service</module>
         <module>posting-service</module>
-        <module>company-service</module>
         <module>skill-service</module>
+        <module>industry-service</module>
+        <module>speciality-service</module>
+        <module>benefit-service</module>
         <module>notification-service</module>
         <module>mail-service</module>
     </modules>
@@ -39,12 +39,11 @@
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
-        <spring-boot.version>3.2.3</spring-boot.version>
-        <spring-authorization-server.version>1.2.1</spring-authorization-server.version>
-        <lombok.version>1.18.30</lombok.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <postgresql.version>42.7.1</postgresql.version>
-        <jjwt.version>0.11.5</jjwt.version>
+        <spring-boot.version>3.2.0</spring-boot.version>
+        <jib-maven-plugin.version>3.4.0</jib-maven-plugin.version>
+        <docker.image.prefix>goodjob</docker.image.prefix>
+        <jjwt.version>0.12.6</jjwt.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
     </properties>
 
     <dependencyManagement>
@@ -74,19 +73,50 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                
+                <!-- Google Jib Plugin for containerization -->
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>${jib-maven-plugin.version}</version>
+                    <configuration>
+                        <from>
+                            <image>eclipse-temurin:17-jre-alpine</image>
+                        </from>
+                        <to>
+                            <image>${docker.image.prefix}/${project.artifactId}</image>
+                            <tags>
+                                <tag>latest</tag>
+                                <tag>${project.version}</tag>
+                            </tags>
+                        </to>
+                        <container>
+                            <jvmFlags>
+                                <jvmFlag>-Xms256m</jvmFlag>
+                                <jvmFlag>-Xmx512m</jvmFlag>
+                            </jvmFlags>
+                            <environment>
+                                <SPRING_PROFILES_ACTIVE>prod</SPRING_PROFILES_ACTIVE>
+                            </environment>
+                            <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                        </container>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project> 

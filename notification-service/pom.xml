@@ -19,6 +19,13 @@
     </properties>
 
     <dependencies>
+        <!-- Common Library -->
+        <dependency>
+            <groupId>com.goodjob</groupId>
+            <artifactId>common-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -115,6 +122,20 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            
+            <!-- Google Jib Plugin for containerization -->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Override parent configuration if needed -->
+                    <container>
+                        <ports>
+                            <port>8085</port>
+                        </ports>
+                    </container>
                 </configuration>
             </plugin>
         </plugins>

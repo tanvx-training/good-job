@@ -9,7 +9,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * This service handles user registration, login, and token management.
  */
 @SpringBootApplication
-@EnableDiscoveryClient
 public class AuthorizationServiceApplication {
 
     public static void main(String[] args) {

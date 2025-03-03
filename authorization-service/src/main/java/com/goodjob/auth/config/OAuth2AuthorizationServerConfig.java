@@ -1,6 +1,5 @@
 package com.goodjob.auth.config;
 
-import com.goodjob.auth.service.UserDetailsServiceImpl;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -12,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -44,7 +43,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OAuth2AuthorizationServerConfig {
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -65,7 +64,9 @@ public class OAuth2AuthorizationServerConfig {
             .exceptionHandling(exceptions -> exceptions
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
             )
-            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+            .oauth2ResourceServer(configurer -> {
+                configurer.jwt(Customizer.withDefaults());
+            });
 
         return http.build();
     }
@@ -84,7 +85,6 @@ public class OAuth2AuthorizationServerConfig {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
                 .redirectUri("http://localhost:8080/login/oauth2/code/goodjob-client")
                 .redirectUri("http://localhost:3000/oauth2/redirect")
                 .scope(OidcScopes.OPENID)

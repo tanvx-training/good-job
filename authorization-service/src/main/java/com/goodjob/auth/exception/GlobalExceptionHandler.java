@@ -1,5 +1,7 @@
 package com.goodjob.auth.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -124,33 +126,12 @@ public class GlobalExceptionHandler {
     /**
      * Error response class for structured error responses.
      */
+    @Getter
+    @AllArgsConstructor
     public static class ErrorResponse {
         private int status;
         private LocalDateTime timestamp;
         private String message;
         private String details;
-
-        public ErrorResponse(int status, LocalDateTime timestamp, String message, String details) {
-            this.status = status;
-            this.timestamp = timestamp;
-            this.message = message;
-            this.details = details;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-
-        public LocalDateTime getTimestamp() {
-            return timestamp;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getDetails() {
-            return details;
-        }
     }
 } 
