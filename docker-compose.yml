@@ -230,25 +230,6 @@ services:
       retries: 5
       start_period: 30s
 
-  # Kafka UI - Web UI for Apache Kafka
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    restart: always
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-    environment:
-      KAFKA_CLUSTERS_0_NAME: goodjob-cluster
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:9092,kafka2:9092,kafka3:9092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-    ports:
-      - "8080:8080"
-    networks:
-      - backend-network
-      - monitoring-network
-
   # Debezium - Change Data Capture for PostgreSQL
   # Captures database changes and publishes them to Kafka
   debezium:

@@ -20,20 +20,19 @@
 
     <modules>
         <module>common-lib</module>
-        <module>eureka-server</module>
         <module>config-server</module>
-        <module>api-gateway</module>
-        <module>authorization-service</module>
-        <module>candidate-service</module>
+        <module>eureka-server</module>
+        <module>mail-service</module>
+        <module>notification-service</module>
         <module>company-service</module>
+        <module>candidate-service</module>
         <module>job-service</module>
         <module>posting-service</module>
         <module>skill-service</module>
         <module>industry-service</module>
         <module>speciality-service</module>
         <module>benefit-service</module>
-        <module>notification-service</module>
-        <module>mail-service</module>
+        <module>api-gateway</module>
     </modules>
 
     <properties>
@@ -42,7 +41,7 @@
         <spring-boot.version>3.2.0</spring-boot.version>
         <jib-maven-plugin.version>3.4.0</jib-maven-plugin.version>
         <docker.image.prefix>goodjob</docker.image.prefix>
-        <jjwt.version>0.12.6</jjwt.version>
+        <jjwt.version>0.11.5</jjwt.version>
         <mapstruct.version>1.6.3</mapstruct.version>
     </properties>
 

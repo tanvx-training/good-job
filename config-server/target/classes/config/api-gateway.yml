@@ -1,64 +1,30 @@
 server:
-  port: 8686
+  port: 8080
 
 spring:
   application:
     name: api-gateway
+  main:
+    web-application-type: reactive
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_db
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
-      routes:
-        - id: authorization-service
-          uri: lb://authorization-service
-          predicates:
-            - Path=/api/auth/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: benefit-service
-          uri: lb://benefit-service
-          predicates:
-            - Path=/api/benefits/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: industry-service
-          uri: lb://industry-service
-          predicates:
-            - Path=/api/industries/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: speciality-service
-          uri: lb://speciality-service
-          predicates:
-            - Path=/api/specialities/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: job-service
-          uri: lb://job-service
-          predicates:
-            - Path=/api/jobs/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: posting-service
-          uri: lb://posting-service
-          predicates:
-            - Path=/api/postings/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: company-service
-          uri: lb://company-service
-          predicates:
-            - Path=/api/companies/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: skill-service
-          uri: lb://skill-service
-          predicates:
-            - Path=/api/skills/**
-          filters:
-            - JwtAuthenticationFilter
 
 eureka:
   client:
@@ -69,14 +35,24 @@ eureka:
   instance:
     prefer-ip-address: true
 
+app:
+  jwt:
+    secret: d6d9vYwRjZ0C5P1w72wYJ+PGgKYTWm6u83rXJwVQSO8jxTDV+jMp1+XO9Mg4Xz0+nYOvivTOLXi/L4vXxzvC1A==
+    expiration:
+      access: 900000      # 15 minutes
+      refresh: 2592000000 # 30 days
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+    com.goodjob.apigateway: DEBUG
+
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: "*"
   endpoint:
     health:
       show-details: always
-
-jwt:
-  secret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437 
