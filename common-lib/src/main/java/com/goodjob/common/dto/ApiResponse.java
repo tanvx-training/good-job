@@ -87,6 +87,21 @@ public class ApiResponse<T> implements Serializable {
     }
 
     /**
+     * Creates an error response.
+     *
+     * @param errors detailed error information
+     * @param <T> the type of data
+     * @return an error ApiResponse
+     */
+    public static <T> ApiResponse<T> error(Object errors) {
+        return ApiResponse.<T>builder()
+            .success(false)
+            .message("Operation failed")
+            .errors(errors)
+            .build();
+    }
+
+    /**
      * Creates an error response with just a message.
      *
      * @param message the error message

@@ -75,13 +75,15 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     // 4️⃣ Tạo tài khoản Admin mặc định
     if (userRepository.findByUsername("admin").isEmpty()) {
-      User admin = new User();
-      admin.setUsername("admin");
-      admin.setPassword(passwordEncoder.encode("password"));
-      admin.setRoles(Set.of(roles.stream()
-          .filter(role -> role.getName().equals("ROLE_ADMIN"))
-          .findFirst().orElseThrow()));
-      admin.setDeleteFlg(false);
+      User admin = User.builder()
+          .username("admin")
+          .password(passwordEncoder.encode("password"))
+          .roles(Set.of(roles.stream()
+              .filter(role -> role.getName().equals("ROLE_ADMIN"))
+              .findFirst().orElseThrow()))
+          .createdAt(LocalDateTime.now())
+          .deleteFlg(false)
+          .build();
       userRepository.save(admin);
       log.info("✅ Created default admin user: admin");
     }
@@ -94,6 +96,8 @@ public class DatabaseInitializer implements CommandLineRunner {
       Role role = Role.builder()
           .name(roleName)
           .permissions(permissions)
+          .createdAt(LocalDateTime.now())
+          .deleteFlg(false)
           .build();
       return roleRepository.save(role);
     });

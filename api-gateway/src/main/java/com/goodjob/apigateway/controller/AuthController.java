@@ -6,6 +6,7 @@ import com.goodjob.apigateway.dto.request.RegisterRequest;
 import com.goodjob.apigateway.dto.response.LoginResponse;
 import com.goodjob.apigateway.dto.response.UserDTO;
 import com.goodjob.apigateway.service.AuthService;
+import com.goodjob.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,14 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 

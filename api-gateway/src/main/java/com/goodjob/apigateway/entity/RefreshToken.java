@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "refresh_tokens")
@@ -12,7 +13,7 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class RefreshToken extends BaseEntity {
 
   @Id
@@ -25,7 +26,7 @@ public class RefreshToken extends BaseEntity {
   @Column(nullable = false)
   private Instant expiryDate;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private User user;
 } 

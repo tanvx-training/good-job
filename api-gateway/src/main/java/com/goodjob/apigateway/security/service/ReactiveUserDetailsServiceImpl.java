@@ -22,7 +22,8 @@ public class ReactiveUserDetailsServiceImpl implements ReactiveUserDetailsServic
 
   @Override
   public Mono<UserDetails> findByUsername(String username) {
-    return Mono.fromCallable(() -> userRepository.findByUsername(username)
+    return Mono.fromCallable(() -> userRepository
+            .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username)))
         .map(this::createUserDetails);
   }
@@ -42,7 +43,7 @@ public class ReactiveUserDetailsServiceImpl implements ReactiveUserDetailsServic
     return new org.springframework.security.core.userdetails.User(
         user.getUsername(),
         user.getPassword(),
-        user.isDeleteFlg(),
+        !user.isDeleteFlg(),
         true, // accountNonExpired
         true, // credentialsNonExpired
         true, // accountNonLocked

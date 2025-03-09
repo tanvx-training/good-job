@@ -1,6 +1,7 @@
 package com.goodjob.apigateway.service.impl;
 
 import com.goodjob.apigateway.dto.response.UserDTO;
+import com.goodjob.apigateway.entity.Permission;
 import com.goodjob.apigateway.entity.Role;
 import com.goodjob.apigateway.entity.User;
 import com.goodjob.apigateway.repository.RoleRepository;
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     Set<String> permissions = user.getRoles().stream()
         .flatMap(role -> role.getPermissions().stream())
-        .map(permission -> permission.getName())
+        .map(Permission::getName)
         .collect(Collectors.toSet());
 
     return UserDTO.builder()
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
         .username(user.getUsername())
         .roles(roles)
         .permissions(permissions)
-        .enabled(user.isDeleteFlg())
+        .enabled(!user.isDeleteFlg())
         .createdAt(user.getCreatedAt())
         .build();
   }

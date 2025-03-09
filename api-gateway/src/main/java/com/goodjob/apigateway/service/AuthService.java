@@ -4,9 +4,10 @@ import com.goodjob.apigateway.dto.response.LoginResponse;
 import com.goodjob.apigateway.dto.request.RegisterRequest;
 import com.goodjob.apigateway.dto.response.UserDTO;
 import com.goodjob.apigateway.dto.request.LoginRequest;
+import com.goodjob.common.dto.ApiResponse;
 
 public interface AuthService {
-    LoginResponse login(LoginRequest loginRequest);
+    ApiResponse<LoginResponse> login(LoginRequest loginRequest);
     UserDTO register(RegisterRequest registerRequest);
     LoginResponse refreshToken(String refreshToken);
 } 
