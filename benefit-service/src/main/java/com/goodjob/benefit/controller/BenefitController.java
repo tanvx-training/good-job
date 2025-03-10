@@ -3,127 +3,78 @@ package com.goodjob.benefit.controller;
 import com.goodjob.benefit.command.dto.CreateBenefitCommand;
 import com.goodjob.benefit.command.dto.UpdateBenefitCommand;
 import com.goodjob.benefit.command.service.BenefitCommandService;
+import com.goodjob.benefit.query.dto.BenefitQuery;
 import com.goodjob.benefit.query.dto.BenefitView;
 import com.goodjob.benefit.query.service.BenefitQueryService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.goodjob.common.dto.PageResponseDTO;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * Controller for benefit-related endpoints.
  */
 @RestController
-@RequestMapping("/benefits")
+@RequestMapping("/api/v1/benefits")
 @RequiredArgsConstructor
-@Tag(name = "Benefits", description = "Benefit Management API")
 public class BenefitController {
 
-    private final BenefitCommandService benefitCommandService;
-    private final BenefitQueryService benefitQueryService;
+  private final BenefitCommandService benefitCommandService;
+  private final BenefitQueryService benefitQueryService;
 
-    /**
-     * Create a new benefit.
-     *
-     * @param command the create benefit command
-     * @return the created benefit
-     */
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Create a new benefit",
-        description = "Creates a new job benefit (Admin only)",
-        security = @SecurityRequirement(name = "Bearer Authentication")
-    )
-    public ResponseEntity<Void> createBenefit(@Valid @RequestBody CreateBenefitCommand command) {
-        Integer benefitId = benefitCommandService.createBenefit(command);
-        
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(benefitId)
-                .toUri();
-        
-        return ResponseEntity.created(location).build();
-    }
+  @GetMapping
+  @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_BENEFIT')")
+  public ResponseEntity<PageResponseDTO<BenefitView>> getAllBenefits(
+      @RequestParam(value = "page", defaultValue = "0") Integer page,
+      @RequestParam(value = "size", defaultValue = "20") Integer size,
+      @RequestParam(value = "sort", defaultValue = "benefitId,asc") String sort) {
 
-    /**
-     * Get all benefits.
-     *
-     * @return list of all benefits
-     */
-    @GetMapping
-    @Operation(
-        summary = "Get all benefits",
-        description = "Returns a list of all benefits"
-    )
-    public ResponseEntity<List<BenefitView>> getAllBenefits() {
-        List<BenefitView> benefits = benefitQueryService.getAllBenefits();
-        return ResponseEntity.ok(benefits);
-    }
+    PageResponseDTO<BenefitView> benefits = benefitQueryService.getAllBenefits(
+        BenefitQuery.builder()
+            .page(page)
+            .size(size)
+            .sort(sort)
+            .build()
+    );
+    return ResponseEntity.ok(benefits);
+  }
 
-    /**
-     * Get a benefit by ID.
-     *
-     * @param id the benefit ID
-     * @return the benefit
-     */
-    @GetMapping("/{id}")
-    @Operation(
-        summary = "Get benefit by ID",
-        description = "Returns a benefit by its ID"
-    )
-    public ResponseEntity<BenefitView> getBenefitById(@PathVariable Integer id) {
-        BenefitView benefit = benefitQueryService.getBenefitById(id);
-        return ResponseEntity.ok(benefit);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<BenefitView> getBenefitById(@PathVariable Integer id) {
+    BenefitView benefit = benefitQueryService.getBenefitById(id);
+    return ResponseEntity.ok(benefit);
+  }
 
-    /**
-     * Update a benefit.
-     *
-     * @param id the benefit ID
-     * @param command the update benefit command
-     * @return no content
-     */
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Update benefit",
-        description = "Updates an existing benefit (Admin only)",
-        security = @SecurityRequirement(name = "Bearer Authentication")
-    )
-    public ResponseEntity<Void> updateBenefit(
-            @PathVariable Integer id,
-            @Valid @RequestBody UpdateBenefitCommand command) {
-        benefitCommandService.updateBenefit(id, command);
-        return ResponseEntity.noContent().build();
-    }
+  @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<Void> createBenefit(@Valid @RequestBody CreateBenefitCommand command) {
 
-    /**
-     * Delete a benefit.
-     *
-     * @param id the benefit ID
-     * @return no content
-     */
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(
-        summary = "Delete benefit",
-        description = "Deletes a benefit by its ID (Admin only)",
-        security = @SecurityRequirement(name = "Bearer Authentication")
-    )
-    public ResponseEntity<Void> deleteBenefit(@PathVariable Integer id) {
-        benefitCommandService.deleteBenefit(id);
-        return ResponseEntity.noContent().build();
-    }
+    Integer benefitId = benefitCommandService.createBenefit(command);
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{id}")
+        .buildAndExpand(benefitId)
+        .toUri();
+    return ResponseEntity.created(location).build();
+  }
+
+  @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<Void> updateBenefit(
+      @PathVariable Integer id,
+      @Valid @RequestBody UpdateBenefitCommand command) {
+    benefitCommandService.updateBenefit(id, command);
+    return ResponseEntity.noContent().build();
+  }
 } 

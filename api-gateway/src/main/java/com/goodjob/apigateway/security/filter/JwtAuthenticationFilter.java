@@ -58,15 +58,13 @@ public class JwtAuthenticationFilter implements GatewayFilter, Ordered {
     // Extract user details and add to headers
     String username = jwtTokenProvider.getUsernameFromToken(token);
     Claims claims = jwtTokenProvider.getClaimsFromToken(token);
-
+    List<String> roles = (List<String>) claims.get("roles");
+    List<String> permissions = (List<String>) claims.get("permissions");
     // Add user details to request headers for downstream services
     ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-        .header("X-Auth-Username",
-            username)
-        .header("X-Auth-Roles",
-            claims.get("roles", List.class).toString())
-        .header("X-Auth-Permissions",
-            claims.get("permissions", List.class).toString())
+        .header("X-Auth-Username", username)
+        .header("X-Auth-Roles", String.join(",", roles))
+        .header("X-Auth-Permissions", String.join(",", permissions))
         .build();
 
     return chain.filter(exchange.mutate().request(modifiedRequest).build());

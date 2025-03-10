@@ -49,7 +49,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         .user(user)
         .token(UUID.randomUUID().toString())
         .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
-        .createdAt(LocalDateTime.now())
+        .createdOn(LocalDateTime.now())
         .deleteFlg(false)
         .build();
 

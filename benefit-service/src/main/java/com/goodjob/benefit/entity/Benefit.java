@@ -1,28 +1,25 @@
 package com.goodjob.benefit.entity;
 
+import com.goodjob.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Entity representing a job benefit.
  */
-@Entity
-@Table(name = "benefits", schema = "public", 
-       indexes = {
-           @Index(name = "public_benefits_pkey", columnList = "benefit_id", unique = true),
-           @Index(name = "public_benefits_type_key", columnList = "type", unique = true)
-       })
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Benefit {
+@SuperBuilder
+@Entity
+@Table(name = "benefits")
+public class Benefit extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "benefits_benefit_id_seq")
-    @SequenceGenerator(name = "benefits_benefit_id_seq", sequenceName = "benefits_benefit_id_seq", allocationSize = 1)
-    @Column(name = "benefit_id")
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer benefitId;
 
     @Column(name = "type", unique = true, nullable = false)
     private String type;

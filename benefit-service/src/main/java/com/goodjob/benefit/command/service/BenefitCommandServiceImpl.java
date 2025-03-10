@@ -38,9 +38,9 @@ public class BenefitCommandServiceImpl implements BenefitCommandService {
                 .build();
         
         Benefit savedBenefit = benefitRepository.save(benefit);
-        log.info("Benefit created successfully with ID: {}", savedBenefit.getId());
+        log.info("Benefit created successfully with ID: {}", savedBenefit.getBenefitId());
         
-        return savedBenefit.getId();
+        return savedBenefit.getBenefitId();
     }
 
     /**

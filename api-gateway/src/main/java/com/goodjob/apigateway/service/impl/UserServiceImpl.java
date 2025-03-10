@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     User user = User.builder()
         .username(username)
         .password(passwordEncoder.encode(password))
-        .createdAt(LocalDateTime.now())
+        .createdOn(LocalDateTime.now())
         .deleteFlg(false)
         .build();
 
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         .roles(roles)
         .permissions(permissions)
         .enabled(!user.isDeleteFlg())
-        .createdAt(user.getCreatedAt())
+        .createdAt(user.getCreatedOn())
         .build();
   }
 } 

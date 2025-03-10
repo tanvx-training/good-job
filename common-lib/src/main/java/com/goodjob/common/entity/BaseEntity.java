@@ -32,20 +32,20 @@ public abstract class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "created_on", nullable = false, updatable = false)
+    private LocalDateTime createdOn;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "last_modified_on")
+    private LocalDateTime lastModifiedOn;
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)
     private String createdBy;
 
     @LastModifiedBy
-    @Column(name = "updated_by")
-    private String updatedBy;
+    @Column(name = "last_modified_by")
+    private String lastModifiedBy;
 
     @Column(name = "delete_flg", nullable = false)
     private boolean deleteFlg;
