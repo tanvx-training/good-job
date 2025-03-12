@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-03-05T00:03:06+0700",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.41.0.z20250213-2037, environment: Java 21.0.6 (Eclipse Adoptium)"
+    date = "2025-03-12T23:36:44+0700",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.5 (Oracle Corporation)"
 )
 @Component
 public class SpecialityMapperImpl implements SpecialityMapper {
@@ -26,9 +26,9 @@ public class SpecialityMapperImpl implements SpecialityMapper {
 
         SpecialityDto.SpecialityDtoBuilder specialityDto = SpecialityDto.builder();
 
-        specialityDto.description( speciality.getDescription() );
         specialityDto.id( speciality.getId() );
         specialityDto.name( speciality.getName() );
+        specialityDto.description( speciality.getDescription() );
 
         return specialityDto.build();
     }
@@ -41,9 +41,9 @@ public class SpecialityMapperImpl implements SpecialityMapper {
 
         Speciality.SpecialityBuilder speciality = Speciality.builder();
 
-        speciality.description( specialityDto.getDescription() );
         speciality.id( specialityDto.getId() );
         speciality.name( specialityDto.getName() );
+        speciality.description( specialityDto.getDescription() );
 
         return speciality.build();
     }
@@ -70,9 +70,9 @@ public class SpecialityMapperImpl implements SpecialityMapper {
 
         SpecialityView.SpecialityViewBuilder specialityView = SpecialityView.builder();
 
-        specialityView.description( speciality.getDescription() );
         specialityView.id( speciality.getId() );
         specialityView.name( speciality.getName() );
+        specialityView.description( speciality.getDescription() );
 
         return specialityView.build();
     }
@@ -99,8 +99,8 @@ public class SpecialityMapperImpl implements SpecialityMapper {
 
         Speciality.SpecialityBuilder speciality = Speciality.builder();
 
-        speciality.description( command.getDescription() );
         speciality.name( command.getName() );
+        speciality.description( command.getDescription() );
 
         return speciality.build();
     }
@@ -111,7 +111,7 @@ public class SpecialityMapperImpl implements SpecialityMapper {
             return;
         }
 
-        speciality.setDescription( command.getDescription() );
         speciality.setName( command.getName() );
+        speciality.setDescription( command.getDescription() );
     }
 }

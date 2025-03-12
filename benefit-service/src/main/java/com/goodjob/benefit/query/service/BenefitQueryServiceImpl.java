@@ -55,6 +55,11 @@ public class BenefitQueryServiceImpl implements BenefitQueryService {
     return BenefitView.builder()
         .id(benefit.getBenefitId())
         .type(benefit.getType())
+        .createdOn(benefit.getCreatedOn())
+        .createdBy(benefit.getCreatedBy())
+        .lastModifiedOn(benefit.getLastModifiedOn())
+        .lastModifiedBy(benefit.getLastModifiedBy())
+        .deleteFlg(benefit.isDeleteFlg())
         .build();
   }
 } 

@@ -1,5 +1,8 @@
 package com.goodjob.benefit.query.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +15,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BenefitView {
 
     private Integer id;
     private String type;
+    private LocalDateTime createdOn;
+    private String createdBy;
+    private LocalDateTime lastModifiedOn;
+    private String lastModifiedBy;
+    private boolean deleteFlg;
 } 

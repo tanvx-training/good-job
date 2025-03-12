@@ -1,28 +1,26 @@
 package com.goodjob.skill.entity;
 
+import com.goodjob.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Entity representing a skill.
  */
-@Entity
-@Table(name = "skills", schema = "public", 
-       indexes = {
-           @Index(name = "public_skills_pkey", columnList = "skill_id", unique = true),
-           @Index(name = "public_skills_skill_abr_key", columnList = "skill_abr", unique = true)
-       })
-@Data
-@Builder
+@Table(name = "skills")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Skill {
+@SuperBuilder
+@Entity
+public class Skill extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "skills_skill_id_seq")
-    @SequenceGenerator(name = "skills_skill_id_seq", sequenceName = "skills_skill_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "skill_id")
-    private Integer id;
+    private Integer skillId;
 
     @Column(name = "skill_abr", unique = true, nullable = false)
     private String abbreviation;

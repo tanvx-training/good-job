@@ -1,5 +1,7 @@
 package com.goodjob.skill.query.service;
 
+import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.skill.query.dto.SkillQuery;
 import com.goodjob.skill.query.dto.SkillView;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public interface SkillQueryService {
      *
      * @return a list of all skills
      */
-    List<SkillView> getAllSkills();
+    PageResponseDTO<SkillView> getAllSkills(SkillQuery query);
 
     /**
      * Get a skill by its ID.

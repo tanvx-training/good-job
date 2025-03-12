@@ -51,13 +51,14 @@ public class BenefitController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_BENEFIT')")
   public ResponseEntity<BenefitView> getBenefitById(@PathVariable Integer id) {
     BenefitView benefit = benefitQueryService.getBenefitById(id);
     return ResponseEntity.ok(benefit);
   }
 
   @PostMapping
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('CREATE_BENEFIT')")
   public ResponseEntity<Void> createBenefit(@Valid @RequestBody CreateBenefitCommand command) {
 
     Integer benefitId = benefitCommandService.createBenefit(command);
@@ -70,7 +71,7 @@ public class BenefitController {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('UPDATE_BENEFIT')")
   public ResponseEntity<Void> updateBenefit(
       @PathVariable Integer id,
       @Valid @RequestBody UpdateBenefitCommand command) {

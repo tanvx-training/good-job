@@ -1,4 +1,4 @@
-package com.goodjob.benefit.security.filter;
+package com.goodjob.skill.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,7 +33,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         authorities.add(new SimpleGrantedAuthority(role.trim()));
       }
       for (String permission : permissionsHeader.split(",")) {
-        if (permission.contains("BENEFIT")) {
+        if (permission.contains("SKILL")) {
           authorities.add(new SimpleGrantedAuthority(permission.trim()));
         }
       }

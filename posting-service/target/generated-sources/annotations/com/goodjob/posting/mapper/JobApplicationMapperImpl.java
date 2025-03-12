@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-03-05T00:03:05+0700",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.41.0.z20250213-2037, environment: Java 21.0.6 (Eclipse Adoptium)"
+    date = "2025-03-12T23:36:46+0700",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.5 (Oracle Corporation)"
 )
 @Component
 public class JobApplicationMapperImpl implements JobApplicationMapper {
@@ -29,15 +29,15 @@ public class JobApplicationMapperImpl implements JobApplicationMapper {
 
         jobApplicationResponse.postingId( jobApplicationJobPostingId( jobApplication ) );
         jobApplicationResponse.jobPosting( jobPostingMapper.toResponse( jobApplication.getJobPosting() ) );
-        jobApplicationResponse.applicantId( jobApplication.getApplicantId() );
-        jobApplicationResponse.applicantViewed( jobApplication.getApplicantViewed() );
-        jobApplicationResponse.coverLetter( jobApplication.getCoverLetter() );
-        jobApplicationResponse.createdAt( jobApplication.getCreatedAt() );
-        jobApplicationResponse.employerViewed( jobApplication.getEmployerViewed() );
         jobApplicationResponse.id( jobApplication.getId() );
+        jobApplicationResponse.applicantId( jobApplication.getApplicantId() );
         jobApplicationResponse.resumeUrl( jobApplication.getResumeUrl() );
+        jobApplicationResponse.coverLetter( jobApplication.getCoverLetter() );
         jobApplicationResponse.status( jobApplication.getStatus() );
+        jobApplicationResponse.createdAt( jobApplication.getCreatedAt() );
         jobApplicationResponse.updatedAt( jobApplication.getUpdatedAt() );
+        jobApplicationResponse.employerViewed( jobApplication.getEmployerViewed() );
+        jobApplicationResponse.applicantViewed( jobApplication.getApplicantViewed() );
 
         return jobApplicationResponse.build();
     }
@@ -50,8 +50,8 @@ public class JobApplicationMapperImpl implements JobApplicationMapper {
 
         JobApplication.JobApplicationBuilder jobApplication = JobApplication.builder();
 
-        jobApplication.coverLetter( request.getCoverLetter() );
         jobApplication.resumeUrl( request.getResumeUrl() );
+        jobApplication.coverLetter( request.getCoverLetter() );
 
         return jobApplication.build();
     }
