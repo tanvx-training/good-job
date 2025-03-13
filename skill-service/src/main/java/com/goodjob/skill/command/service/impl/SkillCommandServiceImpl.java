@@ -30,14 +30,14 @@ public class SkillCommandServiceImpl implements SkillCommandService {
     log.info("Creating new skill with abbreviation: {}", command.getAbbreviation());
 
     // Check if skill with the same abbreviation already exists
-    if (skillRepository.existsByAbbreviation(command.getAbbreviation())) {
+    if (skillRepository.existsByAbbreviationAndDeleteFlg(command.getAbbreviation(), false)) {
       log.warn("Skill already exists with abbreviation: {}", command.getAbbreviation());
       throw new SkillAlreadyExistsException(
           "Skill already exists with abbreviation: " + command.getAbbreviation());
     }
 
     // Check if skill with the same name already exists
-    if (skillRepository.existsByName(command.getName())) {
+    if (skillRepository.existsByNameAndDeleteFlg(command.getName(), false)) {
       log.warn("Skill already exists with name: {}", command.getName());
       throw new SkillAlreadyExistsException("Skill already exists with name: " + command.getName());
     }
@@ -58,7 +58,7 @@ public class SkillCommandServiceImpl implements SkillCommandService {
 
     // Check if another skill with the same abbreviation already exists
     if (!existingSkill.getAbbreviation().equals(command.getAbbreviation()) &&
-        skillRepository.existsByAbbreviation(command.getAbbreviation())) {
+        skillRepository.existsByAbbreviationAndDeleteFlg(command.getAbbreviation(), false)) {
       log.warn("Another skill already exists with abbreviation: {}", command.getAbbreviation());
       throw new SkillAlreadyExistsException(
           "Another skill already exists with abbreviation: " + command.getAbbreviation());
@@ -66,7 +66,7 @@ public class SkillCommandServiceImpl implements SkillCommandService {
 
     // Check if another skill with the same name already exists
     if (!existingSkill.getName().equals(command.getName()) &&
-        skillRepository.existsByName(command.getName())) {
+        skillRepository.existsByNameAndDeleteFlg(command.getName(), false)) {
       log.warn("Another skill already exists with name: {}", command.getName());
       throw new SkillAlreadyExistsException(
           "Another skill already exists with name: " + command.getName());

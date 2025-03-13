@@ -37,7 +37,7 @@ public class SkillQueryServiceImpl implements SkillQueryService {
     Sort sort = Sort.by(Sort.Direction.fromString(parts[1]), parts[0]);
     Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
 
-    return new PageResponseDTO<>(skillRepository.findAll(pageable)
+    return new PageResponseDTO<>(skillRepository.findAllByDeleteFlg(false, pageable)
         .map(this::mapToSkillView));
   }
 
@@ -47,6 +47,7 @@ public class SkillQueryServiceImpl implements SkillQueryService {
     log.info("Retrieving skill with id: {}", id);
 
     Skill skill = skillRepository.findById(id)
+        .filter(s -> !s.isDeleteFlg())
         .orElseThrow(() -> new SkillNotFoundException("Skill not found with ID: " + id));
     return this.mapToSkillView(skill);
   }
@@ -56,7 +57,7 @@ public class SkillQueryServiceImpl implements SkillQueryService {
 
     log.info("Retrieving skill with abbreviation: {}", abbreviation);
 
-    Skill skill = skillRepository.findByAbbreviation(abbreviation)
+    Skill skill = skillRepository.findByAbbreviationAndDeleteFlg(abbreviation, false)
         .orElseThrow(
             () -> new SkillNotFoundException("Skill not found with abbreviation: " + abbreviation));
 
