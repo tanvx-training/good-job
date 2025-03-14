@@ -7,6 +7,10 @@ import com.goodjob.skill.command.service.SkillCommandService;
 import com.goodjob.skill.query.dto.SkillQuery;
 import com.goodjob.skill.query.dto.SkillView;
 import com.goodjob.skill.query.service.SkillQueryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/api/v1/skills")
 @RequiredArgsConstructor
+@Tag(name = "Skill Management", description = "API of the Skill Management System")
 public class SkillController {
 
   private final SkillQueryService skillQueryService;
@@ -57,6 +62,13 @@ public class SkillController {
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SKILL')")
+  @Operation(summary = "Get list of skills", description = "Get list of skills with pagination.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successful operation"),
+      @ApiResponse(responseCode = "400", description = "Invalid pagination parameters"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden"),
+  })
   public ResponseEntity<PageResponseDTO<SkillView>> getAllSkills(
       @RequestParam(value = "page", defaultValue = "0") Integer page,
       @RequestParam(value = "size", defaultValue = "20") Integer size,
@@ -72,6 +84,13 @@ public class SkillController {
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SKILL')")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successful operation"),
+      @ApiResponse(responseCode = "400", description = "Invalid pagination parameters"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized"),
+      @ApiResponse(responseCode = "403", description = "Forbidden"),
+      @ApiResponse(responseCode = "404", description = "Skill not found")
+  })
   public ResponseEntity<SkillView> getSkillById(@PathVariable Integer id) {
     log.info("REST request to get Skill : {}", id);
     SkillView skill = skillQueryService.getSkillById(id);
