@@ -27,3 +27,6 @@ eureka:
     fetch-registry: true
   instance:
     prefer-ip-address: true
+
+logging:
+  config: classpath:/config/logging/logback-spring.xml

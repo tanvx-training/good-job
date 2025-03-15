@@ -12,4 +12,4 @@ spring:
     import: "optional:configserver:"
 
 logging:
-  config: classpath:/config/logging/logback-spring.xml
+  config: ${spring.cloud.config.uri}/skill-service/logging/logback-spring.xml
