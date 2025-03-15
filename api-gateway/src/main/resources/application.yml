@@ -10,6 +10,3 @@ spring:
       fail-fast: true
   config:
     import: "optional:configserver:"
-
-logging:
-  config: ${spring.cloud.config.uri}/api-gateway/logging/logback-spring.xml
