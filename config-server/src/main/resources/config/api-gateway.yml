@@ -43,7 +43,6 @@ app:
       refresh: 2592000000 # 30 days
 
 logging:
-  config: classpath:/config/logging/logback-spring.xml
   level:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.security: DEBUG
