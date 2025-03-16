@@ -34,3 +34,5 @@ build/
 
 ### Grafana ###
 dashboard/tempo/tempo-data
+
+config-server.iml

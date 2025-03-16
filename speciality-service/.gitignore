@@ -33,3 +33,5 @@ build/
 
 ### Grafana ###
 dashboard/tempo/tempo-data
+
+speciality-service.iml
