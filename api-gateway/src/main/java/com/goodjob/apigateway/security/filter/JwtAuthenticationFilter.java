@@ -23,9 +23,9 @@ public class JwtAuthenticationFilter implements GatewayFilter, Ordered {
 
   private final JwtTokenProvider jwtTokenProvider;
   private final List<String> excludedUrls = List.of(
-      "/api/auth/login",
-      "/api/auth/register",
-      "/api/auth/refresh"
+      "/api/v1/auth/login",
+      "/api/v1/auth/register",
+      "/api/v1/auth/refresh"
   );
 
   @Override
