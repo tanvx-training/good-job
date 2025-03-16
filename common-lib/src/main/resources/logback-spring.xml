@@ -6,7 +6,25 @@
     <!-- <destination>localhost:5600</destination>--> <!--local env-->
     <destination>${LOGSTASH_HOST:-localhost:5600}</destination> <!--docker env-->
     <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-      <customFields>{"service":"${appName}"}</customFields>
+      <providers>
+        <timestamp/>
+        <logLevel/>
+        <loggerName/>
+        <threadName/>
+        <message/>
+        <context/>
+        <mdc/>
+        <logstashMarkers/>
+        <stackTrace/>
+        <pattern>
+          <pattern>
+            {
+            "appName": "${appName}",
+            "environment": "${ENVIRONMENT:-dev}"
+            }
+          </pattern>
+        </pattern>
+      </providers>
     </encoder>
   </appender>
   <root level="info">
