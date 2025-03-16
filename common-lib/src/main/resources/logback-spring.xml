@@ -21,7 +21,7 @@
 
   <!-- Appender cho Logstash (nếu dùng ELK) -->
   <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-    <destination>logstash-host:5600</destination>
+    <destination>localhost:5600</destination>
     <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
   </appender>
 
