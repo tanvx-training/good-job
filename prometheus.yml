@@ -5,58 +5,55 @@ global:
 scrape_configs:
   - job_name: 'api-gateway'
     static_configs:
-      - targets: ['api-gateway:8080']
+      - targets: ['localhost:8080']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'benefit-service'
     static_configs:
-      - targets: ['benefit-service:8080']
+      - targets: ['localhost:8081']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'candidate-service'
     static_configs:
-      - targets: ['candidate-service:8080']
+      - targets: ['localhost:8082']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'company-service'
     static_configs:
-      - targets: ['company-service:8080']
+      - targets: ['localhost:8083']
+    metrics_path: '/actuator/prometheus'
+
+  - job_name: 'industry-service'
+    static_configs:
+      - targets: ['localhost:8084']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'job-service'
     static_configs:
-      - targets: ['job-service:8080']
+      - targets: ['localhost:8085']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'mail-service'
     static_configs:
-      - targets: ['mail-service:8080']
+      - targets: ['localhost:8086']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'notification-service'
     static_configs:
-      - targets: ['notification-service:8080']
+      - targets: ['localhost:8087']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'posting-service'
     static_configs:
-      - targets: ['posting-service:8080']
+      - targets: ['localhost:8088']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'skill-service'
     static_configs:
-      - targets: ['skill-service:8080']
+      - targets: ['localhost:8089']
     metrics_path: '/actuator/prometheus'
 
   - job_name: 'speciality-service'
     static_configs:
-      - targets: ['speciality-service:8080']
+      - targets: ['localhost:8090']
     metrics_path: '/actuator/prometheus'
-
-#alerting:
-#  alertmanagers:
-#    - static_configs:
-#        - targets: ['alertmanager:9093']
-#
-#rule_files:
-#  - 'rules.yml'

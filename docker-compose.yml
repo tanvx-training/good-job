@@ -311,6 +311,8 @@ services:
 
   grafana:
     image: grafana/grafana:8.2.1
+    volumes:
+      - ./dashboards.json:/etc/grafana/provisioning/dashboards
     ports:
       - "3000:3000"
     networks:
