@@ -13,7 +13,7 @@ spring:
 
 # Fallback properties in case config server is not available
 server:
-  port: 8083
+  port: 8081
 
 eureka:
   client:
