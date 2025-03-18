@@ -1,7 +1,7 @@
 package com.goodjob.company.dto;
 
 import com.goodjob.company.entity.Company;
-import com.goodjob.company.entity.CompanyMetrics;
+import com.goodjob.company.entity.CompanyMetric;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -40,7 +40,7 @@ public class CompanyResponse {
      * @param metrics the CompanyMetrics entity
      * @return a new CompanyResponse
      */
-    public static CompanyResponse fromEntity(Company company, CompanyMetrics metrics) {
+    public static CompanyResponse fromEntity(Company company, CompanyMetric metrics) {
         CompanyResponse response = new CompanyResponse();
         response.setId(company.getId());
         response.setName(company.getName());

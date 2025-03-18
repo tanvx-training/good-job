@@ -1,6 +1,6 @@
 package com.goodjob.company.repository;
 
-import com.goodjob.company.entity.CompanyMetrics;
+import com.goodjob.company.entity.CompanyMetric;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * Repository for CompanyMetrics entity.
  */
 @Repository
-public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, Integer> {
+public interface CompanyMetricsRepository extends JpaRepository<CompanyMetric, Integer> {
 
     /**
      * Find metrics by company ID.
@@ -23,7 +23,7 @@ public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, 
      * @param companyId the company ID
      * @return an optional company metrics
      */
-    Optional<CompanyMetrics> findByCompanyId(Integer companyId);
+    Optional<CompanyMetric> findByCompanyId(Integer companyId);
 
     /**
      * Find top companies by rating.
@@ -31,8 +31,8 @@ public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, 
      * @param pageable the pagination information
      * @return a list of company metrics
      */
-    @Query("SELECT cm FROM CompanyMetrics cm WHERE cm.ratingCount > 0 ORDER BY cm.ratingSum / cm.ratingCount DESC")
-    List<CompanyMetrics> findTopByRating(Pageable pageable);
+    @Query("SELECT cm FROM CompanyMetric cm WHERE cm.ratingCount > 0 ORDER BY cm.ratingSum / cm.ratingCount DESC")
+    List<CompanyMetric> findTopByRating(Pageable pageable);
 
     /**
      * Increment the view count of a company.
@@ -41,7 +41,7 @@ public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, 
      * @return the number of rows affected
      */
     @Modifying
-    @Query("UPDATE CompanyMetrics cm SET cm.viewCount = cm.viewCount + 1 WHERE cm.company.id = :companyId")
+    @Query("UPDATE CompanyMetric cm SET cm.viewCount = cm.viewCount + 1 WHERE cm.company.id = :companyId")
     int incrementViewCount(@Param("companyId") Integer companyId);
 
     /**
@@ -51,7 +51,7 @@ public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, 
      * @return the number of rows affected
      */
     @Modifying
-    @Query("UPDATE CompanyMetrics cm SET cm.jobCount = cm.jobCount + 1 WHERE cm.company.id = :companyId")
+    @Query("UPDATE CompanyMetric cm SET cm.jobCount = cm.jobCount + 1 WHERE cm.company.id = :companyId")
     int incrementJobCount(@Param("companyId") Integer companyId);
 
     /**
@@ -61,7 +61,7 @@ public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, 
      * @return the number of rows affected
      */
     @Modifying
-    @Query("UPDATE CompanyMetrics cm SET cm.jobCount = GREATEST(0, cm.jobCount - 1) WHERE cm.company.id = :companyId")
+    @Query("UPDATE CompanyMetric cm SET cm.jobCount = GREATEST(0, cm.jobCount - 1) WHERE cm.company.id = :companyId")
     int decrementJobCount(@Param("companyId") Integer companyId);
 
     /**
@@ -71,7 +71,7 @@ public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, 
      * @return the number of rows affected
      */
     @Modifying
-    @Query("UPDATE CompanyMetrics cm SET cm.followerCount = cm.followerCount + 1 WHERE cm.company.id = :companyId")
+    @Query("UPDATE CompanyMetric cm SET cm.followerCount = cm.followerCount + 1 WHERE cm.company.id = :companyId")
     int incrementFollowerCount(@Param("companyId") Integer companyId);
 
     /**
@@ -81,7 +81,7 @@ public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, 
      * @return the number of rows affected
      */
     @Modifying
-    @Query("UPDATE CompanyMetrics cm SET cm.followerCount = GREATEST(0, cm.followerCount - 1) WHERE cm.company.id = :companyId")
+    @Query("UPDATE CompanyMetric cm SET cm.followerCount = GREATEST(0, cm.followerCount - 1) WHERE cm.company.id = :companyId")
     int decrementFollowerCount(@Param("companyId") Integer companyId);
 
     /**
@@ -92,6 +92,6 @@ public interface CompanyMetricsRepository extends JpaRepository<CompanyMetrics, 
      * @return the number of rows affected
      */
     @Modifying
-    @Query("UPDATE CompanyMetrics cm SET cm.ratingSum = cm.ratingSum + :rating, cm.ratingCount = cm.ratingCount + 1 WHERE cm.company.id = :companyId")
+    @Query("UPDATE CompanyMetric cm SET cm.ratingSum = cm.ratingSum + :rating, cm.ratingCount = cm.ratingCount + 1 WHERE cm.company.id = :companyId")
     int addRating(@Param("companyId") Integer companyId, @Param("rating") Integer rating);
 } 

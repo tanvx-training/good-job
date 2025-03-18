@@ -3,7 +3,7 @@ package com.goodjob.company.query.service.impl;
 import com.goodjob.company.dto.CompanyResponse;
 import com.goodjob.company.dto.CompanySearchCriteria;
 import com.goodjob.company.entity.Company;
-import com.goodjob.company.entity.CompanyMetrics;
+import com.goodjob.company.entity.CompanyMetric;
 import com.goodjob.company.exception.CompanyNotFoundException;
 import com.goodjob.company.query.service.CompanyQueryService;
 import com.goodjob.company.repository.CompanyMetricsRepository;
@@ -50,7 +50,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
                 });
 
         // Increment view count
-        CompanyMetrics metrics = company.getMetrics();
+        CompanyMetric metrics = company.getMetrics();
         metrics.setViewCount(metrics.getViewCount() + 1);
         metricsRepository.save(metrics);
 
@@ -140,10 +140,10 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     public List<CompanyResponse> getTopRatedCompanies(int limit) {
         log.info("Retrieving top {} rated companies", limit);
 
-        List<CompanyMetrics> topMetrics = metricsRepository.findTopByRating(PageRequest.of(0, limit));
+        List<CompanyMetric> topMetrics = metricsRepository.findTopByRating(PageRequest.of(0, limit));
         
         return topMetrics.stream()
-                .map(CompanyMetrics::getCompany)
+                .map(CompanyMetric::getCompany)
                 .map(this::mapToCompanyResponse)
                 .collect(Collectors.toList());
     }
@@ -204,7 +204,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
      * @return the CompanyResponse DTO
      */
     private CompanyResponse mapToCompanyResponse(Company company) {
-        CompanyMetrics metrics = company.getMetrics();
+        CompanyMetric metrics = company.getMetrics();
         
         CompanyResponse response = new CompanyResponse();
         response.setId(company.getId());
