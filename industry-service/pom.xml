@@ -3,12 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.goodjob</groupId>
+        <artifactId>good-job</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.goodjob</groupId>
     <artifactId>industry-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>industry-service</name>
@@ -48,6 +46,11 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.goodjob</groupId>
+            <artifactId>common-lib</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -68,26 +71,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- MapStruct -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
-        </dependency>
-
-        <!-- OpenAPI Documentation -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.2.0</version>
-        </dependency>
-
-        <!-- Testing -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>

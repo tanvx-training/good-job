@@ -1,5 +1,7 @@
 package com.goodjob.industry.query.service;
 
+import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.industry.query.dto.IndustryQuery;
 import com.goodjob.industry.query.dto.IndustryView;
 
 import java.util.List;
@@ -14,7 +16,7 @@ public interface IndustryQueryService {
      *
      * @return list of all industries
      */
-    List<IndustryView> getAllIndustries();
+    PageResponseDTO<IndustryView> getAllIndustries(IndustryQuery query);
 
     /**
      * Get an industry by ID.

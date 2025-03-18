@@ -1,6 +1,8 @@
 package com.goodjob.industry.repository;
 
 import com.goodjob.industry.entity.Industry;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +20,7 @@ public interface IndustryRepository extends JpaRepository<Industry, Integer> {
      * @param name the industry name
      * @return the industry if found
      */
-    Optional<Industry> findByName(String name);
+    Optional<Industry> findByIndustryName(String name);
 
     /**
      * Check if an industry with the given name exists.
@@ -26,5 +28,7 @@ public interface IndustryRepository extends JpaRepository<Industry, Integer> {
      * @param name the industry name
      * @return true if exists, false otherwise
      */
-    boolean existsByName(String name);
+    boolean existsByIndustryName(String name);
+
+    Page<Industry> findAllByDeleteFlg(boolean deleteFlg, Pageable pageable);
 } 

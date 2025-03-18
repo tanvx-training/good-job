@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 /**
  * Implementation of the IndustryCommandService interface.
  */
@@ -29,18 +31,15 @@ public class IndustryCommandServiceImpl implements IndustryCommandService {
     public Integer createIndustry(CreateIndustryCommand command) {
         log.info("Creating new industry: {}", command.getName());
         
-        if (industryRepository.existsByName(command.getName())) {
+        if (industryRepository.existsByIndustryName(command.getName())) {
             throw new IndustryAlreadyExistsException("Industry with name " + command.getName() + " already exists");
         }
         
-        Industry industry = Industry.builder()
-                .name(command.getName())
-                .build();
+        Industry industry = toEntityForCreate(command);
+        industryRepository.save(industry);
+        log.info("Industry created successfully with ID: {}", industry.getIndustryId());
         
-        Industry savedIndustry = industryRepository.save(industry);
-        log.info("Industry created successfully with ID: {}", savedIndustry.getId());
-        
-        return savedIndustry.getId();
+        return industry.getIndustryId();
     }
 
     /**
@@ -55,12 +54,12 @@ public class IndustryCommandServiceImpl implements IndustryCommandService {
                 .orElseThrow(() -> new IndustryNotFoundException("Industry not found with ID: " + id));
         
         // Check if name is being changed and if the new name already exists
-        if (!existingIndustry.getName().equals(command.getName()) && 
-                industryRepository.existsByName(command.getName())) {
+        if (!existingIndustry.getIndustryName().equals(command.getName()) &&
+                industryRepository.existsByIndustryName(command.getName())) {
             throw new IndustryAlreadyExistsException("Industry with name " + command.getName() + " already exists");
         }
         
-        existingIndustry.setName(command.getName());
+        mergeEntityForUpdate(existingIndustry, command);
         
         industryRepository.save(existingIndustry);
         log.info("Industry updated successfully with ID: {}", id);
@@ -80,5 +79,18 @@ public class IndustryCommandServiceImpl implements IndustryCommandService {
         
         industryRepository.deleteById(id);
         log.info("Industry deleted successfully with ID: {}", id);
+    }
+
+    private Industry toEntityForCreate (CreateIndustryCommand command) {
+        return Industry.builder()
+                .industryName(command.getName())
+                .createdOn(LocalDateTime.now())
+                .deleteFlg(false)
+                .build();
+    }
+
+    private void mergeEntityForUpdate (Industry origin, UpdateIndustryCommand command) {
+        origin.setIndustryName(command.getName());
+        origin.setLastModifiedOn(LocalDateTime.now());
     }
 } 

@@ -1,13 +1,12 @@
 package com.goodjob.industry.controller;
 
+import com.goodjob.common.dto.PageResponseDTO;
 import com.goodjob.industry.command.dto.CreateIndustryCommand;
 import com.goodjob.industry.command.dto.UpdateIndustryCommand;
 import com.goodjob.industry.command.service.IndustryCommandService;
+import com.goodjob.industry.query.dto.IndustryQuery;
 import com.goodjob.industry.query.dto.IndustryView;
 import com.goodjob.industry.query.service.IndustryQueryService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,15 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 /**
  * Controller for industry-related endpoints.
  */
 @RestController
-@RequestMapping("/industries")
+@RequestMapping("/api/v1/industries")
 @RequiredArgsConstructor
-@Tag(name = "Industries", description = "Industry Management API")
 public class IndustryController {
 
     private final IndustryCommandService industryCommandService;
@@ -38,12 +35,7 @@ public class IndustryController {
      * @return the created industry
      */
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Create a new industry",
-        description = "Creates a new industry category (Admin only)",
-        security = @SecurityRequirement(name = "Bearer Authentication")
-    )
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_INDUSTRY')")
     public ResponseEntity<Void> createIndustry(@Valid @RequestBody CreateIndustryCommand command) {
         Integer industryId = industryCommandService.createIndustry(command);
         
@@ -62,13 +54,19 @@ public class IndustryController {
      * @return list of all industries
      */
     @GetMapping
-    @Operation(
-        summary = "Get all industries",
-        description = "Returns a list of all industries"
-    )
-    public ResponseEntity<List<IndustryView>> getAllIndustries() {
-        List<IndustryView> industries = industryQueryService.getAllIndustries();
-        return ResponseEntity.ok(industries);
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
+    public ResponseEntity<PageResponseDTO<IndustryView>> getAllIndustries(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "20") Integer size,
+            @RequestParam(value = "sort", defaultValue = "industryId,asc") String sort
+    ) {
+        return ResponseEntity.ok(industryQueryService.getAllIndustries(
+                IndustryQuery.builder()
+                        .page(page)
+                        .size(size)
+                        .sort(sort)
+                        .build())
+        );
     }
 
     /**
@@ -78,10 +76,7 @@ public class IndustryController {
      * @return the industry
      */
     @GetMapping("/{id}")
-    @Operation(
-        summary = "Get industry by ID",
-        description = "Returns an industry by its ID"
-    )
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
     public ResponseEntity<IndustryView> getIndustryById(@PathVariable Integer id) {
         IndustryView industry = industryQueryService.getIndustryById(id);
         return ResponseEntity.ok(industry);
@@ -95,12 +90,7 @@ public class IndustryController {
      * @return no content
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Update industry",
-        description = "Updates an existing industry (Admin only)",
-        security = @SecurityRequirement(name = "Bearer Authentication")
-    )
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_INDUSTRY')")
     public ResponseEntity<Void> updateIndustry(
             @PathVariable Integer id,
             @Valid @RequestBody UpdateIndustryCommand command) {
@@ -115,13 +105,8 @@ public class IndustryController {
      * @return no content
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE_INDUSTRY')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(
-        summary = "Delete industry",
-        description = "Deletes an industry by its ID (Admin only)",
-        security = @SecurityRequirement(name = "Bearer Authentication")
-    )
     public ResponseEntity<Void> deleteIndustry(@PathVariable Integer id) {
         industryCommandService.deleteIndustry(id);
         return ResponseEntity.noContent().build();

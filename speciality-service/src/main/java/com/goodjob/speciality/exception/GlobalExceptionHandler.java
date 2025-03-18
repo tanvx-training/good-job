@@ -1,11 +1,15 @@
 package com.goodjob.speciality.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
@@ -14,45 +18,45 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Global exception handler for the Speciality service.
+ * Global exception handler for the Skill service.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * Handles SpecialityNotFoundException.
+     * Handles SkillNotFoundException.
      *
      * @param ex the exception
      * @param request the web request
      * @return the error response
      */
     @ExceptionHandler(SpecialityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleSpecialityNotFoundException(SpecialityNotFoundException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> handleSkillNotFoundException(SpecialityNotFoundException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .timestamp(LocalDateTime.now())
+                .error(ex.getMessage())
+                .message(request.getDescription(false))
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     /**
-     * Handles SpecialityAlreadyExistsException.
+     * Handles SkillAlreadyExistsException.
      *
      * @param ex the exception
      * @param request the web request
      * @return the error response
      */
     @ExceptionHandler(SpecialityAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleSpecialityAlreadyExistsException(SpecialityAlreadyExistsException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.CONFLICT.value(),
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(SpecialityAlreadyExistsException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .timestamp(LocalDateTime.now())
+                .error(ex.getMessage())
+                .message(request.getDescription(false))
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     /**
@@ -61,22 +65,24 @@ public class GlobalExceptionHandler {
      * @param ex the exception
      * @return the error response
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, Object> response = new HashMap<>();
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                LocalDateTime.now(),
-                "Validation error",
-                errors.toString()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("error", "Validation Error");
+        response.put("details", errors);
+
+        return response;
     }
 
     /**
@@ -87,14 +93,15 @@ public class GlobalExceptionHandler {
      * @return the error response
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.FORBIDDEN.value(),
-                LocalDateTime.now(),
-                "Access denied: " + ex.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex,
+                                                                     WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .timestamp(LocalDateTime.now())
+                .error("Access denied: " + ex.getMessage())
+                .message(request.getDescription(false))
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     /**
@@ -106,45 +113,27 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .timestamp(LocalDateTime.now())
+                .error(ex.getMessage())
+                .message(request.getDescription(false))
+                .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
     /**
-     * Error response class.
+     * Error response class for structured error responses.
      */
+    @Data
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ErrorResponse {
-        private final int status;
-        private final LocalDateTime timestamp;
-        private final String message;
-        private final String details;
 
-        public ErrorResponse(int status, LocalDateTime timestamp, String message, String details) {
-            this.status = status;
-            this.timestamp = timestamp;
-            this.message = message;
-            this.details = details;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-
-        public LocalDateTime getTimestamp() {
-            return timestamp;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getDetails() {
-            return details;
-        }
+        private LocalDateTime timestamp;
+        private int status;
+        private String error;
+        private String message;
+        private Map<String, String> details;
     }
 } 

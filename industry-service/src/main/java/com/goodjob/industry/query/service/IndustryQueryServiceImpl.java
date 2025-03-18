@@ -1,17 +1,18 @@
 package com.goodjob.industry.query.service;
 
+import com.goodjob.common.dto.PageResponseDTO;
 import com.goodjob.industry.entity.Industry;
 import com.goodjob.industry.exception.IndustryNotFoundException;
-import com.goodjob.industry.mapper.IndustryMapper;
+import com.goodjob.industry.query.dto.IndustryQuery;
 import com.goodjob.industry.query.dto.IndustryView;
 import com.goodjob.industry.repository.IndustryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the IndustryQueryService interface.
@@ -22,19 +23,19 @@ import java.util.stream.Collectors;
 public class IndustryQueryServiceImpl implements IndustryQueryService {
 
     private final IndustryRepository industryRepository;
-    private final IndustryMapper industryMapper;
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
-    public List<IndustryView> getAllIndustries() {
+    public PageResponseDTO<IndustryView> getAllIndustries(IndustryQuery query) {
         log.info("Fetching all industries");
-        List<Industry> industries = industryRepository.findAll();
-        return industries.stream()
-                .map(industryMapper::toView)
-                .collect(Collectors.toList());
+        String[] parts = query.getSort().split(",");
+        Sort sort = Sort.by(Sort.Direction.fromString(parts[1]), parts[0]);
+        Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
+        return new PageResponseDTO<>(industryRepository.findAllByDeleteFlg(false, pageable)
+                .map(this::mapToIndustryView));
     }
 
     /**
@@ -44,8 +45,20 @@ public class IndustryQueryServiceImpl implements IndustryQueryService {
     @Transactional(readOnly = true)
     public IndustryView getIndustryById(Integer id) {
         log.info("Fetching industry with ID: {}", id);
-        Industry industry = industryRepository.findById(id)
+        return industryRepository.findById(id)
+                .map(this::mapToIndustryView)
                 .orElseThrow(() -> new IndustryNotFoundException("Industry not found with ID: " + id));
-        return industryMapper.toView(industry);
+    }
+
+    private IndustryView mapToIndustryView(Industry industry) {
+        return IndustryView.builder()
+                .id(industry.getIndustryId())
+                .name(industry.getIndustryName())
+                .createdOn(industry.getCreatedOn())
+                .createdBy(industry.getCreatedBy())
+                .lastModifiedOn(industry.getLastModifiedOn())
+                .lastModifiedBy(industry.getLastModifiedBy())
+                .deleteFlg(industry.isDeleteFlg())
+                .build();
     }
 } 
