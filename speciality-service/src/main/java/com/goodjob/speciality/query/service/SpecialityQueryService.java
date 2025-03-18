@@ -1,5 +1,7 @@
 package com.goodjob.speciality.query.service;
 
+import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.speciality.query.dto.SpecialityQuery;
 import com.goodjob.speciality.query.dto.SpecialityView;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public interface SpecialityQueryService {
      *
      * @return a list of all specialities
      */
-    List<SpecialityView> getAllSpecialities();
+    PageResponseDTO<SpecialityView> getAllSpecialities(SpecialityQuery query);
 
     /**
      * Get a speciality by its ID.

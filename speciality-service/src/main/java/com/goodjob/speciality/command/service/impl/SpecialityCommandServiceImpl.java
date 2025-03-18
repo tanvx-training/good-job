@@ -6,12 +6,13 @@ import com.goodjob.speciality.command.service.SpecialityCommandService;
 import com.goodjob.speciality.entity.Speciality;
 import com.goodjob.speciality.exception.SpecialityAlreadyExistsException;
 import com.goodjob.speciality.exception.SpecialityNotFoundException;
-import com.goodjob.speciality.mapper.SpecialityMapper;
 import com.goodjob.speciality.repository.SpecialityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 /**
  * Implementation of the SpecialityCommandService interface.
@@ -23,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class SpecialityCommandServiceImpl implements SpecialityCommandService {
 
     private final SpecialityRepository specialityRepository;
-    private final SpecialityMapper specialityMapper;
 
     @Override
     @Transactional
@@ -31,15 +31,14 @@ public class SpecialityCommandServiceImpl implements SpecialityCommandService {
         log.info("Creating new speciality with name: {}", command.getName());
         
         // Check if speciality with the same name already exists
-        if (specialityRepository.existsByName(command.getName())) {
+        if (specialityRepository.existsBySpecialityName(command.getName())) {
             log.warn("Speciality already exists with name: {}", command.getName());
             throw new SpecialityAlreadyExistsException("Speciality already exists with name: " + command.getName());
         }
 
-        Speciality speciality = specialityMapper.toEntity(command);
-        Speciality savedSpeciality = specialityRepository.save(speciality);
-        log.info("Speciality created successfully with id: {}", savedSpeciality.getId());
-        return savedSpeciality.getId();
+        Speciality speciality = toEntityForCreate(command);
+        specialityRepository.save(speciality);
+        return speciality.getSpecialityId();
     }
 
     @Override
@@ -47,23 +46,23 @@ public class SpecialityCommandServiceImpl implements SpecialityCommandService {
     public void updateSpeciality(Integer id, UpdateSpecialityCommand command) {
         log.info("Updating speciality with id: {}", id);
         
-        Speciality existingSpeciality = specialityRepository.findById(id)
+        Speciality origin = specialityRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Speciality not found with id: {}", id);
                     return new SpecialityNotFoundException("Speciality not found with id: " + id);
                 });
 
         // Check if another speciality with the same name already exists
-        if (!existingSpeciality.getName().equals(command.getName()) &&
-                specialityRepository.existsByName(command.getName())) {
+        if (!origin.getSpecialityName().equals(command.getName()) &&
+                specialityRepository.existsBySpecialityName(command.getName())) {
             log.warn("Another speciality already exists with name: {}", command.getName());
             throw new SpecialityAlreadyExistsException("Another speciality already exists with name: " + command.getName());
         }
 
         // Update the existing speciality
-        specialityMapper.updateEntityFromCommand(command, existingSpeciality);
-        specialityRepository.save(existingSpeciality);
-        log.info("Speciality updated successfully with id: {}", existingSpeciality.getId());
+        mergeEntityForUpdate(origin, command);
+        specialityRepository.save(origin);
+        log.info("Speciality updated successfully with id: {}", origin.getSpecialityId());
     }
 
     @Override
@@ -78,5 +77,18 @@ public class SpecialityCommandServiceImpl implements SpecialityCommandService {
         
         specialityRepository.deleteById(id);
         log.info("Speciality deleted successfully with id: {}", id);
+    }
+
+    private Speciality toEntityForCreate(CreateSpecialityCommand command) {
+        return Speciality.builder()
+                .specialityName(command.getName())
+                .createdOn(LocalDateTime.now())
+                .deleteFlg(false)
+                .build();
+    }
+
+    private void mergeEntityForUpdate(Speciality origin, UpdateSpecialityCommand command) {
+        origin.setSpecialityName(command.getName());
+        origin.setLastModifiedOn(LocalDateTime.now());
     }
 } 

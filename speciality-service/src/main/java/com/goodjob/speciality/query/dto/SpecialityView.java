@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * DTO for viewing speciality information.
  */
@@ -16,5 +18,9 @@ public class SpecialityView {
 
     private Integer id;
     private String name;
-    private String description;
+    private LocalDateTime createdOn;
+    private String createdBy;
+    private LocalDateTime lastModifiedOn;
+    private String lastModifiedBy;
+    private boolean deleteFlg;
 } 

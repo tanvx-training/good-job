@@ -70,11 +70,6 @@
 
         <!-- MapStruct -->
         <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.goodjob</groupId>
             <artifactId>common-lib</artifactId>
             <version>1.0-SNAPSHOT</version>

@@ -1,17 +1,19 @@
 package com.goodjob.speciality.query.service.impl;
 
+import com.goodjob.common.dto.PageResponseDTO;
 import com.goodjob.speciality.entity.Speciality;
 import com.goodjob.speciality.exception.SpecialityNotFoundException;
-import com.goodjob.speciality.mapper.SpecialityMapper;
+import com.goodjob.speciality.query.dto.SpecialityQuery;
 import com.goodjob.speciality.query.dto.SpecialityView;
 import com.goodjob.speciality.query.service.SpecialityQueryService;
 import com.goodjob.speciality.repository.SpecialityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Implementation of the SpecialityQueryService interface.
@@ -24,37 +26,48 @@ import java.util.List;
 public class SpecialityQueryServiceImpl implements SpecialityQueryService {
 
     private final SpecialityRepository specialityRepository;
-    private final SpecialityMapper specialityMapper;
 
     @Override
-    public List<SpecialityView> getAllSpecialities() {
+    public PageResponseDTO<SpecialityView> getAllSpecialities(SpecialityQuery query) {
         log.info("Retrieving all specialities");
-        List<Speciality> specialities = specialityRepository.findAll();
-        log.info("Found {} specialities", specialities.size());
-        return specialityMapper.toViewList(specialities);
+        String[] parts = query.getSort().split(",");
+        Sort sort = Sort.by(Sort.Direction.fromString(parts[1]), parts[0]);
+        Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
+        return new PageResponseDTO<>(specialityRepository.findAllByDeleteFlg(false, pageable)
+                .map(this::mapToSpecialityView));
     }
 
     @Override
     public SpecialityView getSpecialityById(Integer id) {
         log.info("Retrieving speciality with id: {}", id);
-        Speciality speciality = specialityRepository.findById(id)
+        return specialityRepository.findById(id)
+                .map(this::mapToSpecialityView)
                 .orElseThrow(() -> {
                     log.warn("Speciality not found with id: {}", id);
                     return new SpecialityNotFoundException("Speciality not found with id: " + id);
                 });
-        log.info("Found speciality with id: {}", id);
-        return specialityMapper.toView(speciality);
     }
 
     @Override
     public SpecialityView getSpecialityByName(String name) {
         log.info("Retrieving speciality with name: {}", name);
-        Speciality speciality = specialityRepository.findByName(name)
+        return specialityRepository.findBySpecialityName(name)
+                .map(this::mapToSpecialityView)
                 .orElseThrow(() -> {
                     log.warn("Speciality not found with name: {}", name);
                     return new SpecialityNotFoundException("Speciality not found with name: " + name);
                 });
-        log.info("Found speciality with name: {}", name);
-        return specialityMapper.toView(speciality);
+    }
+
+    private SpecialityView mapToSpecialityView(Speciality speciality) {
+        return SpecialityView.builder()
+                .id(speciality.getSpecialityId())
+                .name(speciality.getSpecialityName())
+                .createdOn(speciality.getCreatedOn())
+                .createdBy(speciality.getCreatedBy())
+                .lastModifiedOn(speciality.getLastModifiedOn())
+                .lastModifiedBy(speciality.getLastModifiedBy())
+                .deleteFlg(speciality.isDeleteFlg())
+                .build();
     }
 } 

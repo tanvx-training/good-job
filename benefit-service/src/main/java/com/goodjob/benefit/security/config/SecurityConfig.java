@@ -24,7 +24,11 @@ public class SecurityConfig {
     http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorizeRequests ->
-            authorizeRequests.anyRequest().authenticated()
+            authorizeRequests
+                    .requestMatchers("/actuator/prometheus")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated()
         )
         .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -1,6 +1,8 @@
 package com.goodjob.speciality.repository;
 
 import com.goodjob.speciality.entity.Speciality;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +20,7 @@ public interface SpecialityRepository extends JpaRepository<Speciality, Integer>
      * @param name the speciality name
      * @return an Optional containing the speciality if found, or empty if not found
      */
-    Optional<Speciality> findByName(String name);
+    Optional<Speciality> findBySpecialityName(String name);
 
     /**
      * Check if a speciality exists by its name.
@@ -26,5 +28,7 @@ public interface SpecialityRepository extends JpaRepository<Speciality, Integer>
      * @param name the speciality name
      * @return true if the speciality exists, false otherwise
      */
-    boolean existsByName(String name);
+    boolean existsBySpecialityName(String name);
+
+    Page<Speciality> findAllByDeleteFlg(Boolean deleteFlg, Pageable pageable);
 } 

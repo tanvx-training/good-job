@@ -1,12 +1,25 @@
-#server:
-#  port: 8081
-#
-#spring:
-#  application:
-#    name: benefit-service
-#  cloud:
-#    config:
-#      uri: http://localhost:8888
-#      fail-fast: true
-#  config:
-#    import: "optional:configserver:"
+spring:
+  application:
+    name: benefit-service
+  config:
+    import: 'configserver:http://localhost:8888'
+
+# Fallback properties in case config server is not available
+server:
+  port: 8081
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always 

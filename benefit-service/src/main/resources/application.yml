@@ -1,19 +1,12 @@
 spring:
   application:
-    name: speciality-service
-  cloud:
-    config:
-      uri: http://localhost:8888
-      fail-fast: true
-      retry:
-        initial-interval: 1500
-        multiplier: 1.5
-        max-attempts: 6
-        max-interval: 5000
+    name: benefit-service
+  config:
+    import: 'configserver:http://localhost:8888'
 
 # Fallback properties in case config server is not available
 server:
-  port: 8090
+  port: 8081
 
 eureka:
   client:
@@ -29,4 +22,4 @@ management:
         include: "*"
   endpoint:
     health:
-      show-details: always
+      show-details: always 
