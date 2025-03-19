@@ -58,17 +58,17 @@ public class IndustryController {
      */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
-    public ResponseEntity<PageResponseDTO<IndustryView>> getAllIndustries(
+    public ResponseEntity<ApiResponse<PageResponseDTO<IndustryView>>> getAllIndustries(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "20") Integer size,
             @RequestParam(value = "sort", defaultValue = "industryId,asc") String sort
     ) {
-        return ResponseEntity.ok(industryQueryService.getAllIndustries(
+        return ResponseEntity.ok(ApiResponse.success(industryQueryService.getAllIndustries(
                 IndustryQuery.builder()
                         .page(page)
                         .size(size)
                         .sort(sort)
-                        .build())
+                        .build()))
         );
     }
 

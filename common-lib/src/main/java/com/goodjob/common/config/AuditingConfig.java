@@ -1,6 +1,6 @@
 package com.goodjob.common.config;
 
-import com.goodjob.common.security.SecurityUtils;
+import com.goodjob.common.util.SecurityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;

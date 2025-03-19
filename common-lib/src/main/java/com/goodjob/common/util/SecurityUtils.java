@@ -1,4 +1,4 @@
-package com.goodjob.common.security;
+package com.goodjob.common.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
