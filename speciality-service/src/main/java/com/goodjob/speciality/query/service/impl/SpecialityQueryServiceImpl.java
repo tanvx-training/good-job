@@ -15,6 +15,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Implementation of the SpecialityQueryService interface.
  * Following the CQRS pattern, this service handles all read operations.
@@ -57,6 +60,25 @@ public class SpecialityQueryServiceImpl implements SpecialityQueryService {
                     log.warn("Speciality not found with name: {}", name);
                     return new SpecialityNotFoundException("Speciality not found with name: " + name);
                 });
+    }
+
+    @Override
+    public List<SpecialityView> getAllByIdList(List<Integer> idList) {
+        List<Speciality> industryList = specialityRepository.findAllById(idList);
+        if (Objects.equals(idList.size(), industryList.size())) {
+            List<Integer> existedIds = industryList
+                    .stream()
+                    .map(Speciality::getSpecialityId)
+                    .toList();
+            List<Integer> notExistedIds = idList.stream()
+                    .filter(id -> !existedIds.contains(id))
+                    .toList();
+            throw new SpecialityNotFoundException("Speciality not found with ids in: " + notExistedIds);
+        }
+        return industryList
+                .stream()
+                .map(this::mapToSpecialityView)
+                .toList();
     }
 
     private SpecialityView mapToSpecialityView(Speciality speciality) {

@@ -1,9 +1,8 @@
 package com.goodjob.company.command.service;
 
-import com.goodjob.company.dto.CompanyCommand;
+import com.goodjob.company.common.dto.CompanyCommand;
 import com.goodjob.company.exception.CompanyAlreadyExistsException;
 import com.goodjob.company.exception.CompanyNotFoundException;
-import com.goodjob.company.exception.UnauthorizedAccessException;
 
 /**
  * Service interface for company command operations.

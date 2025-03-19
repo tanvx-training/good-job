@@ -1,10 +1,11 @@
-package com.goodjob.industry.query.service;
+package com.goodjob.industry.query.service.impl;
 
 import com.goodjob.common.dto.PageResponseDTO;
 import com.goodjob.industry.entity.Industry;
 import com.goodjob.industry.exception.IndustryNotFoundException;
 import com.goodjob.industry.query.dto.IndustryQuery;
 import com.goodjob.industry.query.dto.IndustryView;
+import com.goodjob.industry.query.service.IndustryQueryService;
 import com.goodjob.industry.repository.IndustryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the IndustryQueryService interface.
@@ -48,6 +53,25 @@ public class IndustryQueryServiceImpl implements IndustryQueryService {
         return industryRepository.findById(id)
                 .map(this::mapToIndustryView)
                 .orElseThrow(() -> new IndustryNotFoundException("Industry not found with ID: " + id));
+    }
+
+    @Override
+    public List<IndustryView> getAllByIdList(List<Integer> idList) {
+        List<Industry> industryList = industryRepository.findAllById(idList);
+        if (Objects.equals(idList.size(), industryList.size())) {
+            List<Integer> existedIds = industryList
+                    .stream()
+                    .map(Industry::getIndustryId)
+                    .toList();
+            List<Integer> notExistedIds = idList.stream()
+                    .filter(id -> !existedIds.contains(id))
+                    .toList();
+            throw new IndustryNotFoundException("Industry not found with ids in: " + notExistedIds);
+        }
+        return industryList
+                .stream()
+                .map(this::mapToIndustryView)
+                .toList();
     }
 
     private IndustryView mapToIndustryView(Industry industry) {

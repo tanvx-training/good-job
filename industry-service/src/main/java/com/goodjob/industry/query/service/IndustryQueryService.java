@@ -25,4 +25,6 @@ public interface IndustryQueryService {
      * @return the industry
      */
     IndustryView getIndustryById(Integer id);
+
+    List<IndustryView> getAllByIdList(List<Integer> idList);
 } 

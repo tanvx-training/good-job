@@ -1,9 +1,9 @@
 package com.goodjob.company.controller;
 
 import com.goodjob.company.command.service.CompanyCommandService;
-import com.goodjob.company.dto.CompanyCommand;
-import com.goodjob.company.dto.CompanyResponse;
-import com.goodjob.company.dto.CompanySearchCriteria;
+import com.goodjob.company.common.dto.CompanyCommand;
+import com.goodjob.company.common.dto.CompanyResponse;
+import com.goodjob.company.common.dto.CompanySearchCriteria;
 import com.goodjob.company.query.service.CompanyQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

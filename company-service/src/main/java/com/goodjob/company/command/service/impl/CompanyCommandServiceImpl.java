@@ -1,12 +1,11 @@
 package com.goodjob.company.command.service.impl;
 
 import com.goodjob.company.command.service.CompanyCommandService;
-import com.goodjob.company.dto.CompanyCommand;
+import com.goodjob.company.common.dto.CompanyCommand;
 import com.goodjob.company.entity.Company;
 import com.goodjob.company.entity.CompanyMetric;
 import com.goodjob.company.exception.CompanyAlreadyExistsException;
 import com.goodjob.company.exception.CompanyNotFoundException;
-import com.goodjob.company.exception.UnauthorizedAccessException;
 import com.goodjob.company.repository.CompanyMetricsRepository;
 import com.goodjob.company.repository.CompanyRepository;
 import org.slf4j.Logger;

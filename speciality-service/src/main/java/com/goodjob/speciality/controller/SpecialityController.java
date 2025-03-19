@@ -1,5 +1,6 @@
 package com.goodjob.speciality.controller;
 
+import com.goodjob.common.dto.ApiResponse;
 import com.goodjob.common.dto.PageResponseDTO;
 import com.goodjob.speciality.command.dto.CreateSpecialityCommand;
 import com.goodjob.speciality.command.dto.UpdateSpecialityCommand;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * REST controller for managing specialities.
@@ -40,18 +43,18 @@ public class SpecialityController {
      */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SPECIALITY')")
-    public ResponseEntity<PageResponseDTO<SpecialityView>> getAllSpecialities(
+    public ResponseEntity<ApiResponse<PageResponseDTO<SpecialityView>>> getAllSpecialities(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "20") Integer size,
             @RequestParam(value = "sort", defaultValue = "specialityId,asc") String sort) {
         log.info("REST request to get all Specialities");
-        return ResponseEntity.ok(specialityQueryService.getAllSpecialities(
+        return ResponseEntity.ok(ApiResponse.success(specialityQueryService.getAllSpecialities(
                 SpecialityQuery.builder()
                         .page(page)
                         .size(size)
                         .sort(sort)
                         .build()
-        ));
+        )));
     }
 
     /**
@@ -62,10 +65,10 @@ public class SpecialityController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SPECIALITY')")
-    public ResponseEntity<SpecialityView> getSpecialityById(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<SpecialityView>> getSpecialityById(@PathVariable Integer id) {
         log.info("REST request to get Speciality : {}", id);
         SpecialityView speciality = specialityQueryService.getSpecialityById(id);
-        return ResponseEntity.ok(speciality);
+        return ResponseEntity.ok(ApiResponse.success(speciality));
     }
 
     /**
@@ -76,10 +79,10 @@ public class SpecialityController {
      */
     @GetMapping("/name/{name}")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SPECIALITY')")
-    public ResponseEntity<SpecialityView> getSpecialityByName(@PathVariable String name) {
+    public ResponseEntity<ApiResponse<SpecialityView>> getSpecialityByName(@PathVariable String name) {
         log.info("REST request to get Speciality by name : {}", name);
         SpecialityView speciality = specialityQueryService.getSpecialityByName(name);
-        return ResponseEntity.ok(speciality);
+        return ResponseEntity.ok(ApiResponse.success(speciality));
     }
 
     // Command operations (Create, Update, Delete)
@@ -135,5 +138,14 @@ public class SpecialityController {
         log.info("REST request to delete Speciality : {}", id);
         specialityCommandService.deleteSpeciality(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/batch")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SPECIALITY')")
+    public ResponseEntity<ApiResponse<List<SpecialityView>>> getBatchSpeciality(@RequestParam("ids") String ids) {
+        List<Integer> idList = Arrays.stream(ids.split(","))
+                .map(Integer::parseInt)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(specialityQueryService.getAllByIdList(idList)));
     }
 } 

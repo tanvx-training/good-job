@@ -1,4 +1,4 @@
-package com.goodjob.company.dto;
+package com.goodjob.company.common.dto;
 
 import java.util.Set;
 

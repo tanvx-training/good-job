@@ -1,159 +1,139 @@
 package com.goodjob.company.exception;
 
-import jakarta.validation.ConstraintViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Global exception handler for the Company Service.
+ * Global exception handler for the Skill service.
  */
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
     /**
-     * Handle CompanyNotFoundException.
+     * Handles SkillNotFoundException.
      *
-     * @param ex      the exception
+     * @param ex the exception
      * @param request the web request
      * @return the error response
      */
     @ExceptionHandler(CompanyNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleCompanyNotFoundException(CompanyNotFoundException ex, WebRequest request) {
-        log.error("Company not found: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND,
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> handleSkillNotFoundException(CompanyNotFoundException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .timestamp(LocalDateTime.now())
+                .error(ex.getMessage())
+                .message(request.getDescription(false))
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     /**
-     * Handle CompanyAlreadyExistsException.
+     * Handles SkillAlreadyExistsException.
      *
-     * @param ex      the exception
+     * @param ex the exception
      * @param request the web request
      * @return the error response
      */
     @ExceptionHandler(CompanyAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleCompanyAlreadyExistsException(CompanyAlreadyExistsException ex, WebRequest request) {
-        log.error("Company already exists: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.CONFLICT,
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(CompanyAlreadyExistsException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .timestamp(LocalDateTime.now())
+                .error(ex.getMessage())
+                .message(request.getDescription(false))
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     /**
-     * Handle UnauthorizedAccessException.
+     * Handles validation exceptions.
      *
-     * @param ex      the exception
-     * @param request the web request
+     * @param ex the exception
      * @return the error response
      */
-    @ExceptionHandler(UnauthorizedAccessException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorizedAccessException(UnauthorizedAccessException ex, WebRequest request) {
-        log.error("Unauthorized access: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.FORBIDDEN,
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("error", "Validation Error");
+        response.put("details", errors);
+
+        return response;
     }
 
     /**
-     * Handle AccessDeniedException.
+     * Handles AccessDeniedException.
      *
-     * @param ex      the exception
+     * @param ex the exception
      * @param request the web request
      * @return the error response
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        log.error("Access denied: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.FORBIDDEN,
-                "You do not have permission to access this resource"
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex,
+                                                                     WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .timestamp(LocalDateTime.now())
+                .error("Access denied: " + ex.getMessage())
+                .message(request.getDescription(false))
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     /**
-     * Handle MethodArgumentNotValidException.
+     * Handles all other exceptions.
      *
      * @param ex the exception
-     * @return the error response
-     */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.error("Validation error: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "Validation error"
-        );
-        
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errorResponse.addValidationError(fieldName, errorMessage);
-        });
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-
-    /**
-     * Handle ConstraintViolationException.
-     *
-     * @param ex the exception
-     * @return the error response
-     */
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
-        log.error("Constraint violation: {}", ex.getMessage());
-        
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "Validation error"
-        );
-        
-        ex.getConstraintViolations().forEach(violation -> {
-            String fieldName = violation.getPropertyPath().toString();
-            String errorMessage = violation.getMessage();
-            errorResponse.addValidationError(fieldName, errorMessage);
-        });
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-
-    /**
-     * Handle all other exceptions.
-     *
-     * @param ex the exception
+     * @param request the web request
      * @return the error response
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
-        log.error("Unexpected error: {}", ex.getMessage(), ex);
-        
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "An unexpected error occurred"
-        );
-        
+    public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .timestamp(LocalDateTime.now())
+                .error(ex.getMessage())
+                .message(request.getDescription(false))
+                .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
-}
+
+    /**
+     * Error response class for structured error responses.
+     */
+    @Data
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ErrorResponse {
+
+        private LocalDateTime timestamp;
+        private int status;
+        private String error;
+        private String message;
+        private Map<String, String> details;
+    }
+} 

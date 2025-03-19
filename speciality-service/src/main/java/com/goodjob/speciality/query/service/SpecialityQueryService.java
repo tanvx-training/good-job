@@ -34,4 +34,6 @@ public interface SpecialityQueryService {
      * @return the speciality view
      */
     SpecialityView getSpecialityByName(String name);
+
+    List<SpecialityView> getAllByIdList(List<Integer> idList);
 } 

@@ -1,5 +1,6 @@
 package com.goodjob.industry.controller;
 
+import com.goodjob.common.dto.ApiResponse;
 import com.goodjob.common.dto.PageResponseDTO;
 import com.goodjob.industry.command.dto.CreateIndustryCommand;
 import com.goodjob.industry.command.dto.UpdateIndustryCommand;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Controller for industry-related endpoints.
@@ -77,9 +80,9 @@ public class IndustryController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
-    public ResponseEntity<IndustryView> getIndustryById(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<IndustryView>> getIndustryById(@PathVariable Integer id) {
         IndustryView industry = industryQueryService.getIndustryById(id);
-        return ResponseEntity.ok(industry);
+        return ResponseEntity.ok(ApiResponse.success(industry));
     }
 
     /**
@@ -110,5 +113,16 @@ public class IndustryController {
     public ResponseEntity<Void> deleteIndustry(@PathVariable Integer id) {
         industryCommandService.deleteIndustry(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/batch")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
+    public ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustry(
+            @RequestParam("ids") String ids
+    ) {
+        List<Integer> idList = Arrays.stream(ids.split(","))
+                .map(Integer::parseInt)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(industryQueryService.getAllByIdList(idList)));
     }
 } 

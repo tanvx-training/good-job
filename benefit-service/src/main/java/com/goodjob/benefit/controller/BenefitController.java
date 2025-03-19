@@ -6,6 +6,7 @@ import com.goodjob.benefit.command.service.BenefitCommandService;
 import com.goodjob.benefit.query.dto.BenefitQuery;
 import com.goodjob.benefit.query.dto.BenefitView;
 import com.goodjob.benefit.query.service.BenefitQueryService;
+import com.goodjob.common.dto.ApiResponse;
 import com.goodjob.common.dto.PageResponseDTO;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -35,7 +36,7 @@ public class BenefitController {
 
   @GetMapping
   @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_BENEFIT')")
-  public ResponseEntity<PageResponseDTO<BenefitView>> getAllBenefits(
+  public ResponseEntity<ApiResponse<PageResponseDTO<BenefitView>>> getAllBenefits(
       @RequestParam(value = "page", defaultValue = "0") Integer page,
       @RequestParam(value = "size", defaultValue = "20") Integer size,
       @RequestParam(value = "sort", defaultValue = "benefitId,asc") String sort) {
@@ -47,14 +48,14 @@ public class BenefitController {
             .sort(sort)
             .build()
     );
-    return ResponseEntity.ok(benefits);
+    return ResponseEntity.ok(ApiResponse.success(benefits));
   }
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_BENEFIT')")
-  public ResponseEntity<BenefitView> getBenefitById(@PathVariable Integer id) {
+  public ResponseEntity<ApiResponse<BenefitView>> getBenefitById(@PathVariable Integer id) {
     BenefitView benefit = benefitQueryService.getBenefitById(id);
-    return ResponseEntity.ok(benefit);
+    return ResponseEntity.ok(ApiResponse.success(benefit));
   }
 
   @PostMapping

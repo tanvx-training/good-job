@@ -1,4 +1,4 @@
-package com.goodjob.company.dto;
+package com.goodjob.company.common.dto;
 
 import com.goodjob.company.entity.Company;
 import com.goodjob.company.entity.CompanyMetric;
