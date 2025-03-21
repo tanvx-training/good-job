@@ -11,12 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "industry-service")
 public interface IndustryFeignClient {
 
-    @GetMapping("/api/v1/industries")
-    ResponseEntity<ApiResponse<PageResponseDTO<IndustryView>>> getAllIndustries(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "size", defaultValue = "20") Integer size,
-            @RequestParam(value = "sort", defaultValue = "industryId,asc") String sort
-    );
+    @GetMapping("/api/v1/industries/batch")
+    ResponseEntity<ApiResponse<PageResponseDTO<IndustryView>>> getBatchIndustries(@RequestParam("ids") String ids);
 
     @GetMapping("/api/v1/industries/{id}")
     ResponseEntity<ApiResponse<IndustryView>> getIndustryById(@PathVariable("id") Integer id);
