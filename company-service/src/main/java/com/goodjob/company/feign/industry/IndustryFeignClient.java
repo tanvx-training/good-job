@@ -1,7 +1,7 @@
 package com.goodjob.company.feign.industry;
 
 import com.goodjob.common.dto.ApiResponse;
-import com.goodjob.common.dto.PageResponseDTO;
+import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface IndustryFeignClient {
 
     @GetMapping("/api/v1/industries/batch")
-    ResponseEntity<ApiResponse<PageResponseDTO<IndustryView>>> getBatchIndustries(@RequestParam("ids") String ids);
+    ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustries(@RequestParam("ids") String ids);
 
     @GetMapping("/api/v1/industries/{id}")
     ResponseEntity<ApiResponse<IndustryView>> getIndustryById(@PathVariable("id") Integer id);

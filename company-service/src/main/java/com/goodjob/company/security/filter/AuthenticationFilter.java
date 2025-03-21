@@ -34,7 +34,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         authorities.add(new SimpleGrantedAuthority(role.trim()));
       }
       for (String permission : permissionsHeader.split(",")) {
-        if (permission.contains("COMPANY")) {
+        if (permission.contains("COMPANY")
+            || permission.contains("INDUSTRY")
+            || permission.contains("SPECIALITY")
+        ) {
           authorities.add(new SimpleGrantedAuthority(permission.trim()));
         }
       }

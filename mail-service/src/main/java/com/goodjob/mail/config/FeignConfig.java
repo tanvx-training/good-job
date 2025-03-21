@@ -1,6 +1,5 @@
 package com.goodjob.mail.config;
 
-import com.goodjob.common.config.FeignAuthInterceptor;
 import com.goodjob.common.config.FeignClientConfig;
 import com.goodjob.common.config.OpenFeignConfig;
 import org.springframework.cloud.openfeign.EnableFeignClients;
