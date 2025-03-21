@@ -58,7 +58,7 @@ public class IndustryQueryServiceImpl implements IndustryQueryService {
     @Override
     public List<IndustryView> getAllByIdList(List<Integer> idList) {
         List<Industry> industryList = industryRepository.findAllById(idList);
-        if (Objects.equals(idList.size(), industryList.size())) {
+        if (!Objects.equals(idList.size(), industryList.size())) {
             List<Integer> existedIds = industryList
                     .stream()
                     .map(Industry::getIndustryId)

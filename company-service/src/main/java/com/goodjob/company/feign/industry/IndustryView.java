@@ -1,4 +1,4 @@
-package com.goodjob.common.feign.industry;
+package com.goodjob.company.feign.industry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -10,6 +10,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,8 +66,8 @@ public class Company extends BaseEntity {
     private CompanyMetric companyMetric;
 
     @OneToMany(mappedBy = "company")
-    private List<CompanySpeciality> companySpecialities;
+    private Set<CompanySpeciality> companySpecialities;
 
     @OneToMany(mappedBy = "company")
-    private List<CompanyIndustry> companyIndustries;
+    private Set<CompanyIndustry> companyIndustries;
 } 

@@ -30,4 +30,8 @@ public class CompanyIndustry extends BaseEntity {
   @MapsId("companyId")
   @JoinColumn(name = "company_id")
   private Company company;
+
+  public Integer getIndustryId() {
+    return companyIndustryId.getIndustryId();
+  }
 }

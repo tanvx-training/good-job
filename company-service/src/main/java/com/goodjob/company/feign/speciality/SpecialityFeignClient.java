@@ -1,4 +1,4 @@
-package com.goodjob.common.feign.industry;
+package com.goodjob.company.feign.speciality;
 
 import com.goodjob.common.dto.ApiResponse;
 import com.goodjob.common.dto.PageResponseDTO;
@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "industry-service")
-public interface IndustryFeignClient {
+@FeignClient(name = "speciality-service")
+public interface SpecialityFeignClient {
 
-    @GetMapping("/api/v1/industries")
-    ResponseEntity<ApiResponse<PageResponseDTO<IndustryView>>> getAllIndustries(
+    @GetMapping("/api/v1/specialities")
+    ResponseEntity<ApiResponse<PageResponseDTO<SpecialityView>>> getAllSpecialities(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "20") Integer size,
-            @RequestParam(value = "sort", defaultValue = "industryId,asc") String sort
+            @RequestParam(value = "sort", defaultValue = "specialityId,asc") String sort
     );
 
-    @GetMapping("/api/v1/industries/{id}")
-    ResponseEntity<ApiResponse<IndustryView>> getIndustryById(@PathVariable("id") Integer id);
+    @GetMapping("/api/v1/specialities/{id}")
+    ResponseEntity<ApiResponse<SpecialityView>> getSpecialityById(@PathVariable("id") Integer id);
 }

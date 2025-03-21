@@ -4,15 +4,20 @@ import com.goodjob.common.exception.BadRequestException;
 import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.common.exception.ServiceException;
 import feign.Logger;
+import feign.RequestInterceptor;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 /**
  * Configuration for Feign clients.
@@ -39,6 +44,35 @@ public class FeignClientConfig {
     @Bean
     public ErrorDecoder errorDecoder() {
         return new FeignErrorDecoder();
+    }
+
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        return requestTemplate -> {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String username = authentication.getName();
+                if (username != null) {
+                    requestTemplate.header("X-Auth-Username", username);
+                }
+
+                String roles = authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .filter(authority -> authority.startsWith("ROLE_"))
+                        .collect(Collectors.joining(","));
+                String permissions = authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .filter(authority -> !authority.startsWith("ROLE_"))
+                        .collect(Collectors.joining(","));
+
+                if (!roles.isEmpty()) {
+                    requestTemplate.header("X-Auth-Roles", roles);
+                }
+                if (!permissions.isEmpty()) {
+                    requestTemplate.header("X-Auth-Permissions", permissions);
+                }
+            }
+        };
     }
 
     /**

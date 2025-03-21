@@ -1,6 +1,6 @@
 spring:
   application:
-    name: benefit-service
+    name: company-service
   config:
     import: 'configserver:http://localhost:8888'
 

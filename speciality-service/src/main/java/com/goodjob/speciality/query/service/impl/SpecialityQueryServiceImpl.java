@@ -65,7 +65,7 @@ public class SpecialityQueryServiceImpl implements SpecialityQueryService {
     @Override
     public List<SpecialityView> getAllByIdList(List<Integer> idList) {
         List<Speciality> industryList = specialityRepository.findAllById(idList);
-        if (Objects.equals(idList.size(), industryList.size())) {
+        if (!Objects.equals(idList.size(), industryList.size())) {
             List<Integer> existedIds = industryList
                     .stream()
                     .map(Speciality::getSpecialityId)

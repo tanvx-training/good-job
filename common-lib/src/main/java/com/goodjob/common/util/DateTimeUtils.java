@@ -109,10 +109,7 @@ public final class DateTimeUtils {
      * @return the formatted string
      */
     public static String formatDate(LocalDate localDate) {
-        if (localDate == null) {
-            return null;
-        }
-        return localDate.format(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT));
+        return formatDate(localDate, DEFAULT_DATE_FORMAT);
     }
 
     /**
@@ -136,10 +133,7 @@ public final class DateTimeUtils {
      * @return the parsed LocalDateTime
      */
     public static LocalDateTime parseDateTime(String dateTimeString) {
-        if (dateTimeString == null || dateTimeString.isEmpty()) {
-            return null;
-        }
-        return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT));
+        return parseDateTime(dateTimeString, DEFAULT_DATE_TIME_FORMAT);
     }
 
     /**
@@ -163,10 +157,7 @@ public final class DateTimeUtils {
      * @return the parsed LocalDate
      */
     public static LocalDate parseDate(String dateString) {
-        if (dateString == null || dateString.isEmpty()) {
-            return null;
-        }
-        return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT));
+        return parseDate(dateString, DEFAULT_DATE_FORMAT);
     }
 
     /**
@@ -252,10 +243,7 @@ public final class DateTimeUtils {
      * @return the converted ZonedDateTime
      */
     public static ZonedDateTime toZonedDateTime(LocalDateTime localDateTime) {
-        if (localDateTime == null) {
-            return null;
-        }
-        return localDateTime.atZone(DEFAULT_ZONE_ID);
+        return toZonedDateTime(localDateTime, DEFAULT_ZONE_ID);
     }
 
     /**

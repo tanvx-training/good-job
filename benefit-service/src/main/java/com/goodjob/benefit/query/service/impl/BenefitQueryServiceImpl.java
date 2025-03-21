@@ -1,9 +1,10 @@
-package com.goodjob.benefit.query.service;
+package com.goodjob.benefit.query.service.impl;
 
 import com.goodjob.benefit.entity.Benefit;
 import com.goodjob.benefit.exception.BenefitNotFoundException;
 import com.goodjob.benefit.query.dto.BenefitQuery;
 import com.goodjob.benefit.query.dto.BenefitView;
+import com.goodjob.benefit.query.service.BenefitQueryService;
 import com.goodjob.benefit.repository.BenefitRepository;
 import com.goodjob.common.dto.PageResponseDTO;
 import lombok.RequiredArgsConstructor;

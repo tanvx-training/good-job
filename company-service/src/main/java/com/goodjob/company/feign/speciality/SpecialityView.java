@@ -1,4 +1,4 @@
-package com.goodjob.common.feign.speciality;
+package com.goodjob.company.feign.speciality;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

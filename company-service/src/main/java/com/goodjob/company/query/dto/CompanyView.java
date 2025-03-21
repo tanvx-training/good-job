@@ -12,7 +12,7 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CompanyView {
 
-    private String companyId;
+    private Integer companyId;
     private String name;
     private String description;
     private String companySize;

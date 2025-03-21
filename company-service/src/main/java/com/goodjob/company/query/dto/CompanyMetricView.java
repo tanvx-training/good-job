@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CompanyMetricView {
 
-    private Integer id;
     private Integer employeeCount;
     private Integer followerCount;
     private LocalDateTime recordOn;

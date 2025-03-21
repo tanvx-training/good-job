@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "com.goodjob.common.feign")
+@EnableFeignClients
 public class CompanyServiceApplication {
 
     public static void main(String[] args) {
