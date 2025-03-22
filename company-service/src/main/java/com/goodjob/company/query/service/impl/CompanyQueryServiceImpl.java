@@ -3,7 +3,15 @@ package com.goodjob.company.query.service.impl;
 import com.goodjob.common.dto.ApiResponse;
 import com.goodjob.common.dto.PageResponseDTO;
 import com.goodjob.common.util.DateTimeUtils;
+import com.goodjob.company.common.dto.AddressDto;
 import com.goodjob.company.common.enums.CompanySize;
+import com.goodjob.company.entity.Company;
+import com.goodjob.company.entity.CompanyIndustry;
+import com.goodjob.company.entity.CompanyMetric;
+import com.goodjob.company.entity.CompanySpeciality;
+import com.goodjob.company.entity.id.CompanyIndustryId;
+import com.goodjob.company.entity.id.CompanySpecialityId;
+import com.goodjob.company.exception.CompanyNotFoundException;
 import com.goodjob.company.feign.industry.IndustryFeignClient;
 import com.goodjob.company.feign.industry.IndustryView;
 import com.goodjob.company.feign.speciality.SpecialityFeignClient;
@@ -21,6 +29,8 @@ import com.goodjob.company.repository.CompanySpecialitySummary;
 import com.goodjob.company.repository.CompanySummary;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -56,19 +66,106 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     Page<CompanyView> companyViewPage = companyRepository.findByDeleteFlg(false, pageable)
         .map(summary -> {
           log.info("Summary={}", summary);
-          return this.convertToCompanyView(summary);
+          return this.convertFromSummaryToView(summary);
         });
     return new PageResponseDTO<>(companyViewPage);
   }
 
-  private CompanyView convertToCompanyView(CompanySummary summary) {
+  @Override
+  public CompanyView getCompanyById(Integer id) {
+    return companyRepository.findById(id)
+            .map(this::convertFromEntityToView)
+            .orElseThrow(() -> new CompanyNotFoundException(id));
+  }
+
+  private CompanyView convertFromEntityToView(Company company) {
+    CompanyMetric companyMetric = company.getCompanyMetric();
+    Set<CompanyIndustry> companyIndustryList = company.getCompanyIndustries();
+    Set<CompanySpeciality> companySpecialityList = company.getCompanySpecialities();
+
+    CompanyView.CompanyViewBuilder builder = CompanyView.builder()
+            .companyId(company.getCompanyId())
+            .name(company.getName())
+            .description(company.getDescription())
+            .companySize(CompanySize.fromValue(company.getCompanySize()).getDescription())
+            .address(buildAddress(AddressDto.builder()
+                    .country(company.getCountry())
+                    .city(company.getCity())
+                    .state(company.getState())
+                    .zipCode(company.getZipCode())
+                    .address(company.getAddress())
+                    .build()))
+            .url(company.getUrl())
+            .metric(CompanyMetricView.builder()
+                    .employeeCount(companyMetric.getEmployeeCount())
+                    .employeeCount(companyMetric.getEmployeeCount())
+                    .recordOn(Objects.nonNull(companyMetric.getRecordOn())
+                            ? DateTimeUtils.fromTimestamp(companyMetric.getRecordOn())
+                            : null)
+                    .build());
+    List<Integer> cisIds = companyIndustryList
+            .stream()
+            .map(CompanyIndustry::getCompanyIndustryId)
+            .map(CompanyIndustryId::getIndustryId)
+            .toList();
+    if (!CollectionUtils.isEmpty(cisIds)) {
+      String cisIdParam = String.join(",",
+              cisIds.stream().map(String::valueOf).toList());
+      ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = industryFeignClient.getBatchIndustries(
+              cisIdParam);
+      if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
+              industryResponse.getBody())) {
+        List<IndustryView> industryViews = industryResponse.getBody().getData();
+
+        builder
+                .industries(industryViews
+                        .stream()
+                        .map(industryView ->
+                                CompanyIndustryView.builder().industryName(industryView.getName()).build())
+                        .toList()
+                );
+      }
+    }
+
+    List<Integer> cssIds = companySpecialityList
+            .stream()
+            .map(CompanySpeciality::getCompanySpecialityId)
+            .map(CompanySpecialityId::getSpecialityId)
+            .toList();
+    if (!CollectionUtils.isEmpty(cssIds)) {
+      String cssIdParam = String.join(",",
+              cssIds.stream().map(String::valueOf).toList());
+      ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = specialityFeignClient.getBatchSpecialities(
+              cssIdParam);
+      if (specialityResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
+              specialityResponse.getBody())) {
+        List<SpecialityView> specialityViews = specialityResponse.getBody().getData();
+
+        builder
+                .specialities(specialityViews
+                        .stream()
+                        .map(specialityView ->
+                                CompanySpecialityView.builder().name(specialityView.getName()).build())
+                        .toList());
+      }
+    }
+    return builder.build();
+  }
+
+  private CompanyView convertFromSummaryToView(CompanySummary summary) {
 
     CompanyView.CompanyViewBuilder builder = CompanyView.builder()
         .companyId(summary.getCompanyId())
         .name(summary.getName())
         .description(summary.getDescription())
         .companySize(CompanySize.fromValue(summary.getCompanySize()).getDescription())
-        .address(buildAddress(summary))
+        .address(buildAddress(AddressDto.builder()
+                .country(summary.getCountry())
+                .city(summary.getCity())
+                .state(summary.getState())
+                .zipCode(summary.getZipCode())
+                .address(summary.getAddress())
+                .build()))
         .url(summary.getUrl());
 
     CompanyMetricSummary cms = summary.getCompanyMetric();
@@ -131,34 +228,34 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     return builder.build();
   }
 
-  private String buildAddress(CompanySummary summary) {
+  private String buildAddress(AddressDto addressDto) {
 
     // Use StringBuilder for efficient string construction
     StringBuilder sb = new StringBuilder();
 
     // Add street address if present
-    if (StringUtils.hasText(summary.getAddress())) {
-      sb.append(summary.getAddress());
+    if (StringUtils.hasText(addressDto.getAddress())) {
+      sb.append(addressDto.getAddress());
     }
 
     // Add city if present, with a comma if there's prior content
-    if (StringUtils.hasText(summary.getCity())) {
+    if (StringUtils.hasText(addressDto.getCity())) {
       if (!sb.isEmpty()) {
         sb.append(", ");
       }
-      sb.append(summary.getCity());
+      sb.append(addressDto.getCity());
     }
 
     // Combine state and zip code as a unit (e.g., "IL 62704")
     String stateZip = "";
-    if (StringUtils.hasText(summary.getState())) {
-      stateZip += summary.getState();
+    if (StringUtils.hasText(addressDto.getState())) {
+      stateZip += addressDto.getState();
     }
-    if (StringUtils.hasText(summary.getZipCode())) {
+    if (StringUtils.hasText(addressDto.getZipCode())) {
       if (!stateZip.isEmpty()) {
         stateZip += " ";// Space between state and zip
       }
-      stateZip += summary.getZipCode();
+      stateZip += addressDto.getZipCode();
     }
     if (!stateZip.isEmpty()) {
       if (!sb.isEmpty()) {
@@ -168,11 +265,11 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     }
 
     // Add country if present
-    if (StringUtils.hasText(summary.getCountry())) {
+    if (StringUtils.hasText(addressDto.getCountry())) {
       if (!sb.isEmpty()) {
         sb.append(", ");
       }
-      sb.append(summary.getCountry());
+      sb.append(addressDto.getCountry());
     }
 
     return sb.toString();

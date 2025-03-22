@@ -10,4 +10,6 @@ import com.goodjob.company.query.dto.CompanyView;
 public interface CompanyQueryService {
 
     PageResponseDTO<CompanyView> getAllCompanies(CompanyQuery query);
+
+    CompanyView getCompanyById(Integer id);
 } 
