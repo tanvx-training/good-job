@@ -3,14 +3,12 @@
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/config/CircuitBreakerConfig.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/exception/ServiceException.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/dto/PageRequestDTO.java
-/Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/dto/BaseMongoDTO.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/util/ValidationUtils.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/util/HttpUtils.java
+/Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/config/SharedConfigurationReference.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/exception/AccessDeniedException.java
-/Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/config/FeignAuthInterceptor.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/config/AuditingConfig.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/exception/GlobalExceptionHandler.java
-/Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/entity/BaseMongoEntity.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/util/RestClientUtils.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/dto/ApiResponse.java
 /Users/tanvx/Dev/Java/good-job/common-lib/src/main/java/com/goodjob/common/dto/PageResponseDTO.java

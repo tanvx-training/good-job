@@ -115,14 +115,14 @@ public class IndustryController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/batch")
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
-    public ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustry(
-            @RequestParam("ids") String ids
-    ) {
-        List<Integer> idList = Arrays.stream(ids.split(","))
-                .map(Integer::parseInt)
-                .toList();
-        return ResponseEntity.ok(ApiResponse.success(industryQueryService.getAllByIdList(idList)));
-    }
+        @GetMapping("/batch")
+        @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
+        public ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustry(
+                @RequestParam("ids") String ids
+        ) {
+            List<Integer> idList = Arrays.stream(ids.split(","))
+                    .map(Integer::parseInt)
+                    .toList();
+            return ResponseEntity.ok(ApiResponse.success(industryQueryService.getAllByIdList(idList)));
+        }
 } 

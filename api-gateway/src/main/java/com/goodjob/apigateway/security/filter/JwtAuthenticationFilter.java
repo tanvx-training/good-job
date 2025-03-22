@@ -31,7 +31,6 @@ public class JwtAuthenticationFilter implements GatewayFilter, Ordered {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     ServerHttpRequest request = exchange.getRequest();
-
     // Skip authentication for excluded URLs
     if (isUrlExcluded(request.getURI().getPath())) {
       return chain.filter(exchange);
@@ -67,6 +66,7 @@ public class JwtAuthenticationFilter implements GatewayFilter, Ordered {
         .header("X-Auth-Permissions", String.join(",", permissions))
         .build();
 
+    log.info("{}", modifiedRequest.getHeaders());
     return chain.filter(exchange.mutate().request(modifiedRequest).build());
   }
 
