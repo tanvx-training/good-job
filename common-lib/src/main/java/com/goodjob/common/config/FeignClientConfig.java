@@ -5,8 +5,11 @@ import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.common.exception.ServiceException;
 import feign.Logger;
 import feign.RequestInterceptor;
+import feign.RequestTemplate;
 import feign.Response;
 import feign.codec.ErrorDecoder;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Configuration for Feign clients.
@@ -48,46 +53,26 @@ public class FeignClientConfig {
 
     @Bean
     public RequestInterceptor requestInterceptor() {
-        return requestTemplate -> {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            log.info("Authentication: {}", authentication);
-            if (authentication != null && authentication.isAuthenticated()) {
-                Object credentials = authentication.getCredentials();
-                if (credentials instanceof String jwt) {
-                    requestTemplate.header("Authorization", "Bearer " + jwt);
+        return (RequestTemplate requestTemplate) -> {
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (Objects.nonNull(attributes)) {
+                HttpServletRequest request = attributes.getRequest();
+                String username = request.getHeader("X-Auth-Username");
+                String roles = request.getHeader("X-Auth-Roles");
+                String permissions = request.getHeader("X-Auth-Permissions");
+
+                if (Objects.nonNull(username)) {
+                    requestTemplate.header("X-Auth-Username", username);
+                }
+                if (Objects.nonNull(roles)) {
+                    requestTemplate.header("X-Auth-Roles", roles);
+                }
+                if (Objects.nonNull(permissions)) {
+                    requestTemplate.header("X-Auth-Permissions", permissions);
                 }
             }
         };
     }
-
-//    @Bean
-//    public RequestInterceptor requestInterceptor() {
-//        return requestTemplate -> {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            if (authentication != null && authentication.isAuthenticated()) {
-//                String username = authentication.getName();
-//                if (username != null) {
-//                    requestTemplate.header("X-Auth-Username", username);
-//                }
-//
-//                String roles = authentication.getAuthorities().stream()
-//                        .map(GrantedAuthority::getAuthority)
-//                        .filter(authority -> authority.startsWith("ROLE_"))
-//                        .collect(Collectors.joining(","));
-//                String permissions = authentication.getAuthorities().stream()
-//                        .map(GrantedAuthority::getAuthority)
-//                        .filter(authority -> !authority.startsWith("ROLE_"))
-//                        .collect(Collectors.joining(","));
-//
-//                if (!roles.isEmpty()) {
-//                    requestTemplate.header("X-Auth-Roles", roles);
-//                }
-//                if (!permissions.isEmpty()) {
-//                    requestTemplate.header("X-Auth-Permissions", permissions);
-//                }
-//            }
-//        };
-//    }
 
     /**
      * Custom error decoder for Feign clients.
