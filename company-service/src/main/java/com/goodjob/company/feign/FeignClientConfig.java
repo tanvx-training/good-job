@@ -1,4 +1,4 @@
-package com.goodjob.common.config;
+package com.goodjob.company.feign;
 
 import com.goodjob.common.exception.BadRequestException;
 import com.goodjob.common.exception.ResourceNotFoundException;
