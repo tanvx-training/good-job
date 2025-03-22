@@ -50,6 +50,7 @@ public class FeignClientConfig {
     public RequestInterceptor requestInterceptor() {
         return requestTemplate -> {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            log.info("Authentication: {}", authentication);
             if (authentication != null && authentication.isAuthenticated()) {
                 Object credentials = authentication.getCredentials();
                 if (credentials instanceof String jwt) {
