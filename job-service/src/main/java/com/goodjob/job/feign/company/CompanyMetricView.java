@@ -1,17 +1,17 @@
-package com.goodjob.job.query.dto;
+package com.goodjob.job.feign.company;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
 
-/**
- * DTO for displaying job industry information.
- */
 @Data
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class JobIndustryView {
+public class CompanyMetricView {
 
-    private String industryName;
-} 
+    private Integer employeeCount;
+    private Integer followerCount;
+    private LocalDateTime recordOn;
+}

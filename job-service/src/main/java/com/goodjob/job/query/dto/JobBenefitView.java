@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class JobIndustryView {
+public class JobBenefitView {
 
-    private String industryName;
+    private String benefitName;
 } 

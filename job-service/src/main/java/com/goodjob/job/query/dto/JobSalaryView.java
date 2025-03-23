@@ -1,6 +1,7 @@
 package com.goodjob.job.query.dto;
 
-import com.goodjob.job.entity.SalaryPeriod;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +14,13 @@ import java.math.BigDecimal;
  */
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JobSalaryView {
+
     private BigDecimal minSalary;
+    private BigDecimal medSalary;
     private BigDecimal maxSalary;
+    private String salaryPeriod;
     private String currency;
-    private SalaryPeriod salaryPeriod;
-    private Boolean isNegotiable;
-    private Boolean isVisible;
+    private String compensationType;
 } 

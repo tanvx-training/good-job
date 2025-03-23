@@ -1,20 +1,22 @@
 package com.goodjob.job.entity;
 
+import com.goodjob.common.entity.BaseEntity;
+import com.goodjob.job.entity.id.JobSkillId;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Entity representing a skill required for a job posting.
  */
-@Entity
 @Table(name = "job_skills")
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "job")
-@ToString(exclude = "job")
-public class JobSkill {
+@SuperBuilder
+@Entity
+public class JobSkill extends BaseEntity {
 
     @EmbeddedId
     private JobSkillId id;
@@ -23,21 +25,4 @@ public class JobSkill {
     @MapsId("jobId")
     @JoinColumn(name = "job_id")
     private Job job;
-
-    @Column(name = "skill_level")
-    @Enumerated(EnumType.STRING)
-    private SkillLevel skillLevel;
-
-    @Column(name = "is_required")
-    private Boolean isRequired;
-
-    @PrePersist
-    protected void onCreate() {
-        if (isRequired == null) {
-            isRequired = true;
-        }
-        if (skillLevel == null) {
-            skillLevel = SkillLevel.INTERMEDIATE;
-        }
-    }
 }

@@ -1,22 +1,18 @@
 package com.goodjob.job.query.dto;
 
-import com.goodjob.job.entity.SkillLevel;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * DTO for displaying job skill information.
  */
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JobSkillView {
-    private Integer skillId;
-    private String skillName;
-    private String skillAbr;
-    private SkillLevel skillLevel;
-    private Boolean isRequired;
+
+    private String abbreviation;
+    private String name;
 } 

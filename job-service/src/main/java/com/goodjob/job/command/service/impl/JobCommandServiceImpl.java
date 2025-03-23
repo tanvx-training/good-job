@@ -2,12 +2,9 @@ package com.goodjob.job.command.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goodjob.job.command.dto.CreateJobCommand;
-import com.goodjob.job.command.dto.UpdateJobCommand;
 import com.goodjob.job.command.service.JobCommandService;
 import com.goodjob.job.entity.*;
 import com.goodjob.job.exception.JobNotFoundException;
-import com.goodjob.job.exception.UnauthorizedAccessException;
 import com.goodjob.job.mapper.JobMapper;
 import com.goodjob.job.repository.JobRepository;
 import lombok.RequiredArgsConstructor;

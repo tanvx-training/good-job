@@ -7,6 +7,8 @@ import com.goodjob.benefit.query.dto.BenefitView;
 import com.goodjob.benefit.query.service.BenefitQueryService;
 import com.goodjob.benefit.repository.BenefitRepository;
 import com.goodjob.common.dto.PageResponseDTO;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +51,25 @@ public class BenefitQueryServiceImpl implements BenefitQueryService {
         .orElseThrow(() -> new BenefitNotFoundException("Benefit not found with ID: " + id));
 
     return mapToBenefitView(benefit);
+  }
+
+  @Override
+  public List<BenefitView> getAllByIdList(List<Integer> idList) {
+    List<Benefit> skillList = benefitRepository.findAllById(idList);
+    if (!Objects.equals(idList.size(), skillList.size())) {
+      List<Integer> existedIds = skillList
+          .stream()
+          .map(Benefit::getBenefitId)
+          .toList();
+      List<Integer> notExistedIds = idList.stream()
+          .filter(id -> !existedIds.contains(id))
+          .toList();
+      throw new BenefitNotFoundException("Benefit not found with ids in: " + notExistedIds);
+    }
+    return skillList
+        .stream()
+        .map(this::mapToBenefitView)
+        .toList();
   }
 
   private BenefitView mapToBenefitView(Benefit benefit) {

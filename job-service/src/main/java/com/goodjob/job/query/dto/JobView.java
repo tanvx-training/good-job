@@ -1,42 +1,36 @@
 package com.goodjob.job.query.dto;
 
-import com.goodjob.job.entity.EducationLevel;
-import com.goodjob.job.entity.ExperienceLevel;
-import com.goodjob.job.entity.JobStatus;
-import com.goodjob.job.entity.JobType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.time.LocalDateTime;
 import java.util.Set;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * DTO for displaying job information.
  */
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JobView {
-    private Integer id;
+
+    private Long jobId;
+    private JobCompanyView company;
     private String title;
     private String description;
-    private String requirements;
-    private String employerId;
-    private String companyName;
+    private String workType;
+    private String educationLevel;
+    private String experienceLevel;
+    private boolean remoteAllowed;
     private String location;
-    private JobType jobType;
-    private ExperienceLevel experienceLevel;
-    private EducationLevel educationLevel;
-    private JobStatus status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime expiresAt;
-    private Integer views;
-    private Integer applications;
+    private String zipCode;
+    private String skillsDesc;
+    private LocalDateTime expiry;
+    private LocalDateTime closedTime;
+    private String jobStatus;
     private JobSalaryView salary;
+    private Set<JobBenefitView> benefits;
     private Set<JobSkillView> skills;
     private Set<JobIndustryView> industries;
 } 

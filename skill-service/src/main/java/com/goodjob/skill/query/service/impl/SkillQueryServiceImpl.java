@@ -8,6 +8,7 @@ import com.goodjob.skill.query.dto.SkillView;
 import com.goodjob.skill.query.service.SkillQueryService;
 import com.goodjob.skill.repository.SkillRepository;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -62,6 +63,25 @@ public class SkillQueryServiceImpl implements SkillQueryService {
             () -> new SkillNotFoundException("Skill not found with abbreviation: " + abbreviation));
 
     return this.mapToSkillView(skill);
+  }
+
+  @Override
+  public List<SkillView> getAllByIdList(List<Integer> idList) {
+    List<Skill> skillList = skillRepository.findAllById(idList);
+    if (!Objects.equals(idList.size(), skillList.size())) {
+      List<Integer> existedIds = skillList
+          .stream()
+          .map(Skill::getSkillId)
+          .toList();
+      List<Integer> notExistedIds = idList.stream()
+          .filter(id -> !existedIds.contains(id))
+          .toList();
+      throw new SkillNotFoundException("Skill not found with ids in: " + notExistedIds);
+    }
+    return skillList
+        .stream()
+        .map(this::mapToSkillView)
+        .toList();
   }
 
   private SkillView mapToSkillView(Skill skill) {

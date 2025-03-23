@@ -10,6 +10,8 @@ import com.goodjob.skill.query.dto.SkillView;
 import com.goodjob.skill.query.service.SkillQueryService;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -104,5 +106,14 @@ public class SkillController {
     log.info("REST request to delete Skill : {}", id);
     skillCommandService.deleteSkill(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/batch")
+  @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SKILL')")
+  public ResponseEntity<ApiResponse<List<SkillView>>> getBatchSpeciality(@RequestParam("ids") String ids) {
+    List<Integer> idList = Arrays.stream(ids.split(","))
+        .map(Integer::parseInt)
+        .toList();
+    return ResponseEntity.ok(ApiResponse.success(skillQueryService.getAllByIdList(idList)));
   }
 } 

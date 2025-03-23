@@ -1,12 +1,9 @@
 package com.goodjob.company.common.enums;
 
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.enums.BaseEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Enum representing different company sizes.
@@ -14,7 +11,7 @@ import java.util.Objects;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
-public enum CompanySize {
+public enum CompanySize implements BaseEnum<CompanySize> {
     SOLO(1, "1 employee"),
     MICRO(2, "2-9 employees"),
     SMALL(3, "10-49 employees"),
@@ -27,14 +24,6 @@ public enum CompanySize {
     private final String description;
 
     public static CompanySize fromValue(Integer code) {
-        log.info("CompanySize fromValue:{}", code);
-        return Arrays.stream(CompanySize.values())
-                .filter(e -> Objects.equals(e.code, code))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        CompanySize.class.getName(),
-                        "code",
-                        code
-                ));
+        return BaseEnum.fromValue(CompanySize.class, code);
     }
 } 

@@ -34,4 +34,6 @@ public interface SkillQueryService {
      * @return the skill view
      */
     SkillView getSkillByAbbreviation(String abbreviation);
-} 
+
+    List<SkillView> getAllByIdList(List<Integer> idList);
+}

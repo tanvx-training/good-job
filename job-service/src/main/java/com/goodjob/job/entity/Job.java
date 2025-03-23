@@ -6,8 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,32 +36,20 @@ public class Job extends BaseEntity {
     @Column(name = "company_id", nullable = false)
     private Integer companyId;
 
-    @Column(name = "company_name", nullable = false)
-    private String companyName;
-
     @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "min_salary")
-    private BigDecimal minSalary;
+    @Column(name = "work_type")
+    private Integer workType;
 
-    @Column(name = "max_salary")
-    private BigDecimal maxSalary;
+    @Column(name = "education_level")
+    private Integer educationLevel;
 
-    @Column(name = "med_salary")
-    private BigDecimal medSalary;
-
-    @Column(name = "pay_period", length = 50)
-    private String payPeriod;
-
-    @Column(name = "work_type", length = 100)
-    private String workType;
-
-    @Column(name = "formatted_experience_level", length = 100)
-    private String formattedExperienceLevel;
+    @Column(name = "experience_level")
+    private Integer experienceLevel;
 
     @Column(name = "remote_allowed", nullable = false)
     private boolean remoteAllowed;
@@ -70,12 +60,6 @@ public class Job extends BaseEntity {
     @Column(name = "zip_code", length = 50)
     private String zipCode;
 
-    @Column(name = "currency", length = 10)
-    private String currency;
-
-    @Column(name = "compensation_type", length = 100)
-    private String compensationType;
-
     @Column(name = "skills_desc", columnDefinition = "TEXT")
     private String skillsDesc;
 
@@ -84,4 +68,19 @@ public class Job extends BaseEntity {
 
     @Column(name = "closed_time")
     private Long closedTime;
+
+    @Column(name = "job_status", nullable = false)
+    private Integer jobStatus;
+
+    @OneToOne(mappedBy = "job")
+    private JobSalary jobSalary;
+
+    @OneToMany(mappedBy = "job")
+    private Set<JobBenefit> jobBenefits;
+
+    @OneToMany(mappedBy = "job")
+    private Set<JobSkill> jobSkills;
+
+    @OneToMany(mappedBy = "job")
+    private Set<JobIndustry> jobIndustries;
 } 

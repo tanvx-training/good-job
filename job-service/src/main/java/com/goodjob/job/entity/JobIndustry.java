@@ -1,20 +1,22 @@
 package com.goodjob.job.entity;
 
+import com.goodjob.common.entity.BaseEntity;
+import com.goodjob.job.entity.id.JobIndustryId;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Entity representing an industry associated with a job posting.
  */
-@Entity
 @Table(name = "job_industries")
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "job")
-@ToString(exclude = "job")
-public class JobIndustry {
+@SuperBuilder
+@Entity
+public class JobIndustry extends BaseEntity {
 
     @EmbeddedId
     private JobIndustryId id;

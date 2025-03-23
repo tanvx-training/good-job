@@ -1,58 +1,48 @@
 package com.goodjob.job.entity;
 
+import com.goodjob.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Entity representing salary information for a job posting.
  */
-@Entity
 @Table(name = "job_salaries")
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "job")
-@ToString(exclude = "job")
-public class JobSalary {
+@SuperBuilder
+@Entity
+public class JobSalary extends BaseEntity {
 
     @Id
-    @Column(name = "job_id")
-    private Integer id;
+    @Column(name = "salary_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer salaryId;
 
     @OneToOne
-    @MapsId
     @JoinColumn(name = "job_id")
     private Job job;
 
     @Column(name = "min_salary")
     private BigDecimal minSalary;
 
+    @Column(name = "med_salary")
+    private BigDecimal medSalary;
+
     @Column(name = "max_salary")
     private BigDecimal maxSalary;
+
+    @Column(name = "salary_period", nullable = false)
+    private Integer salaryPeriod;
 
     @Column(name = "currency", nullable = false)
     private String currency;
 
-    @Column(name = "salary_period", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private SalaryPeriod salaryPeriod;
-
-    @Column(name = "is_negotiable")
-    private Boolean isNegotiable;
-
-    @Column(name = "is_visible")
-    private Boolean isVisible;
-
-    @PrePersist
-    protected void onCreate() {
-        if (isNegotiable == null) {
-            isNegotiable = false;
-        }
-        if (isVisible == null) {
-            isVisible = true;
-        }
-    }
+    @Column(name = "compensation_type")
+    private Integer compensationType;
 } 

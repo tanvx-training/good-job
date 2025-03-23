@@ -10,6 +10,8 @@ import com.goodjob.common.dto.ApiResponse;
 import com.goodjob.common.dto.PageResponseDTO;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -78,5 +80,14 @@ public class BenefitController {
       @Valid @RequestBody UpdateBenefitCommand command) {
     benefitCommandService.updateBenefit(id, command);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/batch")
+  @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_BENEFIT')")
+  public ResponseEntity<ApiResponse<List<BenefitView>>> getBatchSpeciality(@RequestParam("ids") String ids) {
+    List<Integer> idList = Arrays.stream(ids.split(","))
+        .map(Integer::parseInt)
+        .toList();
+    return ResponseEntity.ok(ApiResponse.success(benefitQueryService.getAllByIdList(idList)));
   }
 } 
