@@ -37,8 +37,8 @@ public class JobSalary extends BaseEntity {
     @Column(name = "max_salary")
     private BigDecimal maxSalary;
 
-    @Column(name = "salary_period", nullable = false)
-    private Integer salaryPeriod;
+    @Column(name = "pay_period", nullable = false)
+    private Integer payPeriod;
 
     @Column(name = "currency", nullable = false)
     private String currency;
