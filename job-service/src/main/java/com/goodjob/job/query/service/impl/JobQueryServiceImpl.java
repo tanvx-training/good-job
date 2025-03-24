@@ -20,6 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 /**
  * Implementation of the JobQueryService interface.
  */
@@ -46,23 +48,23 @@ public class JobQueryServiceImpl implements JobQueryService {
 
     private JobView convertFromSummaryToView(JobSummary summary) {
         return JobView.builder()
-            .jobId(summary.getJobId())
-            .company(null)
-            .title(summary.getTitle())
-            .description(summary.getDescription())
-            .workType(WorkType.fromValue(summary.getWorkType()).getDescription())
-            .educationLevel(EducationLevel.fromValue(summary.getEducationLevel()).getDescription())
-            .experienceLevel(ExperienceLevel.fromValue(summary.getExperienceLevel()).getDescription())
-            .remoteAllowed(summary.getRemoteAllowed())
-            .location(summary.getLocation())
-            .zipCode(summary.getZipCode())
-            .skillsDesc(summary.getSkillsDesc())
-            .expiry(DateTimeUtils.fromTimestamp(summary.getExpiry()))
-            .closedTime(DateTimeUtils.fromTimestamp(summary.getClosedTime()))
-            .jobStatus(JobStatus.fromValue(summary.getJobStatus()).getDescription())
-            .benefits(null)
-            .skills(null)
-            .industries(null)
-            .build();
+                .jobId(summary.getJobId())
+                .company(null)
+                .title(summary.getTitle())
+                .description(summary.getDescription())
+                .workType(WorkType.fromValue(summary.getWorkType()).getDescription())
+                .educationLevel(Objects.nonNull(summary.getEducationLevel()) ? EducationLevel.fromValue(summary.getEducationLevel()).getDescription() : null)
+                .experienceLevel(Objects.nonNull(summary.getExperienceLevel()) ? ExperienceLevel.fromValue(summary.getExperienceLevel()).getDescription() : null)
+                .remoteAllowed(summary.getRemoteAllowed())
+                .location(summary.getLocation())
+                .zipCode(summary.getZipCode())
+                .skillsDesc(summary.getSkillsDesc())
+                .expiry(Objects.nonNull(summary.getExpiry()) ? DateTimeUtils.fromTimestamp(summary.getExpiry()) : null)
+                .closedTime(Objects.nonNull(summary.getClosedTime()) ? DateTimeUtils.fromTimestamp(summary.getClosedTime()) : null)
+                .jobStatus(Objects.nonNull(summary.getJobStatus()) ? JobStatus.fromValue(summary.getJobStatus()).getDescription() : null)
+                .benefits(null)
+                .skills(null)
+                .industries(null)
+                .build();
     }
 }

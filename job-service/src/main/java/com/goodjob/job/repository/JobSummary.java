@@ -4,30 +4,39 @@ import java.util.List;
 
 public interface JobSummary {
 
-  Long getJobId();
+    Long getJobId();
 
-  Integer getCompanyId();
+    Integer getCompanyId();
 
-  String getTitle();
+    String getTitle();
 
-  String getDescription();
+    String getDescription();
 
-  Integer getWorkType();
+    Integer getWorkType();
 
-  Integer getEducationLevel();
+    Integer getEducationLevel();
 
-  Integer getExperienceLevel();
+    Integer getExperienceLevel();
 
-  boolean getRemoteAllowed();
+    Boolean getRemoteAllowed();
 
-  String getLocation();
-  String getZipCode();
-  String getSkillsDesc();
-  Long getExpiry();
-  Long getClosedTime();
-  Integer getJobStatus();
-  JobSalarySummary getJobSalary();
-  List<JobBenefitSummary> getJobBenefits();
-  List<JobSkillSummary> getJobSkills();
-  List<JobIndustrySummary> getJobIndustries();
+    String getLocation();
+
+    String getZipCode();
+
+    String getSkillsDesc();
+
+    Long getExpiry();
+
+    Long getClosedTime();
+
+    Integer getJobStatus();
+
+    JobSalarySummary getJobSalary();
+
+    List<JobBenefitSummary> getJobBenefits();
+
+    List<JobSkillSummary> getJobSkills();
+
+    List<JobIndustrySummary> getJobIndustries();
 }

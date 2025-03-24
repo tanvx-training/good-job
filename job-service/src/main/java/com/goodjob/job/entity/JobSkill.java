@@ -25,4 +25,8 @@ public class JobSkill extends BaseEntity {
     @MapsId("jobId")
     @JoinColumn(name = "job_id")
     private Job job;
+
+    public Integer getSkillId() {
+        return id.getSkillId();
+    }
 }

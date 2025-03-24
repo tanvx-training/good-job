@@ -34,4 +34,8 @@ public class JobBenefit extends BaseEntity {
     @MapsId("jobId")
     @JoinColumn(name = "job_id")
     private Job job;
+
+    public Integer getBenefitId() {
+        return id.getBenefitId();
+    }
 } 

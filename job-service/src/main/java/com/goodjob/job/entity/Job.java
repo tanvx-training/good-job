@@ -52,7 +52,7 @@ public class Job extends BaseEntity {
     private Integer experienceLevel;
 
     @Column(name = "remote_allowed", nullable = false)
-    private boolean remoteAllowed;
+    private Boolean remoteAllowed;
 
     @Column(name = "location")
     private String location;

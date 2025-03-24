@@ -22,7 +22,7 @@ public class JobView {
     private String workType;
     private String educationLevel;
     private String experienceLevel;
-    private boolean remoteAllowed;
+    private Boolean remoteAllowed;
     private String location;
     private String zipCode;
     private String skillsDesc;

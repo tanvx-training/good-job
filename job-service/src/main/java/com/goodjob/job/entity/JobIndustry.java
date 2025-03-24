@@ -25,4 +25,8 @@ public class JobIndustry extends BaseEntity {
     @MapsId("jobId")
     @JoinColumn(name = "job_id")
     private Job job;
+
+    public Integer getIndustryId() {
+        return id.getIndustryId();
+    }
 } 

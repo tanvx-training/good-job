@@ -7,7 +7,7 @@ public interface JobSalarySummary {
   BigDecimal getMinSalary();
   BigDecimal getMedSalary();
   BigDecimal getMaxSalary();
-  Integer getSalaryPeriod();
+  Integer getPayPeriod();
   String getCurrency();
   Integer getCompensationType();
 }
