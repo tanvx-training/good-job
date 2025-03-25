@@ -10,7 +10,6 @@ networks:
 # Define volumes for data persistence
 volumes:
   postgres-data:
-  mongodb-data:
   redis-data:
   zookeeper-data:
   zookeeper-log:
@@ -47,30 +46,6 @@ services:
       - backend-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  # MongoDB - NoSQL database for document-oriented data
-  mongodb:
-    image: mongo:6.0
-    container_name: mongodb-1
-    restart: always
-#    env_file: .env
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-admin}
-    volumes:
-      - mongodb-data:/data/db
-      # Initialize multiple databases for different services
-#      - ./docker/config/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-    ports:
-      - "27017:27017"
-    networks:
-      - backend-network
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 10s
       timeout: 5s
       retries: 5
@@ -300,137 +275,44 @@ services:
       - backend-network
 
   # Prometheus - Metrics collection and monitoring system
-  prometheus:
-    image: prom/prometheus:v2.30.3
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  loki:
+    image: grafana/loki:main
+    command: [ '-config.file=/etc/loki/local-config.yaml' ]
     ports:
-      - "9090:9090"
-    networks:
-      - monitoring-network
+      - '3100:3100'
+
+  prometheus:
+    image: prom/prometheus:v2.46.0
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - '9090:9090'
+
+  tempo:
+    image: grafana/tempo:2.2.2
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
+      - ./data/tempo:/tmp/tempo
+    ports:
+      - "3110:3100"  # Tempo
+      - "9411:9411" # zipkin
 
   grafana:
-    image: grafana/grafana:8.2.1
+    image: grafana/grafana:10.1.0
+    container_name: grafana
     volumes:
-      - ./dashboards.json:/etc/grafana/provisioning/dashboards
+      - ./docker/grafana:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - "3000:3000"
-    networks:
-      - monitoring-network
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    depends_on:
-      - prometheus
-
-  # Node Exporter - Exports hardware and OS metrics
-  node-exporter:
-    image: prom/node-exporter:v1.6.0
-    container_name: node-exporter
-    restart: always
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    ports:
-      - "9100:9100"
-    networks:
-      - monitoring-network
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9100/metrics"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # cAdvisor - Container monitoring
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.1
-    container_name: cadvisor
-    restart: always
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    ports:
-      - "8081:8080"
-    networks:
-      - monitoring-network
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/healthz"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Kafka Exporter - Exports Kafka metrics to Prometheus
-  kafka-exporter:
-    image: danielqsj/kafka-exporter:latest
-    container_name: kafka-exporter
-    restart: always
-    command:
-      - '--kafka.server=kafka1:9092'
-      - '--kafka.server=kafka2:9092'
-      - '--kafka.server=kafka3:9092'
-    ports:
-      - "9308:9308"
-    networks:
-      - backend-network
-      - monitoring-network
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-
-  # PostgreSQL Exporter - Exports PostgreSQL metrics to Prometheus
-  postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:v0.13.1
-    container_name: postgres-exporter
-    restart: always
-    environment:
-      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-goodjob}?sslmode=disable"
-    ports:
-      - "9187:9187"
-    networks:
-      - backend-network
-      - monitoring-network
-    depends_on:
-      - postgres
-
-  # Redis Exporter - Exports Redis metrics to Prometheus
-  redis-exporter:
-    image: oliver006/redis_exporter:v1.51.0
-    container_name: redis-exporter
-    restart: always
-    environment:
-      REDIS_ADDR: "redis:6379"
-      REDIS_PASSWORD: "${REDIS_PASSWORD:-redis}"
-    ports:
-      - "9121:9121"
-    networks:
-      - backend-network
-      - monitoring-network
-    depends_on:
-      - redis
-
-  # MongoDB Exporter - Exports MongoDB metrics to Prometheus
-  mongodb-exporter:
-    image: percona/mongodb_exporter:0.37.0
-    container_name: mongodb-exporter
-    restart: always
-    environment:
-      MONGODB_URI: "mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-admin}@mongodb:27017/admin?directConnection=true"
-    ports:
-      - "9216:9216"
-    networks:
-      - backend-network
-      - monitoring-network
-    depends_on:
-      - mongodb
 
   #############################################################
   # MICROSERVICES

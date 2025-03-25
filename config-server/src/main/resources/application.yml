@@ -26,10 +26,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
+        include: health,info,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
   observations:
     key-values:
       application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0

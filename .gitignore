@@ -33,6 +33,4 @@ build/
 .vscode/
 
 ### Grafana ###
-dashboard/tempo/tempo-data
-
-good-job.iml
+/docker/tempo/tempo-data/
