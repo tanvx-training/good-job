@@ -53,17 +53,6 @@
             <optional>true</optional>
         </dependency>
         
-        <!-- Observability -->
-
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-otel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-exporter-otlp</artifactId>
-        </dependency>
-        
         <!-- Utilities -->
         <dependency>
             <groupId>org.projectlombok</groupId>
