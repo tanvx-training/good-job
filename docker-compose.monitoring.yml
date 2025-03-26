@@ -2,6 +2,8 @@ version: '3.8'
 
 # Sử dụng mạng đã được định nghĩa trong docker-compose chính
 networks:
+  backend-network:
+    external: true
   monitoring-network:
     driver: bridge
 
