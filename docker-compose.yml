@@ -4,8 +4,6 @@ version: '3.8'
 networks:
   backend-network:
     driver: bridge
-  monitoring-network:
-    driver: bridge
 
 # Define volumes for data persistence
 volumes:
@@ -16,10 +14,6 @@ volumes:
   kafka1-data:
   kafka2-data:
   kafka3-data:
-  prometheus-data:
-  loki-data:
-  tempo-data:
-  grafana-data:
 
 services:
   #############################################################

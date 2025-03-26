@@ -2,21 +2,15 @@ version: '3.8'
 
 # Sử dụng mạng đã được định nghĩa trong docker-compose chính
 networks:
-  backend-network:
-    external: true
   monitoring-network:
-    external: true
+    driver: bridge
 
 # Sử dụng volumes đã được định nghĩa trong docker-compose chính
 volumes:
   prometheus-data:
-    external: true
   loki-data:
-    external: true
   tempo-data:
-    external: true
   grafana-data:
-    external: true
 
 services:
   #############################################################
