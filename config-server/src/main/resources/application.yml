@@ -22,18 +22,32 @@ eureka:
     prefer-ip-address: true
 
 
+logging:
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
 management:
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health,info,prometheus,metrics
   metrics:
-    distribution:
-      percentiles-histogram:
-        http.server.requests: true
-  observations:
-    key-values:
+    tags:
       application: ${spring.application.name}
-  tracing:
-    sampling:
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+otel:
+  exporter:
+    otlp:
+      endpoint: http://tempo:4317
+  resource:
+    attributes: service.name=${spring.application.name}
+  traces:
+    sampler:
       probability: 1.0

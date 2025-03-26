@@ -1,0 +1,82 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Thu thập logs từ tất cả các container Docker
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container'
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: 'logstream'
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        target_label: 'service'
+
+  # Thu thập logs từ các microservices cụ thể
+  - job_name: microservices
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: microservices
+          __path__: /var/lib/docker/containers/*/*log
+    
+    # Xử lý và trích xuất thông tin từ logs
+    pipeline_stages:
+      # Xác định định dạng log là JSON
+      - json:
+          expressions:
+            timestamp: time
+            level: level
+            message: message
+            logger: logger
+            thread: thread
+            traceId: traceId
+            spanId: spanId
+            service: service
+  
+      # Lọc logs cho các service cụ thể
+      - match:
+          selector: '{service=~"api-gateway|candidate-service|company-service|job-service|posting-service|skill-service|industry-service|speciality-service|benefit-service|mail-service|notification-service|config-server|eureka-server"}'
+          stages:
+            # Xử lý timestamp
+            - timestamp:
+                source: timestamp
+                format: RFC3339
+            
+            # Thêm các labels
+            - labels:
+                level:
+                logger:
+                thread:
+                traceId:
+                spanId:
+
+  # Thu thập logs từ các file log của các service
+  - job_name: logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: logs
+          __path__: /var/log/microservices/*.log
+    pipeline_stages:
+      - json:
+      - labels:
+          job:
+          service:
+          level:
+          logger:
+          traceId:
+          spanId: 
