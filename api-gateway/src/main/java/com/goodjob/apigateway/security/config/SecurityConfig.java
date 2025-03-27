@@ -26,13 +26,6 @@ public class SecurityConfig {
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
     return http
             .csrf(CsrfSpec::disable)
-            .authorizeExchange(
-                    authorizeExchangeSpec -> authorizeExchangeSpec
-                            .pathMatchers("/actuator/**")
-                            .permitAll()
-                            .anyExchange()
-                            .authenticated()
-            )
             .formLogin(FormLoginSpec::disable)
             .httpBasic(HttpBasicSpec::disable)
             .build();
