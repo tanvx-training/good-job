@@ -1,81 +1,84 @@
-global:
-  scrape_interval: 15s
-  scrape_timeout: 10s
-  evaluation_interval: 15s
-
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets: []
-
 scrape_configs:
-  # Các endpoints Actuator của Spring Boot applications
-  - job_name: 'spring-boot'
+  - job_name: 'micro-services'
     metrics_path: '/actuator/prometheus'
-    scrape_interval: 5s
+    scrape_interval: 3s
     static_configs:
-      - targets:
-          - 'api-gateway:8080'
-          - 'config-server:8888'
-          - 'eureka-server:8761'
-          - 'candidate-service:8080'
-          - 'company-service:8080'
-          - 'job-service:8080'
-          - 'posting-service:8080'
-          - 'skill-service:8080'
-          - 'industry-service:8080'
-          - 'speciality-service:8080'
-          - 'benefit-service:8080'
-          - 'mail-service:8080'
-          - 'notification-service:8080'
-    relabel_configs:
-      - source_labels: [__address__]
-        regex: '(.*):.*'
-        target_label: instance
-        replacement: $1
+      - targets: [ 'host.docker.internal:8080', 'host.docker.internal:8081', 'host.docker.internal:8082', 'host.docker.internal:8083', 'host.docker.internal:8888', 'host.docker.internal:8761', 'host.docker.internal:8084', 'host.docker.internal:8085', 'host.docker.internal:8086', 'host.docker.internal:8087', 'host.docker.internal:8088', 'host.docker.internal:8089', 'host.docker.internal:8090']
 
-  # Scraping metrics from Prometheus itself
-  - job_name: 'prometheus'
-    static_configs:
-      - targets: ['localhost:9090']
-
-  # Scrape JVM metrics from Spring Boot applications
-  - job_name: 'jvm-metrics'
+  - job_name: 'api-gateway'
     metrics_path: '/actuator/prometheus'
-    scrape_interval: 5s
+    scrape_interval: 3s
     static_configs:
-      - targets:
-          - 'api-gateway:8080'
-          - 'config-server:8888'
-          - 'eureka-server:8761'
-          - 'candidate-service:8080'
-          - 'company-service:8080'
-          - 'job-service:8080'
-          - 'posting-service:8080'
-          - 'skill-service:8080'
-          - 'industry-service:8080'
-          - 'speciality-service:8080'
-          - 'benefit-service:8080'
-          - 'mail-service:8080'
-          - 'notification-service:8080'
-    relabel_configs:
-      - source_labels: [__address__]
-        regex: '(.*):.*'
-        target_label: instance
-        replacement: $1
-      # Thêm label để phân biệt metrics loại jvm
-      - target_label: 'metric_type'
-        replacement: 'jvm'
+      - targets: [ 'host.docker.internal:8080' ]
 
-  # Kafka metrics
-  - job_name: 'kafka'
+  - job_name: 'benefit-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
     static_configs:
-      - targets:
-          - 'kafka1:9092'
-          - 'kafka2:9092'
-          - 'kafka3:9092'
-    
-  # PostgreSQL metrics
-  - job_name: 'postgres'
+      - targets: [ 'host.docker.internal:8081' ]
+
+  - job_name: 'candidate-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
     static_configs:
-      - targets: ['postgres:5432'] 
+      - targets: [ 'host.docker.internal:8082' ]
+
+  - job_name: 'company-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8083' ]
+
+  - job_name: 'config-server'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8888' ]
+
+  - job_name: 'eureka-server'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8761' ]
+
+  - job_name: 'industry-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8084' ]
+
+  - job_name: 'job-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8085' ]
+
+  - job_name: 'mail-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8086' ]
+
+  - job_name: 'notification-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8087' ]
+
+  - job_name: 'posting-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8088' ]
+
+  - job_name: 'skill-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8089' ]
+
+  - job_name: 'speciality-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: [ 'host.docker.internal:8090' ]

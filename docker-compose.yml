@@ -1,39 +1,21 @@
 version: '3.8'
 
-# Define networks to isolate different service groups
 networks:
-  backend-network:
+  monitoring-network:
     driver: bridge
 
-# Define volumes for data persistence
-volumes:
-  postgres-data:
-  redis-data:
-  zookeeper-data:
-  zookeeper-log:
-  kafka1-data:
-  kafka2-data:
-  kafka3-data:
-
 services:
-  #############################################################
-  # DATABASE & CACHING SERVICES
-  #############################################################
-
-  # PostgreSQL - Primary relational database for microservices
+  # PostgreSQL
   postgres:
     image: postgres:15-alpine
     container_name: postgres-1
     restart: always
-#    env_file: .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       PGDATA: /var/lib/postgresql/data
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      # Initialize multiple databases for different services
-#      - ./docker/config/postgres/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
     ports:
       - "5432:5432"
     networks:
@@ -44,187 +26,3 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
-  # Redis - In-memory data structure store for caching and session management
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    restart: always
-    command: redis-server --requirepass ${REDIS_PASSWORD:-redis} --appendonly yes
-#    env_file: .env
-    volumes:
-      - redis-data:/data
-    ports:
-      - "6379:6379"
-    networks:
-      - backend-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  #############################################################
-  # EVENT STREAMING & MESSAGING SERVICES
-  #############################################################
-
-  # ZooKeeper - Centralized service for maintaining configuration information
-  # Required for Kafka cluster coordination
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.2
-    container_name: zookeeper-1
-    restart: always
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    volumes:
-      - zookeeper-data:/var/lib/zookeeper/data
-      - zookeeper-log:/var/lib/zookeeper/log
-    ports:
-      - "2181:2181"
-    networks:
-      - backend-network
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2181"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  # Kafka Broker 1 - Distributed event streaming platform (node 1)
-  kafka1:
-    image: confluentinc/cp-kafka:7.3.2
-    container_name: kafka-1
-    restart: always
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:19092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 2
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_LOG_RETENTION_HOURS: 168
-      KAFKA_LOG_SEGMENT_BYTES: 1073741824
-      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
-    volumes:
-      - kafka1-data:/var/lib/kafka/data
-    ports:
-      - "19092:19092"
-    networks:
-      - backend-network
-    healthcheck:
-      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
-
-  # Kafka Broker 2 - Distributed event streaming platform (node 2)
-  kafka2:
-    image: confluentinc/cp-kafka:7.3.2
-    container_name: kafka-2
-    restart: always
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 2
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_LOG_RETENTION_HOURS: 168
-      KAFKA_LOG_SEGMENT_BYTES: 1073741824
-      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
-    volumes:
-      - kafka2-data:/var/lib/kafka/data
-    ports:
-      - "29092:29092"
-    networks:
-      - backend-network
-    healthcheck:
-      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
-
-  # Kafka Broker 3 - Distributed event streaming platform (node 3)
-  kafka3:
-    image: confluentinc/cp-kafka:7.3.2
-    container_name: kafka-3
-    restart: always
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092,PLAINTEXT_HOST://localhost:39092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 2
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_LOG_RETENTION_HOURS: 168
-      KAFKA_LOG_SEGMENT_BYTES: 1073741824
-      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
-    volumes:
-      - kafka3-data:/var/lib/kafka/data
-    ports:
-      - "39092:39092"
-    networks:
-      - backend-network
-    healthcheck:
-      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
-
-  # Debezium - Change Data Capture for PostgreSQL
-  # Captures database changes and publishes them to Kafka
-  debezium:
-    image: debezium/connect:2.3
-    container_name: debezium
-    restart: always
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-      - postgres
-    environment:
-      BOOTSTRAP_SERVERS: kafka1:9092,kafka2:9092,kafka3:9092
-      GROUP_ID: debezium-connect-cluster
-      CONFIG_STORAGE_TOPIC: debezium_connect_configs
-      OFFSET_STORAGE_TOPIC: debezium_connect_offsets
-      STATUS_STORAGE_TOPIC: debezium_connect_statuses
-      KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      KEY_CONVERTER_SCHEMAS_ENABLE: "false"
-      VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
-    ports:
-      - "8083:8083"
-    networks:
-      - backend-network
-
-  #############################################################
-  # MICROSERVICES
-  #############################################################

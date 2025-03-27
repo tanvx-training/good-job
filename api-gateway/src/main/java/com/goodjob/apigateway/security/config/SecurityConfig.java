@@ -18,17 +18,24 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity
 @RequiredArgsConstructor
-public class SecurityConfiguration {
+public class SecurityConfig {
 
   private final ReactiveUserDetailsService userDetailsService;
 
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
     return http
-        .csrf(CsrfSpec::disable)
-        .formLogin(FormLoginSpec::disable)
-        .httpBasic(HttpBasicSpec::disable)
-        .build();
+            .csrf(CsrfSpec::disable)
+            .authorizeExchange(
+                    authorizeExchangeSpec -> authorizeExchangeSpec
+                            .pathMatchers("/actuator/**")
+                            .permitAll()
+                            .anyExchange()
+                            .authenticated()
+            )
+            .formLogin(FormLoginSpec::disable)
+            .httpBasic(HttpBasicSpec::disable)
+            .build();
   }
 
   @Bean
