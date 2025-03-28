@@ -1,4 +1,4 @@
-package com.goodjob.candidate.dto;
+package com.goodjob.candidate.common.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.goodjob.candidate.dto;
+package com.goodjob.candidate.common.dto;
 
 import com.goodjob.candidate.entity.CandidateSkill.ProficiencyLevel;
 import jakarta.validation.constraints.Max;

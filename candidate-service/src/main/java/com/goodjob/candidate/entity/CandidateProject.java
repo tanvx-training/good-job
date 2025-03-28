@@ -2,11 +2,8 @@ package com.goodjob.candidate.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Entity representing a project associated with a candidate.
@@ -50,28 +47,4 @@ public class CandidateProject {
 
     @Column(length = 1000)
     private String technologies;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    /**
-     * Returns a formatted string representation of the project period.
-     *
-     * @return the formatted period string (e.g., "Jan 2022 - Mar 2022" or "Jun 2023 - Present")
-     */
-    @Transient
-    public String getFormattedPeriod() {
-        if (startDate == null) {
-            return "";
-        }
-        
-        String start = startDate.getMonth().toString().substring(0, 3) + " " + startDate.getYear();
-        String end = currentlyWorking ? "Present" : 
-                     (endDate != null ? endDate.getMonth().toString().substring(0, 3) + " " + endDate.getYear() : "");
-        
-        return start + (end.isEmpty() ? "" : " - " + end);
-    }
 } 

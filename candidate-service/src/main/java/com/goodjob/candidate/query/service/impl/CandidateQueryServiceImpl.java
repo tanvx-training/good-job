@@ -1,6 +1,6 @@
 package com.goodjob.candidate.query.service.impl;
 
-import com.goodjob.candidate.dto.CandidateResponse;
+import com.goodjob.candidate.common.dto.CandidateResponse;
 import com.goodjob.candidate.entity.Candidate;
 import com.goodjob.candidate.exception.CandidateNotFoundException;
 import com.goodjob.candidate.query.service.CandidateQueryService;
@@ -11,9 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the CandidateQueryService interface.

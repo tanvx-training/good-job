@@ -1,12 +1,10 @@
 package com.goodjob.candidate.entity;
 
+import com.goodjob.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Entity representing an education record associated with a candidate.
@@ -19,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CandidateEducation {
+public class CandidateEducation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,22 +57,4 @@ public class CandidateEducation {
 
     @Column(length = 1000)
     private String description;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    /**
-     * Returns a formatted string representation of the education period.
-     *
-     * @return the formatted period string (e.g., "2018 - 2022" or "2020 - Present")
-     */
-    @Transient
-    public String getFormattedPeriod() {
-        String startYear = String.valueOf(startDate.getYear());
-        String endYear = currentlyStudying ? "Present" : String.valueOf(endDate.getYear());
-        return startYear + " - " + endYear;
-    }
 } 

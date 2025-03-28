@@ -1,6 +1,6 @@
 package com.goodjob.candidate.query.service;
 
-import com.goodjob.candidate.dto.CandidateResponse;
+import com.goodjob.candidate.common.dto.CandidateResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
