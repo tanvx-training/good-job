@@ -2,11 +2,16 @@ package com.goodjob.job.query.service.impl;
 
 import com.goodjob.common.dto.ApiResponse;
 import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.common.util.DateTimeUtils;
 import com.goodjob.job.common.enums.EducationLevel;
 import com.goodjob.job.common.enums.ExperienceLevel;
 import com.goodjob.job.common.enums.JobStatus;
 import com.goodjob.job.common.enums.WorkType;
+import com.goodjob.job.entity.Job;
+import com.goodjob.job.entity.JobBenefit;
+import com.goodjob.job.entity.JobIndustry;
+import com.goodjob.job.entity.JobSkill;
 import com.goodjob.job.feign.benefit.BenefitFeignClient;
 import com.goodjob.job.feign.benefit.BenefitView;
 import com.goodjob.job.feign.company.CompanyFeignClient;
@@ -67,10 +72,58 @@ public class JobQueryServiceImpl implements JobQueryService {
         return new PageResponseDTO<>(jobViewPage);
     }
 
-    private Set<JobBenefitView> getBenefits(List<JobBenefitSummary> jobBenefitSummaryList) {
-        List<Integer> idList = jobBenefitSummaryList.stream()
-                .map(JobBenefitSummary::getBenefitId)
-                .toList();
+    @Override
+    public JobView getJobById(Long id) {
+        return jobRepository.findById(id)
+                .map(this::convertFromEntityToView)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        Job.class.getName(),
+                        "id",
+                        id));
+    }
+
+    private JobView convertFromEntityToView(Job job) {
+        return JobView.builder()
+                .jobId(job.getJobId())
+                .company(this.getCompany(job.getCompanyId()))
+                .title(job.getTitle())
+                .description(job.getDescription())
+                .workType(WorkType.fromValue(job.getWorkType()).getDescription())
+                .educationLevel(Objects.nonNull(job.getEducationLevel())
+                        ? EducationLevel.fromValue(job.getEducationLevel()).getDescription()
+                        : null)
+                .experienceLevel(Objects.nonNull(job.getExperienceLevel())
+                        ? ExperienceLevel.fromValue(job.getExperienceLevel()).getDescription()
+                        : null)
+                .remoteAllowed(job.getRemoteAllowed())
+                .location(job.getLocation())
+                .zipCode(job.getZipCode())
+                .skillsDesc(job.getSkillsDesc())
+                .expiry(Objects.nonNull(job.getExpiry())
+                        ? DateTimeUtils.fromTimestamp(job.getExpiry())
+                        : null)
+                .closedTime(Objects.nonNull(job.getClosedTime())
+                        ? DateTimeUtils.fromTimestamp(job.getClosedTime())
+                        : null)
+                .jobStatus(Objects.nonNull(job.getJobStatus())
+                        ? JobStatus.fromValue(job.getJobStatus()).getDescription()
+                        : null)
+                .benefits(this.getBenefits(job.getJobBenefits()
+                        .stream()
+                        .map(JobBenefit::getBenefitId)
+                        .toList()))
+                .skills(this.getSkills(job.getJobSkills()
+                        .stream()
+                        .map(JobSkill::getSkillId)
+                        .toList()))
+                .industries(this.getIndustries(job.getJobIndustries()
+                        .stream()
+                        .map(JobIndustry::getIndustryId)
+                        .toList()))
+                .build();
+    }
+
+    private Set<JobBenefitView> getBenefits(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
@@ -88,10 +141,7 @@ public class JobQueryServiceImpl implements JobQueryService {
         return Collections.emptySet();
     }
 
-    private Set<JobSkillView> getSkills(List<JobSkillSummary> jobSkillSummaryList) {
-        List<Integer> idList = jobSkillSummaryList.stream()
-                .map(JobSkillSummary::getSkillId)
-                .toList();
+    private Set<JobSkillView> getSkills(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
@@ -110,10 +160,7 @@ public class JobQueryServiceImpl implements JobQueryService {
         return Collections.emptySet();
     }
 
-    private Set<JobIndustryView> getIndustries(List<JobIndustrySummary> jobIndustrySummaryList) {
-        List<Integer> idList = jobIndustrySummaryList.stream()
-                .map(JobIndustrySummary::getIndustryId)
-                .toList();
+    private Set<JobIndustryView> getIndustries(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
@@ -164,9 +211,17 @@ public class JobQueryServiceImpl implements JobQueryService {
                 .expiry(Objects.nonNull(summary.getExpiry()) ? DateTimeUtils.fromTimestamp(summary.getExpiry()) : null)
                 .closedTime(Objects.nonNull(summary.getClosedTime()) ? DateTimeUtils.fromTimestamp(summary.getClosedTime()) : null)
                 .jobStatus(Objects.nonNull(summary.getJobStatus()) ? JobStatus.fromValue(summary.getJobStatus()).getDescription() : null)
-                .benefits(this.getBenefits(summary.getJobBenefits()))
-                .skills(this.getSkills(summary.getJobSkills()))
-                .industries(this.getIndustries(summary.getJobIndustries()))
+                .benefits(this.getBenefits(summary.getJobBenefits().stream()
+                        .map(JobBenefitSummary::getBenefitId)
+                        .toList()))
+                .skills(this.getSkills(summary.getJobSkills()
+                        .stream()
+                        .map(JobSkillSummary::getSkillId)
+                        .toList()))
+                .industries(this.getIndustries(summary.getJobIndustries()
+                        .stream()
+                        .map(JobIndustrySummary::getIndustryId)
+                        .toList()))
                 .build();
     }
 }

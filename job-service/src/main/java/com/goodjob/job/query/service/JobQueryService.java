@@ -10,4 +10,6 @@ import com.goodjob.job.query.dto.JobView;
 public interface JobQueryService {
 
     PageResponseDTO<JobView> getAllJobs(JobQuery query);
+
+    JobView getJobById(Long id);
 }
