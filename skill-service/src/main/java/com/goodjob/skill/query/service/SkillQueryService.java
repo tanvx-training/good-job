@@ -1,6 +1,6 @@
 package com.goodjob.skill.query.service;
 
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.skill.query.dto.SkillQuery;
 import com.goodjob.skill.query.dto.SkillView;
 

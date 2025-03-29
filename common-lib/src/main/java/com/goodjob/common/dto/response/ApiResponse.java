@@ -1,4 +1,4 @@
-package com.goodjob.common.dto;
+package com.goodjob.common.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
 package com.goodjob.job.query.service.impl;
 
-import com.goodjob.common.dto.ApiResponse;
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.ApiResponse;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.common.util.DateTimeUtils;
 import com.goodjob.job.common.enums.EducationLevel;

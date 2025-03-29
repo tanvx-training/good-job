@@ -1,6 +1,6 @@
 package com.goodjob.mail.service;
 
-import com.goodjob.common.dto.ApiResponse;
+import com.goodjob.common.dto.response.ApiResponse;
 import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.common.exception.ServiceException;
 import com.goodjob.mail.dto.EmailRequest;

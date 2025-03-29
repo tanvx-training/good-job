@@ -1,6 +1,6 @@
 package com.goodjob.notification.client;
 
-import com.goodjob.common.dto.ApiResponse;
+import com.goodjob.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

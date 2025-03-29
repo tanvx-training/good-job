@@ -6,7 +6,7 @@ import com.goodjob.apigateway.dto.request.RegisterRequest;
 import com.goodjob.apigateway.dto.response.LoginResponse;
 import com.goodjob.apigateway.dto.response.UserDTO;
 import com.goodjob.apigateway.service.AuthService;
-import com.goodjob.common.dto.ApiResponse;
+import com.goodjob.common.dto.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

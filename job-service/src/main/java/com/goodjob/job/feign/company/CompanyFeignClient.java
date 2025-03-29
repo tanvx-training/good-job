@@ -1,6 +1,6 @@
 package com.goodjob.job.feign.company;
 
-import com.goodjob.common.dto.ApiResponse;
+import com.goodjob.common.dto.response.ApiResponse;
 import com.goodjob.job.feign.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

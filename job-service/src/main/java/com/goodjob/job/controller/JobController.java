@@ -1,7 +1,7 @@
 package com.goodjob.job.controller;
 
-import com.goodjob.common.dto.ApiResponse;
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.ApiResponse;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.job.query.dto.JobQuery;
 import com.goodjob.job.query.dto.JobView;
 import com.goodjob.job.query.service.JobQueryService;

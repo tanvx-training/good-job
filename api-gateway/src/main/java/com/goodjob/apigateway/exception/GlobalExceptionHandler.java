@@ -1,6 +1,6 @@
 package com.goodjob.apigateway.exception;
 
-import com.goodjob.common.dto.ApiResponse;
+import com.goodjob.common.dto.response.ApiResponse;
 import com.goodjob.common.exception.BadRequestException;
 import com.goodjob.common.exception.ResourceExistedException;
 import com.goodjob.common.exception.ResourceNotFoundException;

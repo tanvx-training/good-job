@@ -1,7 +1,7 @@
 package com.goodjob.industry.controller;
 
-import com.goodjob.common.dto.ApiResponse;
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.ApiResponse;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.industry.command.dto.CreateIndustryCommand;
 import com.goodjob.industry.command.dto.UpdateIndustryCommand;
 import com.goodjob.industry.command.service.IndustryCommandService;

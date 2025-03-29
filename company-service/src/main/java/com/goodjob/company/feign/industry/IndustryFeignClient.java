@@ -1,6 +1,6 @@
 package com.goodjob.company.feign.industry;
 
-import com.goodjob.common.dto.ApiResponse;
+import com.goodjob.common.dto.response.ApiResponse;
 import java.util.List;
 
 import com.goodjob.company.feign.FeignClientConfig;

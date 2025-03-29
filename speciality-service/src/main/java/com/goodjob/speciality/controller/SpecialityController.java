@@ -1,7 +1,7 @@
 package com.goodjob.speciality.controller;
 
-import com.goodjob.common.dto.ApiResponse;
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.ApiResponse;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.speciality.command.dto.CreateSpecialityCommand;
 import com.goodjob.speciality.command.dto.UpdateSpecialityCommand;
 import com.goodjob.speciality.command.service.SpecialityCommandService;

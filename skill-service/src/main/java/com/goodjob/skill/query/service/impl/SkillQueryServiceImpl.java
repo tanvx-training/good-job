@@ -1,6 +1,6 @@
 package com.goodjob.skill.query.service.impl;
 
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.skill.entity.Skill;
 import com.goodjob.skill.exception.SkillNotFoundException;
 import com.goodjob.skill.query.dto.SkillQuery;

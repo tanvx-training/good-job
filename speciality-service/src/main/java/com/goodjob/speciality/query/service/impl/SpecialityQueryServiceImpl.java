@@ -1,6 +1,6 @@
 package com.goodjob.speciality.query.service.impl;
 
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.speciality.entity.Speciality;
 import com.goodjob.speciality.exception.SpecialityNotFoundException;
 import com.goodjob.speciality.query.dto.SpecialityQuery;

@@ -1,7 +1,8 @@
-package com.goodjob.common.dto;
+package com.goodjob.common.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import java.io.Serial;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class PageRequestDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     
     private static final int DEFAULT_PAGE = 0;

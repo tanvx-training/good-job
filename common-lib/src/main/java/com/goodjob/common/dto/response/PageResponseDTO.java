@@ -1,4 +1,4 @@
-package com.goodjob.common.dto;
+package com.goodjob.common.dto.response;
 
 import java.io.Serial;
 import lombok.AllArgsConstructor;

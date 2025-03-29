@@ -1,7 +1,7 @@
 package com.goodjob.skill.controller;
 
-import com.goodjob.common.dto.ApiResponse;
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.ApiResponse;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.skill.command.dto.CreateSkillCommand;
 import com.goodjob.skill.command.dto.UpdateSkillCommand;
 import com.goodjob.skill.command.service.SkillCommandService;

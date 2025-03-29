@@ -1,6 +1,6 @@
 package com.goodjob.industry.query.service;
 
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.industry.query.dto.IndustryQuery;
 import com.goodjob.industry.query.dto.IndustryView;
 

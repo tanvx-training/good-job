@@ -1,6 +1,6 @@
 package com.goodjob.industry.query.service.impl;
 
-import com.goodjob.common.dto.PageResponseDTO;
+import com.goodjob.common.dto.response.PageResponseDTO;
 import com.goodjob.industry.entity.Industry;
 import com.goodjob.industry.exception.IndustryNotFoundException;
 import com.goodjob.industry.query.dto.IndustryQuery;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the IndustryQueryService interface.

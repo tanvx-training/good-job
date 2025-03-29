@@ -1,7 +1,7 @@
 package com.goodjob.notification.client;
 
 import com.goodjob.common.config.FeignClientConfig;
-import com.goodjob.common.dto.ApiResponse;
+import com.goodjob.common.dto.response.ApiResponse;
 import com.goodjob.common.feign.BaseFeignClient;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

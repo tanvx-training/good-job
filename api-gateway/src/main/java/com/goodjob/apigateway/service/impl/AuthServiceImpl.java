@@ -10,7 +10,7 @@ import com.goodjob.apigateway.security.jwt.JwtTokenProvider;
 import com.goodjob.apigateway.service.AuthService;
 import com.goodjob.apigateway.service.RefreshTokenService;
 import com.goodjob.apigateway.service.UserService;
-import com.goodjob.common.dto.ApiResponse;
+import com.goodjob.common.dto.response.ApiResponse;
 import com.goodjob.common.exception.ResourceExistedException;
 import com.goodjob.common.exception.ResourceNotFoundException;
 import java.util.Objects;
