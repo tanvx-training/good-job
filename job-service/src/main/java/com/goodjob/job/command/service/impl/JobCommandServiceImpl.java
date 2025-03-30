@@ -2,7 +2,7 @@ package com.goodjob.job.command.service.impl;
 
 import com.goodjob.job.command.dto.PostJobCommand;
 import com.goodjob.job.command.event.JobPostingEvent;
-import com.goodjob.job.command.event.JobProducer;
+import com.goodjob.job.command.event.JobPostingProducer;
 import com.goodjob.job.command.service.JobCommandService;
 import com.goodjob.job.common.enums.JobStatus;
 import com.goodjob.job.common.enums.PostingType;
@@ -26,7 +26,7 @@ public class JobCommandServiceImpl implements JobCommandService {
 
   private final JobRepository jobRepository;
 
-  private final JobProducer jobProducer;
+  private final JobPostingProducer jobPostingProducer;
 
   @Override
   public void postJob(Long id, PostJobCommand command) {
@@ -37,10 +37,10 @@ public class JobCommandServiceImpl implements JobCommandService {
     PostingType postingType = PostingType.fromValue(command.getPostingCode());
 
     switch (postingType) {
-      case POSTING -> jobProducer.postJob(JobPostingEvent.builder()
+      case POSTING -> jobPostingProducer.postJob(JobPostingEvent.builder()
           .jobId(job.getJobId())
           .build());
-      case UN_POSTING -> jobProducer.unPostJob(JobPostingEvent.builder()
+      case UN_POSTING -> jobPostingProducer.unPostJob(JobPostingEvent.builder()
           .jobId(job.getJobId())
           .build());
     }
