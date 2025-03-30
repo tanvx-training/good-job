@@ -10,7 +10,7 @@ public class JobNotFoundException extends RuntimeException {
      *
      * @param id the job ID
      */
-    public JobNotFoundException(Integer id) {
+    public JobNotFoundException(Long id) {
         super("Job not found with ID: " + id);
     }
 } 

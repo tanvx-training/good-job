@@ -2,11 +2,14 @@ package com.goodjob.job.controller;
 
 import com.goodjob.common.dto.response.ApiResponse;
 import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.job.command.dto.PostJobCommand;
+import com.goodjob.job.command.service.JobCommandService;
 import com.goodjob.job.query.dto.JobQuery;
 import com.goodjob.job.query.dto.JobView;
 import com.goodjob.job.query.service.JobQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 public class JobController {
 
   private final JobQueryService jobQueryService;
+
+  private final JobCommandService jobCommandService;
 
   @GetMapping
   @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_JOB')")
@@ -44,5 +49,12 @@ public class JobController {
     public ResponseEntity<ApiResponse<JobView>> getJobById(
             @PathVariable("id") Long id) {
         return ResponseEntity.ok(ApiResponse.success(jobQueryService.getJobById(id)));
+    }
+
+    @PostMapping("/{id}/posting")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('POST_JOB')")
+    public void postJob(@PathVariable("id") Long id, @RequestBody PostJobCommand command) {
+        jobCommandService.postJob(id, command);
     }
 } 
