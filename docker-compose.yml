@@ -1,8 +1,11 @@
 version: '3.8'
 
 networks:
-  monitoring-network:
+  backend-network:
     driver: bridge
+
+volumes:
+    postgres-data:
 
 services:
   # PostgreSQL

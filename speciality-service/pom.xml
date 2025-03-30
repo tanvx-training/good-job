@@ -11,12 +11,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>speciality-service</name>
     <description>Speciality Service for Good Job Platform</description>
-    <properties>
-        <java.version>17</java.version>
-        <spring-cloud.version>2023.0.0</spring-cloud.version>
-        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <org.projectlombok.version>1.18.30</org.projectlombok.version>
-    </properties>
     <dependencies>
         <!-- Spring Boot Starters -->
         <dependency>

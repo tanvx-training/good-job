@@ -14,10 +14,6 @@
     <name>mail-service</name>
     <description>Mail service for the Good Job platform</description>
 
-    <properties>
-        <java.version>17</java.version>
-    </properties>
-
     <dependencies>
         <!-- Common Library -->
         <dependency>
