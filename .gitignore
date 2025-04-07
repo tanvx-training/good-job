@@ -34,3 +34,5 @@ build/
 
 ### Grafana ###
 /docker/tempo/tempo-data/
+
+pom.xml

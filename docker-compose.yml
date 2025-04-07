@@ -137,106 +137,178 @@ services:
   # (Mỗi service build qua Jib có image: ${docker.image.prefix}/<artifactId>:latest)
   # ==========================================================
 
-  eureka-service:
-    image: ${docker.image.prefix}/eureka-service:latest
-    container_name: eureka-service
+  eureka-server:
+    image: tanvx308/eureka-server:latest
+    container_name: eureka-server
     ports:
       - "8761:8761"
-    depends_on:
-      - postgres
+    environment:
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     networks:
       - backend-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-  config-service:
-    image: ${docker.image.prefix}/config-service:latest
-    container_name: config-service
+  config-server:
+    image: tanvx308/config-server:latest
+    container_name: config-server
     ports:
       - "8888:8888"
+    environment:
+      - EUREKA_HOST=eureka-server
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      - eureka-service
-      - postgres
+      eureka-server:
+        condition: service_healthy
     networks:
       - backend-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   api-gateway:
-    image: ${docker.image.prefix}/api-gateway:latest
+    image: tanvx308/api-gateway:latest
     container_name: api-gateway
     ports:
       - "8080:8080"
+    environment:
+      - EUREKA_HOST=eureka-server
+      - CONFIG_SERVER_HOST=config-server
+      - DATASOURCE_HOST=postgres
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      - eureka-service
-      - config-service
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - backend-network
 
   benefit-service:
-    image: ${docker.image.prefix}/benefit-service:latest
+    image: tanvx308/benefit-service:latest
     container_name: benefit-service
     ports:
       - "8081:8081"
+    environment:
+      - EUREKA_HOST=eureka-server
+      - CONFIG_SERVER_HOST=config-server
+      - DATASOURCE_HOST=postgres
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      - eureka-service
-      - config-service
-      - postgres
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - backend-network
 
   company-service:
-    image: ${docker.image.prefix}/company-service:latest
+    image: tanvx308/company-service:latest
     container_name: company-service
     ports:
       - "8083:8083"
+    environment:
+      - EUREKA_HOST=eureka-server
+      - CONFIG_SERVER_HOST=config-server
+      - DATASOURCE_HOST=postgres
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      - eureka-service
-      - config-service
-      - postgres
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - backend-network
 
   industry-service:
-    image: ${docker.image.prefix}/industry-service:latest
+    image: tanvx308/industry-service:latest
     container_name: industry-service
     ports:
       - "8084:8084"
+    environment:
+      - EUREKA_HOST=eureka-server
+      - CONFIG_SERVER_HOST=config-server
+      - DATASOURCE_HOST=postgres
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      - eureka-service
-      - config-service
-      - postgres
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - backend-network
 
   job-service:
-    image: ${docker.image.prefix}/job-service:latest
+    image: tanvx308/job-service:latest
     container_name: job-service
     ports:
       - "8085:8085"
+    environment:
+      - EUREKA_HOST=eureka-server
+      - CONFIG_SERVER_HOST=config-server
+      - DATASOURCE_HOST=postgres
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      - eureka-service
-      - config-service
-      - postgres
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - backend-network
 
   skill-service:
-    image: ${docker.image.prefix}/skill-service:latest
+    image: tanvx308/skill-service:latest
     container_name: skill-service
     ports:
       - "8089:8089"
+    environment:
+      - EUREKA_HOST=eureka-server
+      - CONFIG_SERVER_HOST=config-server
+      - DATASOURCE_HOST=postgres
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      - eureka-service
-      - config-service
-      - postgres
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - backend-network
 
-  specialty-service:
-    image: ${docker.image.prefix}/specialty-service:latest
-    container_name: specialty-service
+  speciality-service:
+    image: tanvx308/speciality-service:latest
+    container_name: speciality-service
     ports:
       - "8090:8090"
+    environment:
+      - EUREKA_HOST=eureka-server
+      - CONFIG_SERVER_HOST=config-server
+      - DATASOURCE_HOST=postgres
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      - eureka-service
-      - config-service
-      - postgres
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - backend-network

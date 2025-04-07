@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/speciality
+    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/speciality
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
@@ -12,12 +12,3 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    prefer-ip-address: true

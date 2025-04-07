@@ -12,6 +12,7 @@
     <artifactId>mail-service</artifactId>
     <name>mail-service</name>
     <description>Mail service for the Good Job platform</description>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -71,13 +72,6 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <configuration>
-                    <container>
-                        <ports>
-                            <port>8086</port>
-                        </ports>
-                    </container>
-                </configuration>
             </plugin>
         </plugins>
     </build>

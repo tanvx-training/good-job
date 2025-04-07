@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/posting
+    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/posting
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
@@ -26,12 +26,3 @@ spring:
         spring.json.trusted.packages: '*'
         spring.json.use.type.headers: false
         partition.assignment.strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    prefer-ip-address: true

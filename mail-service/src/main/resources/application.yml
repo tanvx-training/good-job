@@ -1,77 +1,77 @@
-server:
-  port: 8086
-  
 spring:
   application:
     name: mail-service
-  
-  # Database Configuration
-  datasource:
-    url: jdbc:postgresql://localhost:5432/mail_db
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-  
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-  
-  # Mail Configuration
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME:your-email@gmail.com}
-    password: ${MAIL_PASSWORD:your-app-password}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-  
-  # Kafka Configuration
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: mail-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: com.goodjob.*
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-  
-  # Eureka Configuration
-  eureka:
-    client:
-      service-url:
-        defaultZone: http://localhost:8761/eureka/
-    instance:
-      prefer-ip-address: true
-
-# Mail Service Configuration
-mail-service:
-  kafka:
-    topics:
-      email-events: email-events
-  templates:
-    path: classpath:/templates/
-  sender:
-    name: Good Job Platform
-    email: noreply@goodjob.com
-
-# Logging Configuration
-logging:
-  level:
-    com.goodjob.mail: INFO
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-    org.springframework.kafka: INFO 
+  config:
+    import: 'configserver:http://${CONFIG_SERVER_HOST:localhost}:8888/'
+server:
+  port: 8086
+#  # Database Configuration
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/mail_db
+#    username: postgres
+#    password: postgres
+#    driver-class-name: org.postgresql.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#
+#  # Mail Configuration
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: ${MAIL_USERNAME:your-email@gmail.com}
+#    password: ${MAIL_PASSWORD:your-app-password}
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#            required: true
+#
+#  # Kafka Configuration
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    consumer:
+#      group-id: mail-group
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      properties:
+#        spring.json.trusted.packages: com.goodjob.*
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#
+#  # Eureka Configuration
+#  eureka:
+#    client:
+#      service-url:
+#        defaultZone: http://localhost:8761/eureka/
+#    instance:
+#      prefer-ip-address: true
+#
+## Mail Service Configuration
+#mail-service:
+#  kafka:
+#    topics:
+#      email-events: email-events
+#  templates:
+#    path: classpath:/templates/
+#  sender:
+#    name: Good Job Platform
+#    email: noreply@goodjob.com
+#
+## Logging Configuration
+#logging:
+#  level:
+#    com.goodjob.mail: INFO
+#    org.springframework.web: INFO
+#    org.springframework.security: INFO
+#    org.springframework.kafka: INFO

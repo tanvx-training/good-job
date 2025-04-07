@@ -7,7 +7,7 @@ spring:
   main:
     web-application-type: reactive
   datasource:
-    url: jdbc:postgresql://localhost:5432/auth_db
+    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/auth_db
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
@@ -25,15 +25,6 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    prefer-ip-address: true
 
 app:
   jwt:

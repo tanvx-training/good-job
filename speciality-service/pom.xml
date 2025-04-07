@@ -12,6 +12,7 @@
     <artifactId>speciality-service</artifactId>
     <name>speciality-service</name>
     <description>Speciality Service for Good Job Platform</description>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -59,6 +60,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
