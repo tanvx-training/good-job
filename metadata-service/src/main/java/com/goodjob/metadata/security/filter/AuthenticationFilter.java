@@ -1,19 +1,18 @@
-package com.goodjob.speciality.security.filter;
+package com.goodjob.metadata.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Component
 public class AuthenticationFilter extends OncePerRequestFilter {
@@ -34,7 +33,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         authorities.add(new SimpleGrantedAuthority(role.trim()));
       }
       for (String permission : permissionsHeader.split(",")) {
-        if (permission.contains("SPECIALITY")) {
+        if (permission.contains("BENEFIT") || permission.contains("INDUSTRY") || permission.contains("SKILL") || permission.contains("SPECIALITY")) {
           authorities.add(new SimpleGrantedAuthority(permission.trim()));
         }
       }
