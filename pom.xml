@@ -21,10 +21,7 @@
         <module>candidate-service</module>
         <module>job-service</module>
         <module>posting-service</module>
-        <module>skill-service</module>
-        <module>industry-service</module>
-        <module>speciality-service</module>
-        <module>benefit-service</module>
+        <module>metadata-service</module>
         <module>api-gateway</module>
     </modules>
 

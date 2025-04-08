@@ -12,13 +12,10 @@ import com.goodjob.job.entity.Job;
 import com.goodjob.job.entity.JobBenefit;
 import com.goodjob.job.entity.JobIndustry;
 import com.goodjob.job.entity.JobSkill;
-import com.goodjob.job.feign.benefit.BenefitFeignClient;
+import com.goodjob.job.feign.MetadataFeignClient;
 import com.goodjob.job.feign.benefit.BenefitView;
-import com.goodjob.job.feign.company.CompanyFeignClient;
 import com.goodjob.job.feign.company.CompanyView;
-import com.goodjob.job.feign.industry.IndustryFeignClient;
 import com.goodjob.job.feign.industry.IndustryView;
-import com.goodjob.job.feign.skill.SkillFeignClient;
 import com.goodjob.job.feign.skill.SkillView;
 import com.goodjob.job.query.dto.*;
 import com.goodjob.job.query.service.JobQueryService;
@@ -51,13 +48,7 @@ public class JobQueryServiceImpl implements JobQueryService {
 
     private final JobRepository jobRepository;
 
-    private final BenefitFeignClient benefitClient;
-
-    private final CompanyFeignClient companyClient;
-
-    private final IndustryFeignClient industryClient;
-
-    private final SkillFeignClient skillClient;
+    private final MetadataFeignClient metadataFeignClient;
 
     @Override
     public PageResponseDTO<JobView> getAllJobs(JobQuery query) {
@@ -128,7 +119,7 @@ public class JobQueryServiceImpl implements JobQueryService {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
                     .toList());
-            ResponseEntity<ApiResponse<List<BenefitView>>> benefitResponse = benefitClient.getBatchBenefits(ids);
+            ResponseEntity<ApiResponse<List<BenefitView>>> benefitResponse = metadataFeignClient.getBatchBenefits(ids);
             if (benefitResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(benefitResponse.getBody())) {
                 return benefitResponse.getBody().getData()
                         .stream()
@@ -146,7 +137,7 @@ public class JobQueryServiceImpl implements JobQueryService {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
                     .toList());
-            ResponseEntity<ApiResponse<List<SkillView>>> skillResponse = skillClient.getBatchSkills(ids);
+            ResponseEntity<ApiResponse<List<SkillView>>> skillResponse = metadataFeignClient.getBatchSkills(ids);
             if (skillResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(skillResponse.getBody())) {
                 return skillResponse.getBody().getData()
                         .stream()
@@ -165,7 +156,7 @@ public class JobQueryServiceImpl implements JobQueryService {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
                     .toList());
-            ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = industryClient.getBatchIndustries(ids);
+            ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataFeignClient.getBatchIndustries(ids);
             if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(industryResponse.getBody())) {
                 return industryResponse.getBody().getData()
                         .stream()
@@ -181,7 +172,7 @@ public class JobQueryServiceImpl implements JobQueryService {
     private JobCompanyView getCompany(Integer companyId) {
         JobCompanyView.JobCompanyViewBuilder companyBuilder = JobCompanyView.builder();
         if (Objects.nonNull(companyId)) {
-            ResponseEntity<ApiResponse<CompanyView>> companyResponse = companyClient.getCompanyById(companyId);
+            ResponseEntity<ApiResponse<CompanyView>> companyResponse = metadataFeignClient.getCompanyById(companyId);
             if (companyResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(companyResponse.getBody())) {
                 CompanyView company = companyResponse.getBody().getData();
                 companyBuilder

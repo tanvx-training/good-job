@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: metadata-service
+  config:
+    import: 'configserver:http://${CONFIG_SERVER_HOST:localhost}:8888/'
+server:
+  port: 8081
