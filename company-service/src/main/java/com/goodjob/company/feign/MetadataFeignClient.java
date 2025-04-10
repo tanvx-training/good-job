@@ -17,16 +17,16 @@ import java.util.List;
 )
 public interface MetadataFeignClient {
 
-    @GetMapping("/api/v1/specialities/batch")
+    @GetMapping("/api/v1/metadata/specialities/batch")
     ResponseEntity<ApiResponse<List<SpecialityView>>> getBatchSpecialities(@RequestParam("ids") String ids);
 
-    @GetMapping("/api/v1/specialities/{id}")
+    @GetMapping("/api/v1/metadata/specialities/{id}")
     ResponseEntity<ApiResponse<SpecialityView>> getSpecialityById(@PathVariable("id") Integer id);
 
 
-    @GetMapping("/api/v1/industries/batch")
+    @GetMapping("/api/v1/metadata/industries/batch")
     ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustries(@RequestParam("ids") String ids);
 
-    @GetMapping("/api/v1/industries/{id}")
+    @GetMapping("/api/v1/metadata/industries/{id}")
     ResponseEntity<ApiResponse<IndustryView>> getIndustryById(@PathVariable("id") Integer id);
 }

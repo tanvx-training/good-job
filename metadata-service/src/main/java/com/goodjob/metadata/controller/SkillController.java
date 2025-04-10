@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/skills")
+@RequestMapping("/api/v1/metadata/skills")
 @RequiredArgsConstructor
 public class SkillController {
 

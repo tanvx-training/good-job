@@ -13,7 +13,7 @@ spring:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   kafka:
-    bootstrap-servers: localhost:19092,localhost:19093,localhost:19094
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
     security:
       protocol: plaintext
     producer:

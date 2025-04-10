@@ -12,6 +12,7 @@ import com.goodjob.job.entity.Job;
 import com.goodjob.job.entity.JobBenefit;
 import com.goodjob.job.entity.JobIndustry;
 import com.goodjob.job.entity.JobSkill;
+import com.goodjob.job.feign.CompanyFeignClient;
 import com.goodjob.job.feign.MetadataFeignClient;
 import com.goodjob.job.feign.benefit.BenefitView;
 import com.goodjob.job.feign.company.CompanyView;
@@ -49,6 +50,8 @@ public class JobQueryServiceImpl implements JobQueryService {
     private final JobRepository jobRepository;
 
     private final MetadataFeignClient metadataFeignClient;
+
+    private final CompanyFeignClient companyFeignClient;
 
     @Override
     public PageResponseDTO<JobView> getAllJobs(JobQuery query) {
@@ -172,7 +175,7 @@ public class JobQueryServiceImpl implements JobQueryService {
     private JobCompanyView getCompany(Integer companyId) {
         JobCompanyView.JobCompanyViewBuilder companyBuilder = JobCompanyView.builder();
         if (Objects.nonNull(companyId)) {
-            ResponseEntity<ApiResponse<CompanyView>> companyResponse = metadataFeignClient.getCompanyById(companyId);
+            ResponseEntity<ApiResponse<CompanyView>> companyResponse = companyFeignClient.getCompanyById(companyId);
             if (companyResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(companyResponse.getBody())) {
                 CompanyView company = companyResponse.getBody().getData();
                 companyBuilder

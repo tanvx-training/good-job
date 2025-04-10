@@ -24,7 +24,7 @@ import java.util.List;
  * Controller for industry-related endpoints.
  */
 @RestController
-@RequestMapping("/api/v1/industries")
+@RequestMapping("/api/v1/metadata/industries")
 @RequiredArgsConstructor
 public class IndustryController {
 

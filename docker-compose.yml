@@ -146,12 +146,6 @@ services:
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     networks:
       - backend-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
   config-server:
     image: tanvx308/config-server:latest
@@ -162,16 +156,9 @@ services:
       - EUREKA_HOST=eureka-server
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      eureka-server:
-        condition: service_healthy
+      - eureka-server
     networks:
       - backend-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
   api-gateway:
     image: tanvx308/api-gateway:latest
@@ -184,18 +171,15 @@ services:
       - DATASOURCE_HOST=postgres
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      postgres:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - postgres
+      - eureka-server
+      - config-server
     networks:
       - backend-network
 
-  benefit-service:
-    image: tanvx308/benefit-service:latest
-    container_name: benefit-service
+  metadata-service:
+    image: tanvx308/metadata-service:latest
+    container_name: metadata-service
     ports:
       - "8081:8081"
     environment:
@@ -204,12 +188,9 @@ services:
       - DATASOURCE_HOST=postgres
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      postgres:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - postgres
+      - eureka-server
+      - config-server
     networks:
       - backend-network
 
@@ -219,37 +200,15 @@ services:
     ports:
       - "8083:8083"
     environment:
+      - JAVA_OPTS=-Xms512m -Xmx2g
       - EUREKA_HOST=eureka-server
       - CONFIG_SERVER_HOST=config-server
       - DATASOURCE_HOST=postgres
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      postgres:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-    networks:
-      - backend-network
-
-  industry-service:
-    image: tanvx308/industry-service:latest
-    container_name: industry-service
-    ports:
-      - "8084:8084"
-    environment:
-      - EUREKA_HOST=eureka-server
-      - CONFIG_SERVER_HOST=config-server
-      - DATASOURCE_HOST=postgres
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    depends_on:
-      postgres:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - postgres
+      - eureka-server
+      - config-server
     networks:
       - backend-network
 
@@ -259,56 +218,14 @@ services:
     ports:
       - "8085:8085"
     environment:
+      - JAVA_OPTS=-Xms512m -Xmx2g
       - EUREKA_HOST=eureka-server
       - CONFIG_SERVER_HOST=config-server
       - DATASOURCE_HOST=postgres
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
     depends_on:
-      postgres:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-    networks:
-      - backend-network
-
-  skill-service:
-    image: tanvx308/skill-service:latest
-    container_name: skill-service
-    ports:
-      - "8089:8089"
-    environment:
-      - EUREKA_HOST=eureka-server
-      - CONFIG_SERVER_HOST=config-server
-      - DATASOURCE_HOST=postgres
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    depends_on:
-      postgres:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-    networks:
-      - backend-network
-
-  speciality-service:
-    image: tanvx308/speciality-service:latest
-    container_name: speciality-service
-    ports:
-      - "8090:8090"
-    environment:
-      - EUREKA_HOST=eureka-server
-      - CONFIG_SERVER_HOST=config-server
-      - DATASOURCE_HOST=postgres
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    depends_on:
-      postgres:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
+      - postgres
+      - eureka-server
+      - config-server
     networks:
       - backend-network

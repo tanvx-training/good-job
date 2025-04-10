@@ -4,7 +4,7 @@ server:
 distributor:
   receivers:
     zipkin:
-      endpoint: ${OTEL_EXPORTER_ZIPKIN_ENDPOINT:localhost}:9411
+      endpoint: 0.0.0.0:9411
 storage:
   trace:
     backend: local

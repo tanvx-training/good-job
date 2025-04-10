@@ -18,15 +18,15 @@ import java.util.List;
         configuration = FeignClientConfig.class
 )
 public interface MetadataFeignClient {
-    @GetMapping("/api/v1/skills/batch")
+    @GetMapping("/api/v1/metadata/skills/batch")
     ResponseEntity<ApiResponse<List<SkillView>>> getBatchSkills(@RequestParam("ids") String ids);
 
-    @GetMapping("/api/v1/industries/batch")
+    @GetMapping("/api/v1/metadata/industries/batch")
     ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustries(@RequestParam("ids") String ids);
 
     @GetMapping("/api/v1/companies/{id}")
     ResponseEntity<ApiResponse<CompanyView>> getCompanyById(@PathVariable("id") Integer id);
 
-    @GetMapping("/api/v1/benefits/batch")
+    @GetMapping("/api/v1/metadata/benefits/batch")
     ResponseEntity<ApiResponse<List<BenefitView>>> getBatchBenefits(@RequestParam("ids") String ids);
 }

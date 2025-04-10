@@ -26,7 +26,7 @@ import java.util.List;
  * Following the CQRS pattern, this controller separates query and command operations.
  */
 @RestController
-@RequestMapping("/api/v1/specialities")
+@RequestMapping("/api/v1/metadata/specialities")
 @RequiredArgsConstructor
 @Slf4j
 public class SpecialityController {

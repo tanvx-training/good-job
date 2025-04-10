@@ -29,7 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  * Controller for benefit-related endpoints.
  */
 @RestController
-@RequestMapping("/api/v1/benefits")
+@RequestMapping("/api/v1/metadata/benefits")
 @RequiredArgsConstructor
 public class BenefitController {
 
