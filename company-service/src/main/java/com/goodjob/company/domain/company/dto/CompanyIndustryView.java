@@ -1,18 +1,18 @@
-package com.goodjob.common.dto.message;
+package com.goodjob.company.domain.company.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class KafkaMessage<T> extends MessageBase {
+public class CompanyIndustryView {
 
-  private T payload;
+    private String industryName;
 }
