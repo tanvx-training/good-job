@@ -26,3 +26,13 @@ spring:
         enable.idempotence: true
         max.in.flight.requests.per.connection: 5
         spring.json.add.type.headers: false
+    consumer:
+      group-id: default-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.use.type.headers: true
+        partition.assignment.strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
