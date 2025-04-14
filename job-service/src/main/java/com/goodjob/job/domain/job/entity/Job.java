@@ -1,6 +1,7 @@
 package com.goodjob.job.domain.job.entity;
 
 import com.goodjob.common.entity.BaseEntity;
+import com.goodjob.job.domain.posting.entity.JobPosting;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -77,4 +78,7 @@ public class Job extends BaseEntity {
 
     @OneToMany(mappedBy = "job")
     private Set<JobIndustry> jobIndustries;
+
+    @OneToOne(mappedBy = "job")
+    private JobPosting jobPosting;
 } 

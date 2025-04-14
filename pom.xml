@@ -20,7 +20,6 @@
         <module>company-service</module>
         <module>candidate-service</module>
         <module>job-service</module>
-        <module>posting-service</module>
         <module>metadata-service</module>
         <module>api-gateway</module>
     </modules>

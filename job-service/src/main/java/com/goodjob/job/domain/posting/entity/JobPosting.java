@@ -1,12 +1,8 @@
 package com.goodjob.job.domain.posting.entity;
 
 import com.goodjob.common.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.goodjob.job.domain.job.entity.Job;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,9 +38,34 @@ public class JobPosting extends BaseEntity {
     @Column(name = "applies", nullable = false)
     private Integer applies;
 
+    @Column(name = "posting_domain", nullable = false)
+    private String postingDomain;
+
     @Column(name = "job_posting_url", nullable = false, columnDefinition = "TEXT")
     private String jobPostingUrl;
 
+    @Column(name = "application_url", nullable = false, columnDefinition = "TEXT")
+    private String applicationUrl;
+
+    @Column(name = "application_type", nullable = false)
+    private String applicationType;
+
+    @Column(name = "sponsored")
+    private boolean sponsored;
+
+    @Column(name = "fips", length = 50)
+    private String fips;
+
     @Column(name = "posting_status", nullable = false)
     private Integer postingStatus;
+
+    @Column(name = "original_listed_time")
+    private Long originalListedTime;
+
+    @Column(name = "listed_time")
+    private Long listedTime;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id")
+    private Job job;
 } 

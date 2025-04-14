@@ -17,4 +17,11 @@ public interface BaseEnum<T extends Enum<T>> {
             code
         ));
   }
+
+    static <T extends Enum<T> & BaseEnum<T>> T fromValueNullable(Class<T> enumClass, Integer code) {
+        return Arrays.stream(enumClass.getEnumConstants())
+                .filter(e -> e.getCode().equals(code))
+                .findFirst()
+                .orElse(null);
+    }
 }
