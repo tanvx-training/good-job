@@ -26,9 +26,6 @@ public class JobPosting extends BaseEntity {
     @Column(name = "posting_id")
     private Long postingId;
 
-    @Column(name = "job_id", nullable = false)
-    private Long jobId;
-
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 

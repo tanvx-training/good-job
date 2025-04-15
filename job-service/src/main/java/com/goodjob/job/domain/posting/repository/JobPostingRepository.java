@@ -1,6 +1,6 @@
 package com.goodjob.job.domain.posting.repository;
 
-import com.goodjob.posting.entity.JobPosting;
+import com.goodjob.job.domain.posting.entity.JobPosting;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
