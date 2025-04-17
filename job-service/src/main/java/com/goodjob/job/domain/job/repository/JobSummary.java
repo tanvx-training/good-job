@@ -32,6 +32,10 @@ public interface JobSummary {
 
     Integer getJobStatus();
 
+    Integer getViews();
+
+    Integer getApplies();
+
     JobSalarySummary getJobSalary();
 
     List<JobBenefitSummary> getJobBenefits();

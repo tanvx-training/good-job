@@ -83,7 +83,7 @@ public class BenefitController {
   }
 
   @GetMapping("/batch")
-  @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_BENEFIT')")
+//  @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_BENEFIT')")
   public ResponseEntity<ApiResponse<List<BenefitView>>> getBatchBenefits(@RequestParam("ids") String ids) {
     List<Integer> idList = Arrays.stream(ids.split(","))
         .map(Integer::parseInt)

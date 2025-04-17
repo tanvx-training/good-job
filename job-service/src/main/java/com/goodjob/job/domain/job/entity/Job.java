@@ -1,7 +1,6 @@
 package com.goodjob.job.domain.job.entity;
 
 import com.goodjob.common.entity.BaseEntity;
-import com.goodjob.job.domain.posting.entity.JobPosting;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -67,18 +66,21 @@ public class Job extends BaseEntity {
     @Column(name = "job_status", nullable = false)
     private Integer jobStatus;
 
+    @Column(name = "views", nullable = false)
+    private Integer views;
+
+    @Column(name = "applies", nullable = false)
+    private Integer applies;
+
     @OneToOne(mappedBy = "job")
     private JobSalary jobSalary;
 
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<JobBenefit> jobBenefits;
 
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<JobSkill> jobSkills;
 
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<JobIndustry> jobIndustries;
-
-    @OneToOne(mappedBy = "job")
-    private JobPosting jobPosting;
 } 

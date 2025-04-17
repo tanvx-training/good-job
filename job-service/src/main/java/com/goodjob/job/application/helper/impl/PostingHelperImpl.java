@@ -7,7 +7,7 @@ import com.goodjob.job.domain.job.dto.JobBenefitView;
 import com.goodjob.job.domain.job.dto.JobCompanyView;
 import com.goodjob.job.domain.job.dto.JobIndustryView;
 import com.goodjob.job.domain.job.dto.JobSkillView;
-import com.goodjob.job.domain.job.entity.*;
+import com.goodjob.job.domain.job.repository.*;
 import com.goodjob.job.infrastructure.common.enums.EducationLevel;
 import com.goodjob.job.infrastructure.common.enums.ExperienceLevel;
 import com.goodjob.job.infrastructure.common.enums.PayPeriod;
@@ -25,7 +25,7 @@ public class PostingHelperImpl implements PostingHelper {
     private final JobHelper jobHelper;
 
     @Override
-    public String generateJobDescription(Job job) {
+    public String generateJobDescription(JobSummary job) {
 
         Objects.requireNonNull(job);
         StringBuilder description = new StringBuilder();
@@ -44,7 +44,7 @@ public class PostingHelperImpl implements PostingHelper {
         description.append("<p>").append(job.getDescription()).append("</p>");
 
         // Thông tin lương
-        JobSalary salary = job.getJobSalary();
+        JobSalarySummary salary = job.getJobSalary();
         Objects.requireNonNull(salary);
         description.append("<h3>Mức lương</h3><p>");
         description.append(salary.getMinSalary()).append(" - ").append(salary.getMaxSalary());
@@ -55,7 +55,7 @@ public class PostingHelperImpl implements PostingHelper {
 
         // Lợi ích
         Set<JobBenefitView> benefits = jobHelper.getBenefits(job.getJobBenefits().stream()
-                .map(JobBenefit::getBenefitId)
+                .map(JobBenefitSummary::getBenefitId)
                 .toList());
         description.append("<h3>Lợi ích</h3><ul>");
         for (JobBenefitView benefit : benefits) {
@@ -65,7 +65,7 @@ public class PostingHelperImpl implements PostingHelper {
 
         // Ngành nghề
         Set<JobIndustryView> industries = jobHelper.getIndustries(job.getJobIndustries().stream()
-                .map(JobIndustry::getIndustryId)
+                .map(JobIndustrySummary::getIndustryId)
                 .toList());
         description.append("<h3>Ngành nghề</h3><ul>");
         for (JobIndustryView industry : industries) {
@@ -75,7 +75,7 @@ public class PostingHelperImpl implements PostingHelper {
 
         // Kỹ năng
         Set<JobSkillView> skills = jobHelper.getSkills(job.getJobSkills().stream()
-                .map(JobSkill::getSkillId)
+                .map(JobSkillSummary::getSkillId)
                 .toList());
         description.append("<h3>Kỹ năng yêu cầu</h3><ul>");
         for (JobSkillView skill : skills) {

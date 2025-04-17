@@ -1,8 +1,8 @@
 package com.goodjob.job.application.helper;
 
-import com.goodjob.job.domain.job.entity.Job;
+import com.goodjob.job.domain.job.repository.JobSummary;
 
 public interface PostingHelper {
 
-    String generateJobDescription(Job job);
+    String generateJobDescription(JobSummary job);
 }

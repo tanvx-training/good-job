@@ -116,7 +116,7 @@ public class IndustryController {
     }
 
         @GetMapping("/batch")
-        @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
+//        @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
         public ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustry(
                 @RequestParam("ids") String ids
         ) {

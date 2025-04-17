@@ -119,6 +119,8 @@ public class JobQueryServiceImpl implements JobQueryService {
                 .expiry(Objects.nonNull(summary.getExpiry()) ? DateTimeUtils.fromTimestamp(summary.getExpiry()) : null)
                 .closedTime(Objects.nonNull(summary.getClosedTime()) ? DateTimeUtils.fromTimestamp(summary.getClosedTime()) : null)
                 .jobStatus(Objects.nonNull(summary.getJobStatus()) ? JobStatus.fromValue(summary.getJobStatus()).getDescription() : null)
+                .views(summary.getViews())
+                .applies(summary.getApplies())
                 .benefits(jobHelper.getBenefits(summary.getJobBenefits().stream()
                         .map(JobBenefitSummary::getBenefitId)
                         .toList()))

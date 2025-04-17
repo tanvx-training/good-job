@@ -40,7 +40,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_COMPANY')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_COMPANY')")
     public ResponseEntity<ApiResponse<CompanyView>> getCompanyById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(ApiResponse.success(companyQueryService.getCompanyById(id)));
     }

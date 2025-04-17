@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * Repository for Job entity.
  */
@@ -15,4 +17,4 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
   @EntityGraph(attributePaths = {"jobSalary", "jobSkills", "jobIndustries", "jobBenefits"})
   Page<JobSummary> findByDeleteFlg(boolean deleteFlg, Pageable pageable);
-} 
+}

@@ -25,10 +25,12 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorizeRequests ->
             authorizeRequests
-                    .requestMatchers("/actuator/**")
-                    .permitAll()
                     .anyRequest()
-                    .authenticated()
+                    .permitAll()
+//                    .requestMatchers("/actuator/**")
+//                    .permitAll()
+//                    .anyRequest()
+//                    .authenticated()
         )
         .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

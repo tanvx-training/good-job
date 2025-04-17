@@ -29,6 +29,8 @@ public class JobView {
     private LocalDateTime expiry;
     private LocalDateTime closedTime;
     private String jobStatus;
+    private Integer views;
+    private Integer applies;
     private JobSalaryView salary;
     private Set<JobBenefitView> benefits;
     private Set<JobSkillView> skills;
