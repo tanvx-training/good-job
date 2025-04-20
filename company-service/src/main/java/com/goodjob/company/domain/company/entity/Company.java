@@ -62,8 +62,8 @@ public class Company extends BaseEntity {
     @Column(name = "url")
     private String url;
 
-    @OneToOne(mappedBy = "company")
-    private CompanyMetric companyMetric;
+    @OneToMany(mappedBy = "company")
+    private Set<CompanyMetric> companyMetrics;
 
     @OneToMany(mappedBy = "company")
     private Set<CompanySpeciality> companySpecialities;

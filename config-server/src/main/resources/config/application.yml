@@ -9,31 +9,8 @@ management:
   tracing:
     sampling:
       probability: 1.0
-#  zipkin:
-#    tracing:
-#      endpoint: http://localhost:9411/api/v2/spans
-  metrics:
-    distribution:
-      percentiles-histogram:
-        http.server.requests: true
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
-    prometheus:
-      enabled: true
-
-logging:
-  pattern:
-    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
-  level:
-    root: INFO
-    org.springframework.web: INFO
-    com.goodjob: DEBUG
+    propagation:
+      type: w3c
+  zipkin:
+    tracing:
+      endpoint: ${MANAGEMENT_ZIPKIN_TRACING_ENDPOINT:http://localhost:9411/api/v2/spans}

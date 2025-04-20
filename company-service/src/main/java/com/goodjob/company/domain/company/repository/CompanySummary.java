@@ -14,7 +14,7 @@ public interface CompanySummary {
     String getZipCode();
     String getAddress();
     String getUrl();
-    CompanyMetricSummary getCompanyMetric();
+    List<CompanyMetricSummary> getCompanyMetrics();
     List<CompanyIndustrySummary> getCompanyIndustries();
     List<CompanySpecialitySummary> getCompanySpecialities();
 }

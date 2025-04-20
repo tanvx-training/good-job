@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Integer> {
 
-    @EntityGraph(attributePaths = {"companyMetric", "companySpecialities", "companyIndustries"})
+    @EntityGraph(attributePaths = {"companyMetrics", "companySpecialities", "companyIndustries"})
     Page<CompanySummary> findByDeleteFlg(boolean deleteFlg, Pageable pageable);
 }

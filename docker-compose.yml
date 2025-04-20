@@ -6,6 +6,7 @@ networks:
 
 volumes:
     postgres-data:
+    redis-data:
 
 services:
   # PostgreSQL
@@ -29,6 +30,14 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
 
   zoo1:
     image: confluentinc/cp-zookeeper:7.5.3
@@ -60,172 +69,108 @@ services:
     depends_on:
       - zoo1
 
-  kafka2:
-    image: confluentinc/cp-kafka:7.5.3
-    hostname: kafka2
-    container_name: kafka2
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
     ports:
-      - "9093:9093"
-      - "29093:29093"
-    environment:
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka2:19093,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093,DOCKER://host.docker.internal:29093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
-      KAFKA_BROKER_ID: 2
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
-      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
-    depends_on:
-      - zoo1
-
-  kafka3:
-    image: confluentinc/cp-kafka:7.5.3
-    hostname: kafka3
-    container_name: kafka3
-    ports:
-      - "9094:9094"
-      - "29094:29094"
-    environment:
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka3:19094,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094,DOCKER://host.docker.internal:29094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
-      KAFKA_BROKER_ID: 3
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
-      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
-    depends_on:
-      - zoo1
-
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-
-  loki:
-    image: grafana/loki
-    container_name: loki
-    ports:
-      - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
-
-  tempo:
-    image: grafana/tempo
-    container_name: tempo
-    ports:
-      - "3200:3200" #tempo
-      - "9411:9411" # zipkin
-    command: -config.file=/etc/tempo.yaml
-    volumes:
-      - ./monitoring/tempo/tempo.yml:/etc/tempo.yaml
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
-    volumes:
-      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - "9411:9411"
+    networks:
+      - backend-network
 
   # ==========================================================
   # Microservices
   # (Mỗi service build qua Jib có image: ${docker.image.prefix}/<artifactId>:latest)
   # ==========================================================
 
-  eureka-server:
-    image: tanvx308/eureka-server:latest
-    container_name: eureka-server
-    ports:
-      - "8761:8761"
-    environment:
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    networks:
-      - backend-network
-
-  config-server:
-    image: tanvx308/config-server:latest
-    container_name: config-server
-    ports:
-      - "8888:8888"
-    environment:
-      - EUREKA_HOST=eureka-server
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    depends_on:
-      - eureka-server
-    networks:
-      - backend-network
-
-  api-gateway:
-    image: tanvx308/api-gateway:latest
-    container_name: api-gateway
-    ports:
-      - "8080:8080"
-    environment:
-      - EUREKA_HOST=eureka-server
-      - CONFIG_SERVER_HOST=config-server
-      - DATASOURCE_HOST=postgres
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    depends_on:
-      - postgres
-      - eureka-server
-      - config-server
-    networks:
-      - backend-network
-
-  metadata-service:
-    image: tanvx308/metadata-service:latest
-    container_name: metadata-service
-    ports:
-      - "8081:8081"
-    environment:
-      - EUREKA_HOST=eureka-server
-      - CONFIG_SERVER_HOST=config-server
-      - DATASOURCE_HOST=postgres
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    depends_on:
-      - postgres
-      - eureka-server
-      - config-server
-    networks:
-      - backend-network
-
-  company-service:
-    image: tanvx308/company-service:latest
-    container_name: company-service
-    ports:
-      - "8083:8083"
-    environment:
-      - JAVA_OPTS=-Xms512m -Xmx2g
-      - EUREKA_HOST=eureka-server
-      - CONFIG_SERVER_HOST=config-server
-      - DATASOURCE_HOST=postgres
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    depends_on:
-      - postgres
-      - eureka-server
-      - config-server
-    networks:
-      - backend-network
-
-  job-service:
-    image: tanvx308/job-service:latest
-    container_name: job-service
-    ports:
-      - "8085:8085"
-    environment:
-      - JAVA_OPTS=-Xms512m -Xmx2g
-      - EUREKA_HOST=eureka-server
-      - CONFIG_SERVER_HOST=config-server
-      - DATASOURCE_HOST=postgres
-      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
-    depends_on:
-      - postgres
-      - eureka-server
-      - config-server
-    networks:
-      - backend-network
+#  eureka-server:
+#    image: tanvx308/eureka-server:latest
+#    container_name: eureka-server
+#    ports:
+#      - "8761:8761"
+#    environment:
+#      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
+#    networks:
+#      - backend-network
+#
+#  config-server:
+#    image: tanvx308/config-server:latest
+#    container_name: config-server
+#    ports:
+#      - "8888:8888"
+#    environment:
+#      - EUREKA_HOST=eureka-server
+#      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
+#    depends_on:
+#      - eureka-server
+#    networks:
+#      - backend-network
+#
+#  api-gateway:
+#    image: tanvx308/api-gateway:latest
+#    container_name: api-gateway
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - EUREKA_HOST=eureka-server
+#      - CONFIG_SERVER_HOST=config-server
+#      - DATASOURCE_HOST=postgres
+#      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
+#    depends_on:
+#      - postgres
+#      - eureka-server
+#      - config-server
+#    networks:
+#      - backend-network
+#
+#  metadata-service:
+#    image: tanvx308/metadata-service:latest
+#    container_name: metadata-service
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      - EUREKA_HOST=eureka-server
+#      - CONFIG_SERVER_HOST=config-server
+#      - DATASOURCE_HOST=postgres
+#      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
+#    depends_on:
+#      - postgres
+#      - eureka-server
+#      - config-server
+#    networks:
+#      - backend-network
+#
+#  company-service:
+#    image: tanvx308/company-service:latest
+#    container_name: company-service
+#    ports:
+#      - "8083:8083"
+#    environment:
+#      - JAVA_OPTS=-Xms512m -Xmx2g
+#      - EUREKA_HOST=eureka-server
+#      - CONFIG_SERVER_HOST=config-server
+#      - DATASOURCE_HOST=postgres
+#      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
+#    depends_on:
+#      - postgres
+#      - eureka-server
+#      - config-server
+#    networks:
+#      - backend-network
+#
+#  job-service:
+#    image: tanvx308/job-service:latest
+#    container_name: job-service
+#    ports:
+#      - "8085:8085"
+#    environment:
+#      - JAVA_OPTS=-Xms512m -Xmx2g
+#      - EUREKA_HOST=eureka-server
+#      - CONFIG_SERVER_HOST=config-server
+#      - DATASOURCE_HOST=postgres
+#      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
+#    depends_on:
+#      - postgres
+#      - eureka-server
+#      - config-server
+#    networks:
+#      - backend-network

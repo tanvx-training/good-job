@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
               loginRequest.getUsername(),
               loginRequest.getPassword()
           )
-      ).block();
+      ).toFuture().get();
 
       // Generate JWT access token
       Objects.requireNonNull(authentication);

@@ -26,6 +26,8 @@ import com.goodjob.company.domain.company.repository.CompanyMetricSummary;
 import com.goodjob.company.domain.company.repository.CompanyRepository;
 import com.goodjob.company.domain.company.repository.CompanySpecialitySummary;
 import com.goodjob.company.domain.company.repository.CompanySummary;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -76,7 +78,10 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
   }
 
   private CompanyView convertFromEntityToView(Company company) {
-    CompanyMetric companyMetric = company.getCompanyMetric();
+    CompanyMetric companyMetric = company.getCompanyMetrics()
+            .stream().max(Comparator.comparing(CompanyMetric::getCompanyMetricId))
+            .orElse(null);
+    Objects.requireNonNull(companyMetric);
     Set<CompanyIndustry> companyIndustryList = company.getCompanyIndustries();
     Set<CompanySpeciality> companySpecialityList = company.getCompanySpecialities();
 
@@ -165,7 +170,9 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
                 .build()))
         .url(summary.getUrl());
 
-    CompanyMetricSummary cms = summary.getCompanyMetric();
+    CompanyMetricSummary cms = summary.getCompanyMetrics()
+            .stream().max(Comparator.comparing(CompanyMetricSummary::getCompanyMetricId)).orElse(null);
+    Objects.requireNonNull(cms);
     builder
         .metric(CompanyMetricView.builder()
             .employeeCount(cms.getEmployeeCount())
