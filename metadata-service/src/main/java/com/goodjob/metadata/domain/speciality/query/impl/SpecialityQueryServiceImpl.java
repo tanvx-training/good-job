@@ -1,8 +1,8 @@
 package com.goodjob.metadata.domain.speciality.query.impl;
 
 import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.speciality.entity.Speciality;
-import com.goodjob.metadata.application.exception.SpecialityNotFoundException;
 import com.goodjob.metadata.domain.speciality.dto.SpecialityQuery;
 import com.goodjob.metadata.domain.speciality.dto.SpecialityView;
 import com.goodjob.metadata.domain.speciality.query.SpecialityQueryService;
@@ -47,7 +47,7 @@ public class SpecialityQueryServiceImpl implements SpecialityQueryService {
                 .map(this::mapToSpecialityView)
                 .orElseThrow(() -> {
                     log.warn("Speciality not found with id: {}", id);
-                    return new SpecialityNotFoundException("Speciality not found with id: " + id);
+                    return new ResourceNotFoundException(Speciality.class.getName(), "ID", id);
                 });
     }
 
@@ -58,7 +58,7 @@ public class SpecialityQueryServiceImpl implements SpecialityQueryService {
                 .map(this::mapToSpecialityView)
                 .orElseThrow(() -> {
                     log.warn("Speciality not found with name: {}", name);
-                    return new SpecialityNotFoundException("Speciality not found with name: " + name);
+                    return new ResourceNotFoundException(Speciality.class.getName(), "Name", name);
                 });
     }
 
@@ -73,7 +73,7 @@ public class SpecialityQueryServiceImpl implements SpecialityQueryService {
             List<Integer> notExistedIds = idList.stream()
                     .filter(id -> !existedIds.contains(id))
                     .toList();
-            throw new SpecialityNotFoundException("Speciality not found with ids in: " + notExistedIds);
+            throw new ResourceNotFoundException(Speciality.class.getName(), "ID", String.valueOf(notExistedIds));
         }
         return industryList
                 .stream()

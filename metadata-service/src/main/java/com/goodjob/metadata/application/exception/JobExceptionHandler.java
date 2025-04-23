@@ -1,6 +1,8 @@
 package com.goodjob.metadata.application.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.goodjob.common.exception.ResourceExistedException;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -21,7 +23,7 @@ import java.util.Map;
  * Global exception handler for the Benefit Service.
  */
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class JobExceptionHandler {
 
   /**
    * Handle validation exceptions.
@@ -56,8 +58,8 @@ public class GlobalExceptionHandler {
    * @param request the WebRequest
    * @return the error response
    */
-  @ExceptionHandler(BenefitNotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleBenefitNotFoundException(BenefitNotFoundException ex,
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleBenefitNotFoundException(ResourceNotFoundException ex,
       WebRequest request) {
     ErrorResponse errorResponse = ErrorResponse.builder()
         .status(HttpStatus.NOT_FOUND.value())
@@ -75,87 +77,15 @@ public class GlobalExceptionHandler {
    * @param request the WebRequest
    * @return the error response
    */
-  @ExceptionHandler(BenefitAlreadyExistsException.class)
+  @ExceptionHandler(ResourceExistedException.class)
   public ResponseEntity<ErrorResponse> handleBenefitAlreadyExistsException(
-      BenefitAlreadyExistsException ex, WebRequest request) {
+          ResourceExistedException ex, WebRequest request) {
     ErrorResponse errorResponse = ErrorResponse.builder()
         .status(HttpStatus.CONFLICT.value())
         .timestamp(LocalDateTime.now())
         .error(ex.getMessage())
         .message(request.getDescription(false))
         .build();
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-  }
-
-  /**
-   * Handles SkillNotFoundException.
-   *
-   * @param ex the exception
-   * @param request the web request
-   * @return the error response
-   */
-  @ExceptionHandler(IndustryNotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleSkillNotFoundException(IndustryNotFoundException ex, WebRequest request) {
-    ErrorResponse errorResponse = ErrorResponse.builder()
-            .status(HttpStatus.NOT_FOUND.value())
-            .timestamp(LocalDateTime.now())
-            .error(ex.getMessage())
-            .message(request.getDescription(false))
-            .build();
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-  }
-
-  /**
-   * Handles SkillAlreadyExistsException.
-   *
-   * @param ex the exception
-   * @param request the web request
-   * @return the error response
-   */
-  @ExceptionHandler(IndustryAlreadyExistsException.class)
-  public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(IndustryAlreadyExistsException ex, WebRequest request) {
-    ErrorResponse errorResponse = ErrorResponse.builder()
-            .status(HttpStatus.CONFLICT.value())
-            .timestamp(LocalDateTime.now())
-            .error(ex.getMessage())
-            .message(request.getDescription(false))
-            .build();
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-  }
-
-  /**
-   * Handles SkillNotFoundException.
-   *
-   * @param ex the exception
-   * @param request the web request
-   * @return the error response
-   */
-  @ExceptionHandler(SkillNotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleSkillNotFoundException(SkillNotFoundException ex, WebRequest request) {
-    ErrorResponse errorResponse = ErrorResponse.builder()
-            .status(HttpStatus.NOT_FOUND.value())
-            .timestamp(LocalDateTime.now())
-            .error(ex.getMessage())
-            .message(request.getDescription(false))
-            .build();
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-  }
-
-  /**
-   * Handles SkillAlreadyExistsException.
-   *
-   * @param ex the exception
-   * @param request the web request
-   * @return the error response
-   */
-  @ExceptionHandler(SkillAlreadyExistsException.class)
-  public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(SkillAlreadyExistsException ex, WebRequest request) {
-    ErrorResponse errorResponse = ErrorResponse.builder()
-            .status(HttpStatus.CONFLICT.value())
-            .timestamp(LocalDateTime.now())
-            .error(ex.getMessage())
-            .message(request.getDescription(false))
-            .build();
     return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
   }
 

@@ -1,7 +1,8 @@
 package com.goodjob.common.exception;
 
 /**
- * Exception thrown when a service encounters an error during processing.
+ * Exception thrown when a service encounters an error.
+ * Used primarily for errors that occur when calling external services via Feign clients.
  */
 public class ServiceException extends RuntimeException {
 
@@ -22,5 +23,9 @@ public class ServiceException extends RuntimeException {
      */
     public ServiceException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public ServiceException(Throwable cause) {
+        super(cause);
     }
 } 

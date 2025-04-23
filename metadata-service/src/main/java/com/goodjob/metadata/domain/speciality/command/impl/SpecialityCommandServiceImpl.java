@@ -1,11 +1,11 @@
 package com.goodjob.metadata.domain.speciality.command.impl;
 
+import com.goodjob.common.exception.ResourceExistedException;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.speciality.dto.CreateSpecialityCommand;
 import com.goodjob.metadata.domain.speciality.dto.UpdateSpecialityCommand;
 import com.goodjob.metadata.domain.speciality.command.SpecialityCommandService;
 import com.goodjob.metadata.domain.speciality.entity.Speciality;
-import com.goodjob.metadata.application.exception.SpecialityAlreadyExistsException;
-import com.goodjob.metadata.application.exception.SpecialityNotFoundException;
 import com.goodjob.metadata.domain.speciality.repository.SpecialityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class SpecialityCommandServiceImpl implements SpecialityCommandService {
         // Check if speciality with the same name already exists
         if (specialityRepository.existsBySpecialityName(command.getName())) {
             log.warn("Speciality already exists with name: {}", command.getName());
-            throw new SpecialityAlreadyExistsException("Speciality already exists with name: " + command.getName());
+            throw new ResourceExistedException(Speciality.class.getName(), "Name", command.getName());
         }
 
         Speciality speciality = toEntityForCreate(command);
@@ -49,14 +49,14 @@ public class SpecialityCommandServiceImpl implements SpecialityCommandService {
         Speciality origin = specialityRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Speciality not found with id: {}", id);
-                    return new SpecialityNotFoundException("Speciality not found with id: " + id);
+                    return new ResourceNotFoundException(Speciality.class.getName(), "ID", id);
                 });
 
         // Check if another speciality with the same name already exists
         if (!origin.getSpecialityName().equals(command.getName()) &&
                 specialityRepository.existsBySpecialityName(command.getName())) {
             log.warn("Another speciality already exists with name: {}", command.getName());
-            throw new SpecialityAlreadyExistsException("Another speciality already exists with name: " + command.getName());
+            throw new ResourceExistedException(Speciality.class.getName(), "Name", command.getName());
         }
 
         // Update the existing speciality
@@ -72,7 +72,7 @@ public class SpecialityCommandServiceImpl implements SpecialityCommandService {
         
         if (!specialityRepository.existsById(id)) {
             log.warn("Speciality not found with id: {}", id);
-            throw new SpecialityNotFoundException("Speciality not found with id: " + id);
+            throw new ResourceNotFoundException(Speciality.class.getName(), "ID", id);
         }
         
         specialityRepository.deleteById(id);

@@ -1,15 +1,15 @@
 package com.goodjob.job.application.helper.impl;
 
+import com.goodjob.common.dto.company.CompanyDTO;
 import com.goodjob.common.dto.response.ApiResponse;
+import com.goodjob.common.feign.client.CompanyClient;
 import com.goodjob.job.application.helper.JobHelper;
 import com.goodjob.job.domain.job.dto.JobBenefitView;
 import com.goodjob.job.domain.job.dto.JobCompanyView;
 import com.goodjob.job.domain.job.dto.JobIndustryView;
 import com.goodjob.job.domain.job.dto.JobSkillView;
-import com.goodjob.job.infrastructure.feign.CompanyFeignClient;
 import com.goodjob.job.infrastructure.feign.MetadataFeignClient;
 import com.goodjob.job.infrastructure.feign.benefit.BenefitView;
-import com.goodjob.job.infrastructure.feign.company.CompanyView;
 import com.goodjob.job.infrastructure.feign.industry.IndustryView;
 import com.goodjob.job.infrastructure.feign.skill.SkillView;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class JobHelperImpl implements JobHelper {
 
     private final MetadataFeignClient metadataFeignClient;
 
-    private final CompanyFeignClient companyFeignClient;
+    private final CompanyClient companyClient;
 
     @Override
     @Cacheable(
@@ -117,15 +117,15 @@ public class JobHelperImpl implements JobHelper {
     public JobCompanyView getCompany(Integer companyId) {
         JobCompanyView.JobCompanyViewBuilder companyBuilder = JobCompanyView.builder();
         if (Objects.nonNull(companyId)) {
-            ResponseEntity<ApiResponse<CompanyView>> companyResponse = companyFeignClient.getCompanyById(companyId);
-            if (companyResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(companyResponse.getBody())) {
-                CompanyView company = companyResponse.getBody().getData();
+            ApiResponse<CompanyDTO> companyResponse = companyClient.getCompanyById(companyId.longValue());
+            if (companyResponse.isSuccess() && Objects.nonNull(companyResponse.getData())) {
+                CompanyDTO company = companyResponse.getData();
                 companyBuilder
                         .name(company.getName())
                         .description(company.getDescription())
-                        .companySize(company.getCompanySize())
-                        .address(company.getAddress())
-                        .url(company.getUrl());
+                        .companySize(company.getSize() != null ? company.getSize().toString() : null)
+                        .address(company.getLocation())
+                        .url(company.getWebsite());
             }
         }
         return companyBuilder.build();

@@ -1,11 +1,11 @@
 package com.goodjob.metadata.domain.industry.command.impl;
 
+import com.goodjob.common.exception.ResourceExistedException;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.industry.dto.CreateIndustryCommand;
 import com.goodjob.metadata.domain.industry.dto.UpdateIndustryCommand;
 import com.goodjob.metadata.domain.industry.command.IndustryCommandService;
 import com.goodjob.metadata.domain.industry.entity.Industry;
-import com.goodjob.metadata.application.exception.IndustryAlreadyExistsException;
-import com.goodjob.metadata.application.exception.IndustryNotFoundException;
 import com.goodjob.metadata.domain.industry.repository.IndustryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class IndustryCommandServiceImpl implements IndustryCommandService {
         log.info("Creating new industry: {}", command.getName());
         
         if (industryRepository.existsByIndustryName(command.getName())) {
-            throw new IndustryAlreadyExistsException("Industry with name " + command.getName() + " already exists");
+            throw new ResourceExistedException(Industry.class.getName(), "Name", command.getName());
         }
         
         Industry industry = toEntityForCreate(command);
@@ -50,14 +50,14 @@ public class IndustryCommandServiceImpl implements IndustryCommandService {
     @Transactional
     public void updateIndustry(Integer id, UpdateIndustryCommand command) {
         log.info("Updating industry with ID: {}", id);
-        
+
         Industry existingIndustry = industryRepository.findById(id)
-                .orElseThrow(() -> new IndustryNotFoundException("Industry not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(Industry.class.getName(), "ID", id));
         
         // Check if name is being changed and if the new name already exists
         if (!existingIndustry.getIndustryName().equals(command.getName()) &&
                 industryRepository.existsByIndustryName(command.getName())) {
-            throw new IndustryAlreadyExistsException("Industry with name " + command.getName() + " already exists");
+            throw new ResourceExistedException(Industry.class.getName(), "Name", command.getName());
         }
         
         mergeEntityForUpdate(existingIndustry, command);
@@ -75,7 +75,7 @@ public class IndustryCommandServiceImpl implements IndustryCommandService {
         log.info("Deleting industry with ID: {}", id);
         
         if (!industryRepository.existsById(id)) {
-            throw new IndustryNotFoundException("Industry not found with ID: " + id);
+            throw new ResourceNotFoundException(Industry.class.getName(), "ID", id);
         }
         
         industryRepository.deleteById(id);

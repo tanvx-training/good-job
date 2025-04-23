@@ -1,6 +1,8 @@
 package com.goodjob.company.application.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.goodjob.common.exception.ResourceExistedException;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -21,7 +23,7 @@ import java.util.Map;
  * Global exception handler for the Skill service.
  */
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class CompanyExceptionHandler {
 
     /**
      * Handles SkillNotFoundException.
@@ -30,8 +32,8 @@ public class GlobalExceptionHandler {
      * @param request the web request
      * @return the error response
      */
-    @ExceptionHandler(CompanyNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleSkillNotFoundException(CompanyNotFoundException ex, WebRequest request) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSkillNotFoundException(ResourceNotFoundException ex, WebRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
                 .timestamp(LocalDateTime.now())
@@ -48,8 +50,8 @@ public class GlobalExceptionHandler {
      * @param request the web request
      * @return the error response
      */
-    @ExceptionHandler(CompanyAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(CompanyAlreadyExistsException ex, WebRequest request) {
+    @ExceptionHandler(ResourceExistedException.class)
+    public ResponseEntity<ErrorResponse> handleSkillAlreadyExistsException(ResourceExistedException ex, WebRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.CONFLICT.value())
                 .timestamp(LocalDateTime.now())

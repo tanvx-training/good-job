@@ -1,6 +1,7 @@
 package com.goodjob.job.domain.job.command.impl;
 
 import com.goodjob.common.dto.event.JobPostingEvent;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.job.domain.job.dto.PostJobCommand;
 import com.goodjob.job.api.kafka.JobPostingProducer;
 import com.goodjob.job.domain.job.command.JobCommandService;
@@ -8,7 +9,6 @@ import com.goodjob.job.domain.job.entity.Job;
 import com.goodjob.job.infrastructure.common.enums.JobStatus;
 import com.goodjob.job.infrastructure.common.enums.PostingType;
 
-import com.goodjob.job.application.exception.JobNotFoundException;
 import com.goodjob.job.domain.job.repository.JobRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class JobCommandServiceImpl implements JobCommandService {
 
     Job job = jobRepository.findById(id)
         .filter(o -> Objects.equals(o.getJobStatus(), JobStatus.OPEN.getCode()))
-        .orElseThrow(() -> new JobNotFoundException(id));
+        .orElseThrow(() -> new ResourceNotFoundException(Job.class.getName(), "ID", id));
     PostingType postingType = PostingType.fromValue(command.getPostingCode());
 
     switch (postingType) {

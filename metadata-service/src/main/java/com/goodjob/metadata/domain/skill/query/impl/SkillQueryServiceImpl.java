@@ -1,8 +1,8 @@
 package com.goodjob.metadata.domain.skill.query.impl;
 
 import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.skill.entity.Skill;
-import com.goodjob.metadata.application.exception.SkillNotFoundException;
 import com.goodjob.metadata.domain.skill.dto.SkillQuery;
 import com.goodjob.metadata.domain.skill.dto.SkillView;
 import com.goodjob.metadata.domain.skill.query.SkillQueryService;
@@ -50,7 +50,7 @@ public class SkillQueryServiceImpl implements SkillQueryService {
 
     Skill skill = skillRepository.findById(id)
         .filter(s -> !s.isDeleteFlg())
-        .orElseThrow(() -> new SkillNotFoundException("Skill not found with ID: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException(Skill.class.getName(), "ID", id));
     return this.mapToSkillView(skill);
   }
 
@@ -61,7 +61,7 @@ public class SkillQueryServiceImpl implements SkillQueryService {
 
     Skill skill = skillRepository.findByAbbreviationAndDeleteFlg(abbreviation, false)
         .orElseThrow(
-            () -> new SkillNotFoundException("Skill not found with abbreviation: " + abbreviation));
+            () -> new ResourceNotFoundException(Skill.class.getName(), "Abbreviation", abbreviation));
 
     return this.mapToSkillView(skill);
   }
@@ -77,7 +77,7 @@ public class SkillQueryServiceImpl implements SkillQueryService {
       List<Integer> notExistedIds = idList.stream()
           .filter(id -> !existedIds.contains(id))
           .toList();
-      throw new SkillNotFoundException("Skill not found with ids in: " + notExistedIds);
+      throw new ResourceNotFoundException(Skill.class.getName(), "ID", String.valueOf(idList));
     }
     return skillList
         .stream()

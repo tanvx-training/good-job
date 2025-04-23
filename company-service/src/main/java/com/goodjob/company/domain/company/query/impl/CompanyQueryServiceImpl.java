@@ -2,6 +2,7 @@ package com.goodjob.company.domain.company.query.impl;
 
 import com.goodjob.common.dto.response.ApiResponse;
 import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.common.util.DateTimeUtils;
 import com.goodjob.company.infrastructure.common.dto.AddressDto;
 import com.goodjob.company.infrastructure.common.enums.CompanySize;
@@ -11,7 +12,6 @@ import com.goodjob.company.domain.company.entity.CompanyMetric;
 import com.goodjob.company.domain.company.entity.CompanySpeciality;
 import com.goodjob.company.domain.company.entity.id.CompanyIndustryId;
 import com.goodjob.company.domain.company.entity.id.CompanySpecialityId;
-import com.goodjob.company.application.exception.CompanyNotFoundException;
 import com.goodjob.company.infrastructure.feign.MetadataFeignClient;
 import com.goodjob.company.infrastructure.feign.industry.IndustryView;
 import com.goodjob.company.infrastructure.feign.speciality.SpecialityView;
@@ -74,7 +74,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
   public CompanyView getCompanyById(Integer id) {
     return companyRepository.findById(id)
             .map(this::convertFromEntityToView)
-            .orElseThrow(() -> new CompanyNotFoundException(id));
+            .orElseThrow(() -> new ResourceNotFoundException(Company.class.getName(), "ID", id));
   }
 
   private CompanyView convertFromEntityToView(Company company) {

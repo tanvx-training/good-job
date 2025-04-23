@@ -1,7 +1,7 @@
 package com.goodjob.metadata.domain.benefit.query.impl;
 
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.benefit.entity.Benefit;
-import com.goodjob.metadata.application.exception.BenefitNotFoundException;
 import com.goodjob.metadata.domain.benefit.dto.BenefitQuery;
 import com.goodjob.metadata.domain.benefit.dto.BenefitView;
 import com.goodjob.metadata.domain.benefit.query.BenefitQueryService;
@@ -48,7 +48,7 @@ public class BenefitQueryServiceImpl implements BenefitQueryService {
     log.info("Fetching benefit with ID: {}", id);
 
     Benefit benefit = benefitRepository.findById(id)
-        .orElseThrow(() -> new BenefitNotFoundException("Benefit not found with ID: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException(Benefit.class.getName(), "ID", id));
 
     return mapToBenefitView(benefit);
   }
@@ -64,7 +64,7 @@ public class BenefitQueryServiceImpl implements BenefitQueryService {
       List<Integer> notExistedIds = idList.stream()
           .filter(id -> !existedIds.contains(id))
           .toList();
-      throw new BenefitNotFoundException("Benefit not found with ids in: " + notExistedIds);
+      throw new ResourceNotFoundException(Benefit.class.getName(), "ID", String.valueOf(idList));
     }
     return skillList
         .stream()

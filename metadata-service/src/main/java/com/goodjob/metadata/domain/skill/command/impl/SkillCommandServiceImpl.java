@@ -1,11 +1,11 @@
 package com.goodjob.metadata.domain.skill.command.impl;
 
+import com.goodjob.common.exception.ResourceExistedException;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.skill.dto.CreateSkillCommand;
 import com.goodjob.metadata.domain.skill.dto.UpdateSkillCommand;
 import com.goodjob.metadata.domain.skill.command.SkillCommandService;
 import com.goodjob.metadata.domain.skill.entity.Skill;
-import com.goodjob.metadata.application.exception.SkillAlreadyExistsException;
-import com.goodjob.metadata.application.exception.SkillNotFoundException;
 import com.goodjob.metadata.domain.skill.repository.SkillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +33,15 @@ public class SkillCommandServiceImpl implements SkillCommandService {
     // Check if skill with the same abbreviation already exists
     if (skillRepository.existsByAbbreviationAndDeleteFlg(command.getAbbreviation(), false)) {
       log.warn("Skill already exists with abbreviation: {}", command.getAbbreviation());
-      throw new SkillAlreadyExistsException(
-          "Skill already exists with abbreviation: " + command.getAbbreviation());
+      throw new ResourceExistedException(Skill.class.getName(),
+          "Abbreviation", command.getAbbreviation());
     }
 
     // Check if skill with the same name already exists
     if (skillRepository.existsByNameAndDeleteFlg(command.getName(), false)) {
       log.warn("Skill already exists with name: {}", command.getName());
-      throw new SkillAlreadyExistsException("Skill already exists with name: " + command.getName());
+      throw new ResourceExistedException(Skill.class.getName(),
+              "name", command.getName());
     }
 
     Skill skill = this.toEntityForCreate(command);
@@ -55,22 +56,22 @@ public class SkillCommandServiceImpl implements SkillCommandService {
     log.info("Updating skill with id: {}", id);
 
     Skill existingSkill = skillRepository.findById(id)
-        .orElseThrow(() -> new SkillNotFoundException("Skill not found with ID: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException(Skill.class.getName(), "ID", id));
 
     // Check if another skill with the same abbreviation already exists
     if (!existingSkill.getAbbreviation().equals(command.getAbbreviation()) &&
         skillRepository.existsByAbbreviationAndDeleteFlg(command.getAbbreviation(), false)) {
       log.warn("Another skill already exists with abbreviation: {}", command.getAbbreviation());
-      throw new SkillAlreadyExistsException(
-          "Another skill already exists with abbreviation: " + command.getAbbreviation());
+      throw new ResourceExistedException(Skill.class.getName(),
+          "Abbreviation", command.getAbbreviation());
     }
 
     // Check if another skill with the same name already exists
     if (!existingSkill.getName().equals(command.getName()) &&
         skillRepository.existsByNameAndDeleteFlg(command.getName(), false)) {
       log.warn("Another skill already exists with name: {}", command.getName());
-      throw new SkillAlreadyExistsException(
-          "Another skill already exists with name: " + command.getName());
+      throw new ResourceExistedException(Skill.class.getName(),
+              "Name", command.getName());
     }
 
     // Update the existing skill
@@ -84,7 +85,7 @@ public class SkillCommandServiceImpl implements SkillCommandService {
     log.info("Deleting skill with id: {}", id);
 
     if (!skillRepository.existsById(id)) {
-      throw new SkillNotFoundException("Skill not found with ID: " + id);
+      throw new ResourceNotFoundException(Skill.class.getName(), "ID", id);
     }
 
     skillRepository.deleteById(id);

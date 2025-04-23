@@ -1,8 +1,8 @@
 package com.goodjob.metadata.domain.industry.query.impl;
 
 import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.industry.entity.Industry;
-import com.goodjob.metadata.application.exception.IndustryNotFoundException;
 import com.goodjob.metadata.domain.industry.dto.IndustryQuery;
 import com.goodjob.metadata.domain.industry.dto.IndustryView;
 import com.goodjob.metadata.domain.industry.query.IndustryQueryService;
@@ -51,7 +51,7 @@ public class IndustryQueryServiceImpl implements IndustryQueryService {
         log.info("Fetching industry with ID: {}", id);
         return industryRepository.findById(id)
                 .map(this::mapToIndustryView)
-                .orElseThrow(() -> new IndustryNotFoundException("Industry not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(Industry.class.getName(), "ID", id));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class IndustryQueryServiceImpl implements IndustryQueryService {
             List<Integer> notExistedIds = idList.stream()
                     .filter(id -> !existedIds.contains(id))
                     .toList();
-            throw new IndustryNotFoundException("Industry not found with ids in: " + notExistedIds);
+            throw new ResourceNotFoundException(Industry.class.getName(), "ID", String.valueOf(idList));
         }
         return industryList
                 .stream()
