@@ -2,6 +2,8 @@ package com.goodjob.job.domain.job.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Builder;
@@ -13,7 +15,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class JobView {
+public class JobView implements Serializable {
 
     private Long jobId;
     private JobCompanyView company;

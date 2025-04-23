@@ -12,8 +12,17 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  cache:
+    type: redis
+    redis:
+      time-to-live: 36000  # Thời gian mặc định (giây)
+      cache-null-values: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
   kafka:
-    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    bootstrap-servers: localhost:9092
     security:
       protocol: plaintext
     producer:
@@ -36,3 +45,10 @@ spring:
         spring.json.trusted.packages: '*'
         spring.json.use.type.headers: true
         partition.assignment.strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
+
+
+logging:
+  level:
+    org:
+      springframework:
+        cache: DEBUG

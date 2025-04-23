@@ -5,13 +5,15 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * DTO for displaying job industry information.
  */
 @Data
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class JobIndustryView {
+public class JobIndustryView implements Serializable {
 
     private String industryName;
 } 

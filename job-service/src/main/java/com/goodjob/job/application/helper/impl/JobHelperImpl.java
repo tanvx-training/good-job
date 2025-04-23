@@ -13,6 +13,7 @@ import com.goodjob.job.infrastructure.feign.company.CompanyView;
 import com.goodjob.job.infrastructure.feign.industry.IndustryView;
 import com.goodjob.job.infrastructure.feign.skill.SkillView;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -32,6 +33,12 @@ public class JobHelperImpl implements JobHelper {
     private final CompanyFeignClient companyFeignClient;
 
     @Override
+    @Cacheable(
+            value = "benefits",
+            key = "#idList.toString()",
+            condition = "#idList != null",
+            unless = "#result.isEmpty()"
+    )
     public Set<JobBenefitView> getBenefits(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
@@ -51,6 +58,12 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
+    @Cacheable(
+            value = "skills",
+            key = "#idList.toString()",
+            condition = "#idList != null",
+            unless = "#result.isEmpty()"
+    )
     public Set<JobSkillView> getSkills(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
@@ -71,6 +84,12 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
+    @Cacheable(
+            value = "industries",
+            key = "#idList.toString()",
+            condition = "#idList != null",
+            unless = "#result.isEmpty()"
+    )
     public Set<JobIndustryView> getIndustries(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
@@ -90,6 +109,11 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
+    @Cacheable(
+            value = "company",
+            key = "#companyId.toString()",
+            condition = "#companyId != null",
+            unless = "#result.name == null")
     public JobCompanyView getCompany(Integer companyId) {
         JobCompanyView.JobCompanyViewBuilder companyBuilder = JobCompanyView.builder();
         if (Objects.nonNull(companyId)) {

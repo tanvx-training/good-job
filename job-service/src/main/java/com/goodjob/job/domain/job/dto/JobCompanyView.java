@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class JobCompanyView {
+public class JobCompanyView implements Serializable {
 
   private String name;
   private String description;
