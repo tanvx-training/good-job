@@ -1,6 +1,6 @@
 package com.goodjob.metadata.domain.industry.query;
 
-import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.metadata.domain.industry.dto.IndustryQuery;
 import com.goodjob.metadata.domain.industry.dto.IndustryView;
 

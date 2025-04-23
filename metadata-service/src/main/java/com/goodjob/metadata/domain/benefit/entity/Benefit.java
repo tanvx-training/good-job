@@ -1,6 +1,6 @@
 package com.goodjob.metadata.domain.benefit.entity;
 
-import com.goodjob.common.entity.BaseEntity;
+import com.goodjob.common.domain.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

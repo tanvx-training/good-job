@@ -1,6 +1,6 @@
 package com.goodjob.metadata;
 
-import com.goodjob.common.config.SharedConfigurationReference;
+import com.goodjob.common.infrastructure.config.SharedConfigurationReference;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

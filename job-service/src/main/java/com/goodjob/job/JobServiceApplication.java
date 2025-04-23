@@ -1,7 +1,7 @@
 package com.goodjob.job;
 
-import com.goodjob.common.config.SharedConfigurationReference;
-import com.goodjob.common.feign.config.EnableGoodJobFeignClients;
+import com.goodjob.common.infrastructure.config.SharedConfigurationReference;
+import com.goodjob.common.api.feign.config.CustomFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Main application class for the Job service.
  */
 @SpringBootApplication
-@EnableGoodJobFeignClients
+@CustomFeignClients
 @EnableCaching
 @EnableScheduling
 @Import(SharedConfigurationReference.class)

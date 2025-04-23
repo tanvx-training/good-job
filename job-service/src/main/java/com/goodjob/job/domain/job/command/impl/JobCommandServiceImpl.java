@@ -1,7 +1,7 @@
 package com.goodjob.job.domain.job.command.impl;
 
-import com.goodjob.common.dto.event.JobPostingEvent;
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.dto.event.JobPostingEvent;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.job.domain.job.dto.PostJobCommand;
 import com.goodjob.job.api.kafka.JobPostingProducer;
 import com.goodjob.job.domain.job.command.JobCommandService;

@@ -1,7 +1,7 @@
 package com.goodjob.metadata.domain.skill.query.impl;
 
-import com.goodjob.common.dto.response.PageResponseDTO;
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.skill.entity.Skill;
 import com.goodjob.metadata.domain.skill.dto.SkillQuery;
 import com.goodjob.metadata.domain.skill.dto.SkillView;

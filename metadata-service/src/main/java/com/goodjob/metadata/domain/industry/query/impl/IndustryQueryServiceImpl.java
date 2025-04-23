@@ -1,7 +1,7 @@
 package com.goodjob.metadata.domain.industry.query.impl;
 
-import com.goodjob.common.dto.response.PageResponseDTO;
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.industry.entity.Industry;
 import com.goodjob.metadata.domain.industry.dto.IndustryQuery;
 import com.goodjob.metadata.domain.industry.dto.IndustryView;

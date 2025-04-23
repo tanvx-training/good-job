@@ -1,6 +1,6 @@
 package com.goodjob.company.domain.company.query;
 
-import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.company.domain.company.dto.CompanyQuery;
 import com.goodjob.company.domain.company.dto.CompanyView;
 

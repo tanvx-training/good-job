@@ -1,6 +1,6 @@
 package com.goodjob.metadata.domain.skill.entity;
 
-import com.goodjob.common.entity.BaseEntity;
+import com.goodjob.common.domain.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

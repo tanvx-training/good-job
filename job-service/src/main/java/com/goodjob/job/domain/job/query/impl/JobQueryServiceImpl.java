@@ -1,9 +1,9 @@
 package com.goodjob.job.domain.job.query.impl;
 
-import com.goodjob.common.dto.response.PageResponseDTO;
-import com.goodjob.common.exception.ResourceNotFoundException;
-import com.goodjob.common.util.DateTimeUtils;
-import com.goodjob.job.application.helper.JobHelper;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
+import com.goodjob.common.infrastructure.util.DateTimeUtils;
+import com.goodjob.job.infrastructure.helper.JobHelper;
 import com.goodjob.job.domain.job.entity.Job;
 import com.goodjob.job.domain.job.entity.JobBenefit;
 import com.goodjob.job.domain.job.entity.JobIndustry;

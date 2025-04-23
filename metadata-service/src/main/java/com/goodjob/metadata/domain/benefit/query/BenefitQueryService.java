@@ -2,7 +2,7 @@ package com.goodjob.metadata.domain.benefit.query;
 
 import com.goodjob.metadata.domain.benefit.dto.BenefitQuery;
 import com.goodjob.metadata.domain.benefit.dto.BenefitView;
-import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
 import java.util.List;
 
 /**

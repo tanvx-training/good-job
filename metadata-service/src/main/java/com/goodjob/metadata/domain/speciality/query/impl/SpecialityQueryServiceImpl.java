@@ -1,7 +1,7 @@
 package com.goodjob.metadata.domain.speciality.query.impl;
 
-import com.goodjob.common.dto.response.PageResponseDTO;
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.speciality.entity.Speciality;
 import com.goodjob.metadata.domain.speciality.dto.SpecialityQuery;
 import com.goodjob.metadata.domain.speciality.dto.SpecialityView;

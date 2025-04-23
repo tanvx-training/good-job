@@ -1,12 +1,12 @@
 package com.goodjob.metadata.domain.benefit.query.impl;
 
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.benefit.entity.Benefit;
 import com.goodjob.metadata.domain.benefit.dto.BenefitQuery;
 import com.goodjob.metadata.domain.benefit.dto.BenefitView;
 import com.goodjob.metadata.domain.benefit.query.BenefitQueryService;
 import com.goodjob.metadata.domain.benefit.repository.BenefitRepository;
-import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;

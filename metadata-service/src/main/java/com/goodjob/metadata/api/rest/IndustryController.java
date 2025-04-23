@@ -1,7 +1,7 @@
 package com.goodjob.metadata.api.rest;
 
-import com.goodjob.common.dto.response.ApiResponse;
-import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.application.dto.response.ApiResponse;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.metadata.domain.industry.dto.CreateIndustryCommand;
 import com.goodjob.metadata.domain.industry.dto.UpdateIndustryCommand;
 import com.goodjob.metadata.domain.industry.command.IndustryCommandService;

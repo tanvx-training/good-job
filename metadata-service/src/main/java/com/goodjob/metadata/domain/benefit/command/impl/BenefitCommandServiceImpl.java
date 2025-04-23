@@ -1,7 +1,7 @@
 package com.goodjob.metadata.domain.benefit.command.impl;
 
-import com.goodjob.common.exception.ResourceExistedException;
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.exception.ResourceExistedException;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.benefit.command.BenefitCommandService;
 import com.goodjob.metadata.domain.benefit.dto.CreateBenefitCommand;
 import com.goodjob.metadata.domain.benefit.dto.UpdateBenefitCommand;

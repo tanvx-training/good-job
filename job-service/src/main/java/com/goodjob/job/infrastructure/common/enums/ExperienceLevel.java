@@ -1,6 +1,6 @@
 package com.goodjob.job.infrastructure.common.enums;
 
-import com.goodjob.common.enums.BaseEnum;
+import com.goodjob.common.application.enums.BaseEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

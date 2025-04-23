@@ -1,6 +1,6 @@
 package com.goodjob.metadata.domain.skill.query;
 
-import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.metadata.domain.skill.dto.SkillQuery;
 import com.goodjob.metadata.domain.skill.dto.SkillView;
 

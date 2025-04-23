@@ -1,9 +1,11 @@
 package com.goodjob.company.domain.company.query.impl;
 
-import com.goodjob.common.dto.response.ApiResponse;
-import com.goodjob.common.dto.response.PageResponseDTO;
-import com.goodjob.common.exception.ResourceNotFoundException;
-import com.goodjob.common.util.DateTimeUtils;
+import com.goodjob.common.api.feign.client.MetadataClient;
+import com.goodjob.common.api.feign.dto.industry.IndustryView;
+import com.goodjob.common.application.dto.response.ApiResponse;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
+import com.goodjob.common.infrastructure.util.DateTimeUtils;
 import com.goodjob.company.infrastructure.common.dto.AddressDto;
 import com.goodjob.company.infrastructure.common.enums.CompanySize;
 import com.goodjob.company.domain.company.entity.Company;
@@ -12,9 +14,6 @@ import com.goodjob.company.domain.company.entity.CompanyMetric;
 import com.goodjob.company.domain.company.entity.CompanySpeciality;
 import com.goodjob.company.domain.company.entity.id.CompanyIndustryId;
 import com.goodjob.company.domain.company.entity.id.CompanySpecialityId;
-import com.goodjob.company.infrastructure.feign.MetadataFeignClient;
-import com.goodjob.company.infrastructure.feign.industry.IndustryView;
-import com.goodjob.company.infrastructure.feign.speciality.SpecialityView;
 import com.goodjob.company.domain.company.dto.CompanyIndustryView;
 import com.goodjob.company.domain.company.dto.CompanyMetricView;
 import com.goodjob.company.domain.company.dto.CompanyQuery;
@@ -53,7 +52,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
 
   private final CompanyRepository companyRepository;
 
-  private final MetadataFeignClient metadataFeignClient;
+  private final MetadataClient metadataClient;
 
   @Override
   public PageResponseDTO<CompanyView> getAllCompanies(CompanyQuery query) {
@@ -113,7 +112,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     if (!CollectionUtils.isEmpty(cisIds)) {
       String cisIdParam = String.join(",",
               cisIds.stream().map(String::valueOf).toList());
-      ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataFeignClient.getBatchIndustries(
+      ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataClient.getBatchIndustries(
               cisIdParam);
       if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
               industryResponse.getBody())) {
@@ -137,7 +136,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     if (!CollectionUtils.isEmpty(cssIds)) {
       String cssIdParam = String.join(",",
               cssIds.stream().map(String::valueOf).toList());
-      ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = metadataFeignClient.getBatchSpecialities(
+      ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = metadataClient.getBatchSpecialities(
               cssIdParam);
       if (specialityResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
               specialityResponse.getBody())) {
@@ -190,7 +189,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     if (!CollectionUtils.isEmpty(cisIds)) {
       String cisIdParam = String.join(",",
           cisIds.stream().map(String::valueOf).toList());
-      ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataFeignClient.getBatchIndustries(
+      ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataClient.getBatchIndustries(
           cisIdParam);
       if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
           industryResponse.getBody())) {
@@ -214,7 +213,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     if (!CollectionUtils.isEmpty(cssIds)) {
       String cssIdParam = String.join(",",
           cssIds.stream().map(String::valueOf).toList());
-      ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = metadataFeignClient.getBatchSpecialities(
+      ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = metadataClient.getBatchSpecialities(
           cssIdParam);
       if (specialityResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
           specialityResponse.getBody())) {

@@ -1,7 +1,7 @@
 package com.goodjob.company.api.rest;
 
-import com.goodjob.common.dto.response.ApiResponse;
-import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.application.dto.response.ApiResponse;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.company.domain.company.dto.CompanyQuery;
 import com.goodjob.company.domain.company.dto.CompanyView;
 import com.goodjob.company.domain.company.query.CompanyQueryService;

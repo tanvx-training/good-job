@@ -1,8 +1,8 @@
 package com.goodjob.metadata.application.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.goodjob.common.exception.ResourceExistedException;
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.exception.ResourceExistedException;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;

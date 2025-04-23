@@ -1,6 +1,6 @@
 package com.goodjob.job.domain.job.entity;
 
-import com.goodjob.common.entity.BaseEntity;
+import com.goodjob.common.domain.entity.BaseEntity;
 import com.goodjob.job.domain.job.entity.id.JobBenefitId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

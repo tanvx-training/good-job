@@ -1,9 +1,9 @@
 package com.goodjob.job.api.kafka;
 
-import com.goodjob.common.dto.event.JobPostingEvent;
-import com.goodjob.common.dto.message.KafkaMessage;
-import com.goodjob.common.enums.EventType;
-import com.goodjob.common.util.MessageBuilder;
+import com.goodjob.common.application.dto.event.JobPostingEvent;
+import com.goodjob.common.application.dto.message.KafkaMessage;
+import com.goodjob.common.application.enums.EventType;
+import com.goodjob.common.infrastructure.util.MessageBuilder;
 import com.goodjob.job.infrastructure.common.dto.KafkaConstants;
 import com.goodjob.job.infrastructure.common.enums.PostingType;
 import lombok.RequiredArgsConstructor;

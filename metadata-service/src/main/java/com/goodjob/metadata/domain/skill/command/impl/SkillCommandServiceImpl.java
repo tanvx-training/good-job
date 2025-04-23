@@ -1,7 +1,7 @@
 package com.goodjob.metadata.domain.skill.command.impl;
 
-import com.goodjob.common.exception.ResourceExistedException;
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.exception.ResourceExistedException;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.metadata.domain.skill.dto.CreateSkillCommand;
 import com.goodjob.metadata.domain.skill.dto.UpdateSkillCommand;
 import com.goodjob.metadata.domain.skill.command.SkillCommandService;

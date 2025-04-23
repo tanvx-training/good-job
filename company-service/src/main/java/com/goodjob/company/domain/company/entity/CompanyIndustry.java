@@ -1,6 +1,6 @@
 package com.goodjob.company.domain.company.entity;
 
-import com.goodjob.common.entity.BaseEntity;
+import com.goodjob.common.domain.entity.BaseEntity;
 import com.goodjob.company.domain.company.entity.id.CompanyIndustryId;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;

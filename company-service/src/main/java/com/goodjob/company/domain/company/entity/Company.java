@@ -1,13 +1,12 @@
 package com.goodjob.company.domain.company.entity;
 
-import com.goodjob.common.entity.BaseEntity;
+import com.goodjob.common.domain.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.util.Set;

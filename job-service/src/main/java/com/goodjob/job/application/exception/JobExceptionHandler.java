@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.goodjob.common.exception.ResourceExistedException;
-import com.goodjob.common.exception.ResourceNotFoundException;
+import com.goodjob.common.application.exception.ResourceExistedException;
+import com.goodjob.common.application.exception.ResourceNotFoundException;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;

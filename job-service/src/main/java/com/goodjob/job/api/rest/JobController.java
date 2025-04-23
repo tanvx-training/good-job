@@ -1,7 +1,7 @@
 package com.goodjob.job.api.rest;
 
-import com.goodjob.common.dto.response.ApiResponse;
-import com.goodjob.common.dto.response.PageResponseDTO;
+import com.goodjob.common.application.dto.response.ApiResponse;
+import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.job.domain.job.dto.PostJobCommand;
 import com.goodjob.job.domain.job.command.JobCommandService;
 import com.goodjob.job.domain.job.dto.JobQuery;
