@@ -13,8 +13,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @CustomFeignClients
-@EnableCaching
-@EnableScheduling
 @Import(SharedConfigurationReference.class)
 public class JobServiceApplication {
 

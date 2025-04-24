@@ -2,6 +2,7 @@ package com.goodjob.company.domain.company.query.impl;
 
 import com.goodjob.common.api.feign.client.MetadataClient;
 import com.goodjob.common.api.feign.dto.industry.IndustryView;
+import com.goodjob.common.api.feign.dto.speciality.SpecialityView;
 import com.goodjob.common.application.dto.response.ApiResponse;
 import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.common.application.exception.ResourceNotFoundException;

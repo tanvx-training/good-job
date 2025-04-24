@@ -141,7 +141,7 @@ public class SpecialityController {
     }
 
     @GetMapping("/batch")
-//    @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SPECIALITY')")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_SPECIALITY')")
     public ResponseEntity<ApiResponse<List<SpecialityView>>> getBatchSpeciality(@RequestParam("ids") String ids) {
         List<Integer> idList = Arrays.stream(ids.split(","))
                 .map(Integer::parseInt)

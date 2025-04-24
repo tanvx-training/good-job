@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@EnableFeignClients(basePackages = "com.goodjob.common.feign.client")
+@EnableFeignClients(basePackages = "com.goodjob.common.api.feign.client")
 @Import(FeignClientConfig.class)
 public @interface CustomFeignClients {
 } 

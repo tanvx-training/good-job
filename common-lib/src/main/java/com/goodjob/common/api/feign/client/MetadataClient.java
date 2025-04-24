@@ -5,6 +5,7 @@ import com.goodjob.common.api.feign.dto.benefit.BenefitView;
 import com.goodjob.common.api.feign.dto.company.CompanyView;
 import com.goodjob.common.api.feign.dto.industry.IndustryView;
 import com.goodjob.common.api.feign.dto.skill.SkillView;
+import com.goodjob.common.api.feign.dto.speciality.SpecialityView;
 import com.goodjob.common.application.dto.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +31,7 @@ public interface MetadataClient {
 
     @GetMapping("/api/v1/metadata/benefits/batch")
     ResponseEntity<ApiResponse<List<BenefitView>>> getBatchBenefits(@RequestParam("ids") String ids);
+
+    @GetMapping("/api/v1/metadata/specialities/batch")
+    ResponseEntity<ApiResponse<List<SpecialityView>>> getBatchSpecialities(@RequestParam("ids") String ids);
 }

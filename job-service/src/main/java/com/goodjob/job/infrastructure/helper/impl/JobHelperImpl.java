@@ -33,12 +33,6 @@ public class JobHelperImpl implements JobHelper {
     private final CompanyClient companyClient;
 
     @Override
-    @Cacheable(
-            value = "benefits",
-            key = "#idList.toString()",
-            condition = "#idList != null",
-            unless = "#result.isEmpty()"
-    )
     public Set<JobBenefitView> getBenefits(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
@@ -58,12 +52,6 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
-    @Cacheable(
-            value = "skills",
-            key = "#idList.toString()",
-            condition = "#idList != null",
-            unless = "#result.isEmpty()"
-    )
     public Set<JobSkillView> getSkills(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
@@ -84,12 +72,6 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
-    @Cacheable(
-            value = "industries",
-            key = "#idList.toString()",
-            condition = "#idList != null",
-            unless = "#result.isEmpty()"
-    )
     public Set<JobIndustryView> getIndustries(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
@@ -109,11 +91,6 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
-    @Cacheable(
-            value = "company",
-            key = "#companyId.toString()",
-            condition = "#companyId != null",
-            unless = "#result.name == null")
     public JobCompanyView getCompany(Integer companyId) {
         JobCompanyView.JobCompanyViewBuilder companyBuilder = JobCompanyView.builder();
         if (Objects.nonNull(companyId)) {
