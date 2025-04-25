@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,5 +16,11 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CompanyIndustryView {
 
-    private String industryName;
+    private Integer id;
+    private String name;
+    private LocalDateTime createdOn;
+    private String createdBy;
+    private LocalDateTime lastModifiedOn;
+    private String lastModifiedBy;
+    private boolean deleteFlg;
 }

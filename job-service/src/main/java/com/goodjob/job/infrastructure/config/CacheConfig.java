@@ -14,6 +14,8 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -41,15 +43,28 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+        RedisCacheConfiguration defaultCacheConfig = createCacheConfiguration(Duration.ofSeconds(defaultTTL));
+        // Cấu hình cho từng loại cache với TTL khác nhau
+        // Dữ liệu metadata (ít thay đổi) - cache lâu hơn
+        cacheConfigurations.put("benefits", createCacheConfiguration(Duration.ofHours(24)));
+        cacheConfigurations.put("skills", createCacheConfiguration(Duration.ofHours(24)));
+        cacheConfigurations.put("industries", createCacheConfiguration(Duration.ofHours(24)));
+        // Dữ liệu company (thay đổi thường xuyên hơn) - cache ngắn hơn
+        cacheConfigurations.put("companies", createCacheConfiguration(Duration.ofHours(6)));
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(defaultCacheConfig)
+                .withInitialCacheConfigurations(cacheConfigurations)
+                .build();
+    }
+
+    private RedisCacheConfiguration createCacheConfiguration(Duration ttl) {
         GenericJackson2JsonRedisSerializer redisSerializer = new GenericJackson2JsonRedisSerializer();
-        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(this.defaultTTL))
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(ttl)
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
                 .disableCachingNullValues()
                 .prefixCacheNameWith("job-service:")
-                .computePrefixWith(cacheName -> "cache" + cacheName + ":");
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(redisCacheConfiguration)
-                .build();
+                .computePrefixWith(cacheName -> "cache:" + cacheName + ":");
     }
 }

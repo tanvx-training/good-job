@@ -16,6 +16,7 @@ import com.goodjob.job.domain.job.dto.*;
 import com.goodjob.job.domain.job.repository.*;
 import com.goodjob.job.domain.job.query.JobQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Implementation of the JobQueryService interface.
@@ -47,7 +51,14 @@ public class JobQueryServiceImpl implements JobQueryService {
         Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
 
         Page<JobView> jobViewPage = jobRepository.findByDeleteFlg(false, pageable)
-                .map(this::convertFromSummaryToView);
+                .map((jobSummary -> {
+                    try {
+                        return this.convertFromSummaryToView(jobSummary);
+                    } catch (ExecutionException | InterruptedException e) {
+                        Thread.currentThread().interrupt(); // Preserve interrupt status
+                        throw new RuntimeException("Error converting summary to view", e);
+                    }
+                }));
 
         return new PageResponseDTO<>(jobViewPage);
     }
@@ -55,17 +66,35 @@ public class JobQueryServiceImpl implements JobQueryService {
     @Override
     public JobView getJobById(Long id) {
         return jobRepository.findById(id)
-                .map(this::convertFromEntityToView)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        Job.class.getName(),
-                        "id",
-                        id));
+                .map(job -> {
+                    try {
+                        return this.convertFromEntityToView(job);
+                    } catch (ExecutionException | InterruptedException e) {
+                        Thread.currentThread().interrupt(); // Preserve interrupt status
+                        throw new RuntimeException("Error converting summary to view", e);
+                    }
+                })
+                .orElseThrow(() -> new ResourceNotFoundException(Job.class.getName(), "ID", id));
     }
 
-    private JobView convertFromEntityToView(Job job) {
+    private JobView convertFromEntityToView(Job job) throws ExecutionException, InterruptedException {
+        CompletableFuture<JobCompanyView> jcvFuture = jobHelper.getCompany(job.getCompanyId());
+        CompletableFuture<Set<JobBenefitView>> jbvFuture = jobHelper.getBenefits(job.getJobBenefits()
+                .stream()
+                .map(JobBenefit::getBenefitId)
+                .toList());
+        CompletableFuture<Set<JobSkillView>> jsvFuture = jobHelper.getSkills(job.getJobSkills()
+                .stream()
+                .map(JobSkill::getSkillId)
+                .toList());
+        CompletableFuture<Set<JobIndustryView>> jivFuture = jobHelper.getIndustries(job.getJobIndustries()
+                .stream()
+                .map(JobIndustry::getIndustryId)
+                .toList());
+        CompletableFuture.allOf(jcvFuture, jbvFuture, jsvFuture, jivFuture).join();
         return JobView.builder()
                 .jobId(job.getJobId())
-                .company(jobHelper.getCompany(job.getCompanyId()))
+                .company(jcvFuture.get())
                 .title(job.getTitle())
                 .description(job.getDescription())
                 .workType(WorkType.fromValue(job.getWorkType()).getDescription())
@@ -88,25 +117,30 @@ public class JobQueryServiceImpl implements JobQueryService {
                 .jobStatus(Objects.nonNull(job.getJobStatus())
                         ? JobStatus.fromValue(job.getJobStatus()).getDescription()
                         : null)
-                .benefits(jobHelper.getBenefits(job.getJobBenefits()
-                        .stream()
-                        .map(JobBenefit::getBenefitId)
-                        .toList()))
-                .skills(jobHelper.getSkills(job.getJobSkills()
-                        .stream()
-                        .map(JobSkill::getSkillId)
-                        .toList()))
-                .industries(jobHelper.getIndustries(job.getJobIndustries()
-                        .stream()
-                        .map(JobIndustry::getIndustryId)
-                        .toList()))
+                .benefits(jbvFuture.get())
+                .skills(jsvFuture.get())
+                .industries(jivFuture.get())
                 .build();
     }
 
-    private JobView convertFromSummaryToView(JobSummary summary) {
+    private JobView convertFromSummaryToView(JobSummary summary) throws ExecutionException, InterruptedException {
+        CompletableFuture<JobCompanyView> jcvFuture = jobHelper.getCompany(summary.getCompanyId());
+        CompletableFuture<Set<JobBenefitView>> jbvFuture = jobHelper.getBenefits(summary.getJobBenefits()
+                .stream()
+                .map(JobBenefitSummary::getBenefitId)
+                .toList());
+        CompletableFuture<Set<JobSkillView>> jsvFuture = jobHelper.getSkills(summary.getJobSkills()
+                .stream()
+                .map(JobSkillSummary::getSkillId)
+                .toList());
+        CompletableFuture<Set<JobIndustryView>> jivFuture = jobHelper.getIndustries(summary.getJobIndustries()
+                .stream()
+                .map(JobIndustrySummary::getIndustryId)
+                .toList());
+        CompletableFuture.allOf(jcvFuture, jbvFuture, jsvFuture, jivFuture).join();
         return JobView.builder()
                 .jobId(summary.getJobId())
-                .company(jobHelper.getCompany(summary.getCompanyId()))
+                .company(jcvFuture.get())
                 .title(summary.getTitle())
                 .description(summary.getDescription())
                 .workType(WorkType.fromValue(summary.getWorkType()).getDescription())
@@ -121,17 +155,9 @@ public class JobQueryServiceImpl implements JobQueryService {
                 .jobStatus(Objects.nonNull(summary.getJobStatus()) ? JobStatus.fromValue(summary.getJobStatus()).getDescription() : null)
                 .views(summary.getViews())
                 .applies(summary.getApplies())
-                .benefits(jobHelper.getBenefits(summary.getJobBenefits().stream()
-                        .map(JobBenefitSummary::getBenefitId)
-                        .toList()))
-                .skills(jobHelper.getSkills(summary.getJobSkills()
-                        .stream()
-                        .map(JobSkillSummary::getSkillId)
-                        .toList()))
-                .industries(jobHelper.getIndustries(summary.getJobIndustries()
-                        .stream()
-                        .map(JobIndustrySummary::getIndustryId)
-                        .toList()))
+                .benefits(jbvFuture.get())
+                .skills(jsvFuture.get())
+                .industries(jivFuture.get())
                 .build();
     }
 }

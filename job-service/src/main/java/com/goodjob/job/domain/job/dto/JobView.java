@@ -6,14 +6,19 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * DTO for displaying job information.
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JobView implements Serializable {
 

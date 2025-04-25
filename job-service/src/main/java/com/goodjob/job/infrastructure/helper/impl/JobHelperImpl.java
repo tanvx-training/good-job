@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,65 +34,87 @@ public class JobHelperImpl implements JobHelper {
     private final CompanyClient companyClient;
 
     @Override
-    public Set<JobBenefitView> getBenefits(List<Integer> idList) {
+    @Cacheable(value = "benefits", key = "#idList.toString()", unless = "#result.join().isEmpty()")
+    public CompletableFuture<Set<JobBenefitView>> getBenefits(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
                     .toList());
             ResponseEntity<ApiResponse<List<BenefitView>>> benefitResponse = metadataClient.getBatchBenefits(ids);
             if (benefitResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(benefitResponse.getBody())) {
-                return benefitResponse.getBody().getData()
+                return CompletableFuture.supplyAsync(() -> benefitResponse.getBody().getData()
                         .stream()
                         .map(bv -> JobBenefitView.builder()
-                                .benefitName(bv.getType())
+                                .id(bv.getId())
+                                .type(bv.getType())
+                                .createdOn(bv.getCreatedOn())
+                                .createdBy(bv.getCreatedBy())
+                                .lastModifiedOn(bv.getLastModifiedOn())
+                                .lastModifiedBy(bv.getLastModifiedBy())
+                                .deleteFlg(bv.isDeleteFlg())
                                 .build())
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toSet()));
             }
         }
-        return Collections.emptySet();
+        return CompletableFuture.supplyAsync(Collections::emptySet);
     }
 
     @Override
-    public Set<JobSkillView> getSkills(List<Integer> idList) {
+    @Cacheable(value = "skills", key = "#idList.toString()", unless = "#result.isEmpty()")
+    public CompletableFuture<Set<JobSkillView>> getSkills(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
                     .toList());
             ResponseEntity<ApiResponse<List<SkillView>>> skillResponse = metadataClient.getBatchSkills(ids);
             if (skillResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(skillResponse.getBody())) {
-                return skillResponse.getBody().getData()
+                return CompletableFuture.supplyAsync(() -> skillResponse.getBody().getData()
                         .stream()
                         .map(sv -> JobSkillView.builder()
+                                .id(sv.getId())
                                 .abbreviation(sv.getAbbreviation())
                                 .name(sv.getName())
+                                .createdOn(sv.getCreatedOn())
+                                .createdBy(sv.getCreatedBy())
+                                .lastModifiedOn(sv.getLastModifiedOn())
+                                .lastModifiedBy(sv.getLastModifiedBy())
+                                .deleteFlg(sv.isDeleteFlg())
                                 .build())
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toSet()));
             }
         }
-        return Collections.emptySet();
+        return CompletableFuture.supplyAsync(Collections::emptySet);
     }
 
     @Override
-    public Set<JobIndustryView> getIndustries(List<Integer> idList) {
+    @Cacheable(value = "industries", key = "#idList.toString()", unless = "#result.isEmpty()")
+    public CompletableFuture<Set<JobIndustryView>> getIndustries(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             String ids = String.join(",", idList.stream()
                     .map(String::valueOf)
                     .toList());
             ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataClient.getBatchIndustries(ids);
             if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(industryResponse.getBody())) {
-                return industryResponse.getBody().getData()
+                return CompletableFuture.supplyAsync(() -> industryResponse.getBody().getData()
                         .stream()
                         .map(iv -> JobIndustryView.builder()
-                                .industryName(iv.getName())
+                                .id(iv.getId())
+                                .name(iv.getName())
+                                .createdOn(iv.getCreatedOn())
+                                .createdBy(iv.getCreatedBy())
+                                .lastModifiedOn(iv.getLastModifiedOn())
+                                .lastModifiedBy(iv.getLastModifiedBy())
+                                .deleteFlg(iv.isDeleteFlg())
                                 .build())
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toSet()));
             }
         }
-        return Collections.emptySet();
+        return CompletableFuture.supplyAsync(Collections::emptySet);
     }
 
     @Override
-    public JobCompanyView getCompany(Integer companyId) {
+    @Cacheable(value = "companies", key = "#companyId", unless = "#companyId == null")
+    public CompletableFuture<JobCompanyView> getCompany(Integer companyId) {
         JobCompanyView.JobCompanyViewBuilder companyBuilder = JobCompanyView.builder();
         if (Objects.nonNull(companyId)) {
             ApiResponse<CompanyView> companyResponse = companyClient.getCompanyById(companyId.longValue());
@@ -105,6 +128,6 @@ public class JobHelperImpl implements JobHelper {
                         .url(company.getUrl());
             }
         }
-        return companyBuilder.build();
+        return CompletableFuture.supplyAsync(companyBuilder::build);
     }
 }

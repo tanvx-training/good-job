@@ -1,12 +1,9 @@
 package com.goodjob.company.domain.company.query.impl;
 
-import com.goodjob.common.api.feign.client.MetadataClient;
-import com.goodjob.common.api.feign.dto.industry.IndustryView;
-import com.goodjob.common.api.feign.dto.speciality.SpecialityView;
-import com.goodjob.common.application.dto.response.ApiResponse;
 import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.common.infrastructure.util.DateTimeUtils;
+import com.goodjob.company.domain.company.dto.*;
 import com.goodjob.company.infrastructure.common.dto.AddressDto;
 import com.goodjob.company.infrastructure.common.enums.CompanySize;
 import com.goodjob.company.domain.company.entity.Company;
@@ -15,11 +12,6 @@ import com.goodjob.company.domain.company.entity.CompanyMetric;
 import com.goodjob.company.domain.company.entity.CompanySpeciality;
 import com.goodjob.company.domain.company.entity.id.CompanyIndustryId;
 import com.goodjob.company.domain.company.entity.id.CompanySpecialityId;
-import com.goodjob.company.domain.company.dto.CompanyIndustryView;
-import com.goodjob.company.domain.company.dto.CompanyMetricView;
-import com.goodjob.company.domain.company.dto.CompanyQuery;
-import com.goodjob.company.domain.company.dto.CompanySpecialityView;
-import com.goodjob.company.domain.company.dto.CompanyView;
 import com.goodjob.company.domain.company.query.CompanyQueryService;
 import com.goodjob.company.domain.company.repository.CompanyIndustrySummary;
 import com.goodjob.company.domain.company.repository.CompanyMetricSummary;
@@ -31,16 +23,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+import com.goodjob.company.infrastructure.helper.CompanyHelper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -53,7 +47,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
 
   private final CompanyRepository companyRepository;
 
-  private final MetadataClient metadataClient;
+  private final CompanyHelper companyHelper;
 
   @Override
   public PageResponseDTO<CompanyView> getAllCompanies(CompanyQuery query) {
@@ -63,21 +57,34 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
 
     Page<CompanyView> companyViewPage = companyRepository.findByDeleteFlg(false, pageable)
-        .map(summary -> {
-          log.info("Summary={}", summary);
-          return this.convertFromSummaryToView(summary);
-        });
+            .map(summary -> {
+              log.info("Summary={}", summary);
+              try {
+                return this.convertFromSummaryToView(summary);
+              } catch (ExecutionException | InterruptedException e) {
+                Thread.currentThread().interrupt(); // Preserve interrupt status
+                throw new RuntimeException("Error converting summary to view", e);
+              }
+            });
+
     return new PageResponseDTO<>(companyViewPage);
   }
 
   @Override
   public CompanyView getCompanyById(Integer id) {
     return companyRepository.findById(id)
-            .map(this::convertFromEntityToView)
+            .map(company -> {
+              try {
+                return this.convertFromEntityToView(company);
+              } catch (ExecutionException | InterruptedException e) {
+                Thread.currentThread().interrupt(); // Preserve interrupt status
+                throw new RuntimeException("Error converting summary to view", e);
+              }
+            })
             .orElseThrow(() -> new ResourceNotFoundException(Company.class.getName(), "ID", id));
   }
 
-  private CompanyView convertFromEntityToView(Company company) {
+  private CompanyView convertFromEntityToView(Company company) throws ExecutionException, InterruptedException {
     CompanyMetric companyMetric = company.getCompanyMetrics()
             .stream().max(Comparator.comparing(CompanyMetric::getCompanyMetricId))
             .orElse(null);
@@ -105,56 +112,29 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
                             ? DateTimeUtils.fromTimestamp(companyMetric.getRecordOn())
                             : null)
                     .build());
+
     List<Integer> cisIds = companyIndustryList
             .stream()
             .map(CompanyIndustry::getCompanyIndustryId)
             .map(CompanyIndustryId::getIndustryId)
             .toList();
-    if (!CollectionUtils.isEmpty(cisIds)) {
-      String cisIdParam = String.join(",",
-              cisIds.stream().map(String::valueOf).toList());
-      ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataClient.getBatchIndustries(
-              cisIdParam);
-      if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
-              industryResponse.getBody())) {
-        List<IndustryView> industryViews = industryResponse.getBody().getData();
-
-        builder
-                .industries(industryViews
-                        .stream()
-                        .map(industryView ->
-                                CompanyIndustryView.builder().industryName(industryView.getName()).build())
-                        .toList()
-                );
-      }
-    }
+    CompletableFuture<Set<CompanyIndustryView>> civFuture = companyHelper.getIndustries(cisIds);
 
     List<Integer> cssIds = companySpecialityList
             .stream()
             .map(CompanySpeciality::getCompanySpecialityId)
             .map(CompanySpecialityId::getSpecialityId)
             .toList();
-    if (!CollectionUtils.isEmpty(cssIds)) {
-      String cssIdParam = String.join(",",
-              cssIds.stream().map(String::valueOf).toList());
-      ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = metadataClient.getBatchSpecialities(
-              cssIdParam);
-      if (specialityResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
-              specialityResponse.getBody())) {
-        List<SpecialityView> specialityViews = specialityResponse.getBody().getData();
+    CompletableFuture<Set<CompanySpecialityView>> csvFuture = companyHelper.getSpecialities(cssIds);
 
-        builder
-                .specialities(specialityViews
-                        .stream()
-                        .map(specialityView ->
-                                CompanySpecialityView.builder().name(specialityView.getName()).build())
-                        .toList());
-      }
-    }
+    CompletableFuture.allOf(civFuture, csvFuture).join();
+    builder.industries(civFuture.get());
+    builder.specialities(csvFuture.get());
+
     return builder.build();
   }
 
-  private CompanyView convertFromSummaryToView(CompanySummary summary) {
+  private CompanyView convertFromSummaryToView(CompanySummary summary) throws ExecutionException, InterruptedException {
 
     CompanyView.CompanyViewBuilder builder = CompanyView.builder()
         .companyId(summary.getCompanyId())
@@ -187,47 +167,19 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
         .stream()
         .map(CompanyIndustrySummary::getIndustryId)
         .toList();
-    if (!CollectionUtils.isEmpty(cisIds)) {
-      String cisIdParam = String.join(",",
-          cisIds.stream().map(String::valueOf).toList());
-      ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataClient.getBatchIndustries(
-          cisIdParam);
-      if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
-          industryResponse.getBody())) {
-        List<IndustryView> industryViews = industryResponse.getBody().getData();
-        log.info("IndustryViews={}", industryViews);
-        builder
-            .industries(industryViews
-                .stream()
-                .map(industryView ->
-                    CompanyIndustryView.builder().industryName(industryView.getName()).build())
-                .toList()
-            );
-      }
-    }
+    CompletableFuture<Set<CompanyIndustryView>> civFuture = companyHelper.getIndustries(cisIds);
 
     List<CompanySpecialitySummary> cssList = summary.getCompanySpecialities();
     List<Integer> cssIds = cssList
         .stream()
         .map(CompanySpecialitySummary::getSpecialityId)
         .toList();
-    if (!CollectionUtils.isEmpty(cssIds)) {
-      String cssIdParam = String.join(",",
-          cssIds.stream().map(String::valueOf).toList());
-      ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = metadataClient.getBatchSpecialities(
-          cssIdParam);
-      if (specialityResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(
-          specialityResponse.getBody())) {
-        List<SpecialityView> specialityViews = specialityResponse.getBody().getData();
-        log.info("SpecialityViews={}", specialityViews);
-        builder
-            .specialities(specialityViews
-                .stream()
-                .map(specialityView ->
-                    CompanySpecialityView.builder().name(specialityView.getName()).build())
-                .toList());
-      }
-    }
+    CompletableFuture<Set<CompanySpecialityView>> csvFuture = companyHelper.getSpecialities(cssIds);
+
+    CompletableFuture.allOf(civFuture, csvFuture).join();
+
+    builder.industries(civFuture.get());
+    builder.specialities(csvFuture.get());
 
     return builder.build();
   }
