@@ -3,7 +3,6 @@ package com.goodjob.common.api.feign.fallback;
 import com.goodjob.common.api.feign.dto.job.JobDTO;
 import com.goodjob.common.application.dto.response.ApiResponse;
 import com.goodjob.common.application.dto.response.PageResponseDTO;
-import com.goodjob.common.api.feign.client.JobClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

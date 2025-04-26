@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -39,7 +40,7 @@ public class JobView implements Serializable {
     private Integer views;
     private Integer applies;
     private JobSalaryView salary;
-    private Set<JobBenefitView> benefits;
-    private Set<JobSkillView> skills;
-    private Set<JobIndustryView> industries;
+    private List<JobBenefitView> benefits;
+    private List<JobSkillView> skills;
+    private List<JobIndustryView> industries;
 } 

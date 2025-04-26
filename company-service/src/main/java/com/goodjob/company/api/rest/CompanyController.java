@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * REST controller for company operations.
  */
@@ -40,8 +43,17 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_COMPANY')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_COMPANY')")
     public ResponseEntity<ApiResponse<CompanyView>> getCompanyById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(ApiResponse.success(companyQueryService.getCompanyById(id)));
+    }
+
+    @GetMapping("/batch")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_COMPANY')")
+    public ResponseEntity<ApiResponse<List<CompanyView>>> getBatchCompanies(@RequestParam("ids") String ids) {
+        List<Integer> idList = Arrays.stream(ids.split(","))
+                .map(Integer::parseInt)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(companyQueryService.getAllByIdList(idList)));
     }
 } 

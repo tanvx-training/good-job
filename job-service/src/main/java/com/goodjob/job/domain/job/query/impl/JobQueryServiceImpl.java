@@ -16,7 +16,6 @@ import com.goodjob.job.domain.job.dto.*;
 import com.goodjob.job.domain.job.repository.*;
 import com.goodjob.job.domain.job.query.JobQueryService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -79,15 +79,15 @@ public class JobQueryServiceImpl implements JobQueryService {
 
     private JobView convertFromEntityToView(Job job) throws ExecutionException, InterruptedException {
         CompletableFuture<JobCompanyView> jcvFuture = jobHelper.getCompany(job.getCompanyId());
-        CompletableFuture<Set<JobBenefitView>> jbvFuture = jobHelper.getBenefits(job.getJobBenefits()
+        CompletableFuture<List<JobBenefitView>> jbvFuture = jobHelper.getBenefits(job.getJobBenefits()
                 .stream()
                 .map(JobBenefit::getBenefitId)
                 .toList());
-        CompletableFuture<Set<JobSkillView>> jsvFuture = jobHelper.getSkills(job.getJobSkills()
+        CompletableFuture<List<JobSkillView>> jsvFuture = jobHelper.getSkills(job.getJobSkills()
                 .stream()
                 .map(JobSkill::getSkillId)
                 .toList());
-        CompletableFuture<Set<JobIndustryView>> jivFuture = jobHelper.getIndustries(job.getJobIndustries()
+        CompletableFuture<List<JobIndustryView>> jivFuture = jobHelper.getIndustries(job.getJobIndustries()
                 .stream()
                 .map(JobIndustry::getIndustryId)
                 .toList());
@@ -125,15 +125,15 @@ public class JobQueryServiceImpl implements JobQueryService {
 
     private JobView convertFromSummaryToView(JobSummary summary) throws ExecutionException, InterruptedException {
         CompletableFuture<JobCompanyView> jcvFuture = jobHelper.getCompany(summary.getCompanyId());
-        CompletableFuture<Set<JobBenefitView>> jbvFuture = jobHelper.getBenefits(summary.getJobBenefits()
+        CompletableFuture<List<JobBenefitView>> jbvFuture = jobHelper.getBenefits(summary.getJobBenefits()
                 .stream()
                 .map(JobBenefitSummary::getBenefitId)
                 .toList());
-        CompletableFuture<Set<JobSkillView>> jsvFuture = jobHelper.getSkills(summary.getJobSkills()
+        CompletableFuture<List<JobSkillView>> jsvFuture = jobHelper.getSkills(summary.getJobSkills()
                 .stream()
                 .map(JobSkillSummary::getSkillId)
                 .toList());
-        CompletableFuture<Set<JobIndustryView>> jivFuture = jobHelper.getIndustries(summary.getJobIndustries()
+        CompletableFuture<List<JobIndustryView>> jivFuture = jobHelper.getIndustries(summary.getJobIndustries()
                 .stream()
                 .map(JobIndustrySummary::getIndustryId)
                 .toList());

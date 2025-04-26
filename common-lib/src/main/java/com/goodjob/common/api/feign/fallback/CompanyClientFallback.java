@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Fallback implementation for CompanyClient.
@@ -21,6 +22,11 @@ public class CompanyClientFallback implements CompanyClient {
     public ApiResponse<CompanyView> getCompanyById(Long id) {
         log.error("Fallback: Unable to get company with ID {}", id);
         return ApiResponse.error("Company service is not available");
+    }
+
+    @Override
+    public ApiResponse<List<CompanyView>> getBatchCompanies(String ids) {
+        return null;
     }
 
     @Override

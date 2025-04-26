@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,6 +23,6 @@ public class CompanyView {
     private String address;
     private String url;
     private CompanyMetricView metric;
-    private Set<CompanyIndustryView> industries;
-    private Set<CompanySpecialityView> specialities;
+    private List<CompanyIndustryView> industries;
+    private List<CompanySpecialityView> specialities;
 }

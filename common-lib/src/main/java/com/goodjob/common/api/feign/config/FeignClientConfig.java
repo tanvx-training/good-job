@@ -1,14 +1,22 @@
 package com.goodjob.common.api.feign.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import feign.codec.Decoder;
 import feign.codec.ErrorDecoder;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
+import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import java.util.Objects;
 
@@ -17,7 +25,22 @@ import java.util.Objects;
  * This configuration will be applied to all Feign clients defined in common-lib.
  */
 @Configuration
+@RequiredArgsConstructor
 public class FeignClientConfig {
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
+    }
+
+    @Bean
+    public HttpMessageConverters httpMessageConverters(ObjectMapper objectMapper) {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setObjectMapper(objectMapper); // Link the ObjectMapper to the converter
+        return new HttpMessageConverters(converter);
+    }
 
     /**
      * Configure logging level for Feign clients.
@@ -56,6 +79,12 @@ public class FeignClientConfig {
             }
         };
     }
+
+    @Bean
+    public Decoder feignDecoder() {
+        return new ResponseEntityDecoder(new SpringDecoder(() -> httpMessageConverters(objectMapper())));
+    }
+
     /**
      * Error decoder to convert HTTP errors to custom exceptions.
      * @return ErrorDecoder for handling HTTP errors

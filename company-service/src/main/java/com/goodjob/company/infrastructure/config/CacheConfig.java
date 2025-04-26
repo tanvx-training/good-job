@@ -1,7 +1,6 @@
-package com.goodjob.job.infrastructure.config;
+package com.goodjob.company.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,13 +51,8 @@ public class CacheConfig {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
         RedisCacheConfiguration defaultCacheConfig = createCacheConfiguration(Duration.ofSeconds(defaultTTL));
-        // Cấu hình cho từng loại cache với TTL khác nhau
-        // Dữ liệu metadata (ít thay đổi) - cache lâu hơn
-        cacheConfigurations.put("benefits", createCacheConfiguration(Duration.ofHours(24)));
-        cacheConfigurations.put("skills", createCacheConfiguration(Duration.ofHours(24)));
+        cacheConfigurations.put("specialities", createCacheConfiguration(Duration.ofHours(24)));
         cacheConfigurations.put("industries", createCacheConfiguration(Duration.ofHours(24)));
-        // Dữ liệu company (thay đổi thường xuyên hơn) - cache ngắn hơn
-        cacheConfigurations.put("companies", createCacheConfiguration(Duration.ofHours(6)));
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultCacheConfig)
                 .withInitialCacheConfigurations(cacheConfigurations)
@@ -72,7 +66,7 @@ public class CacheConfig {
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
                 .disableCachingNullValues()
-                .prefixCacheNameWith("job-service:")
+                .prefixCacheNameWith("company-service:")
                 .computePrefixWith(cacheName -> "cache:" + cacheName + ":");
     }
 }

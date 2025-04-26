@@ -11,11 +11,11 @@ import java.util.concurrent.CompletableFuture;
 
 public interface JobHelper {
 
-    CompletableFuture<Set<JobBenefitView>> getBenefits(List<Integer> idList);
+    CompletableFuture<List<JobBenefitView>> getBenefits(List<Integer> idList);
 
-    CompletableFuture<Set<JobSkillView>> getSkills(List<Integer> idList);
+    CompletableFuture<List<JobSkillView>> getSkills(List<Integer> idList);
 
-    CompletableFuture<Set<JobIndustryView>> getIndustries(List<Integer> idList);
+    CompletableFuture<List<JobIndustryView>> getIndustries(List<Integer> idList);
 
     CompletableFuture<JobCompanyView> getCompany(Integer companyId);
 }

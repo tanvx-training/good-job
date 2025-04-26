@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * Feign client for company-service.
  * This interface defines methods to call the company-service APIs.
@@ -29,6 +31,15 @@ public interface CompanyClient {
      */
     @GetMapping("/api/v1/companies/{id}")
     ApiResponse<CompanyView> getCompanyById(@PathVariable("id") Long id);
+
+    /**
+     * Get list company by list ID.
+     *
+     * @param ids list the company ID
+     * @return ApiResponse containing the list company details
+     */
+    @GetMapping("/api/v1/companies/batch")
+    ApiResponse<List<CompanyView>> getBatchCompanies(@RequestParam("ids") String ids);
 
     /**
      * Get all companies with pagination.

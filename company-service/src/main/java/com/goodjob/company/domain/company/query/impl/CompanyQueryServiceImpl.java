@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutionException;
 
 import com.goodjob.company.infrastructure.helper.CompanyHelper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -84,6 +83,21 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
             .orElseThrow(() -> new ResourceNotFoundException(Company.class.getName(), "ID", id));
   }
 
+  @Override
+  public List<CompanyView> getAllByIdList(List<Integer> idList) {
+    return companyRepository.findAllById(idList)
+            .stream()
+            .map(company -> {
+              try {
+                return this.convertFromEntityToView(company);
+              } catch (ExecutionException | InterruptedException e) {
+                Thread.currentThread().interrupt(); // Preserve interrupt status
+                throw new RuntimeException("Error converting summary to view", e);
+              }
+            })
+            .toList();
+  }
+
   private CompanyView convertFromEntityToView(Company company) throws ExecutionException, InterruptedException {
     CompanyMetric companyMetric = company.getCompanyMetrics()
             .stream().max(Comparator.comparing(CompanyMetric::getCompanyMetricId))
@@ -118,14 +132,14 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
             .map(CompanyIndustry::getCompanyIndustryId)
             .map(CompanyIndustryId::getIndustryId)
             .toList();
-    CompletableFuture<Set<CompanyIndustryView>> civFuture = companyHelper.getIndustries(cisIds);
+    CompletableFuture<List<CompanyIndustryView>> civFuture = companyHelper.getIndustries(cisIds);
 
     List<Integer> cssIds = companySpecialityList
             .stream()
             .map(CompanySpeciality::getCompanySpecialityId)
             .map(CompanySpecialityId::getSpecialityId)
             .toList();
-    CompletableFuture<Set<CompanySpecialityView>> csvFuture = companyHelper.getSpecialities(cssIds);
+    CompletableFuture<List<CompanySpecialityView>> csvFuture = companyHelper.getSpecialities(cssIds);
 
     CompletableFuture.allOf(civFuture, csvFuture).join();
     builder.industries(civFuture.get());
@@ -167,14 +181,14 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
         .stream()
         .map(CompanyIndustrySummary::getIndustryId)
         .toList();
-    CompletableFuture<Set<CompanyIndustryView>> civFuture = companyHelper.getIndustries(cisIds);
+    CompletableFuture<List<CompanyIndustryView>> civFuture = companyHelper.getIndustries(cisIds);
 
     List<CompanySpecialitySummary> cssList = summary.getCompanySpecialities();
     List<Integer> cssIds = cssList
         .stream()
         .map(CompanySpecialitySummary::getSpecialityId)
         .toList();
-    CompletableFuture<Set<CompanySpecialityView>> csvFuture = companyHelper.getSpecialities(cssIds);
+    CompletableFuture<List<CompanySpecialityView>> csvFuture = companyHelper.getSpecialities(cssIds);
 
     CompletableFuture.allOf(civFuture, csvFuture).join();
 
