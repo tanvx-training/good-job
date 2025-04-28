@@ -169,8 +169,8 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     Objects.requireNonNull(cms);
     builder
         .metric(CompanyMetricView.builder()
-            .employeeCount(cms.getEmployeeCount())
-            .followerCount(cms.getFollowerCount())
+            .employeeCount(cms.getEmployeeCount() == null ? 0 : cms.getEmployeeCount())
+            .followerCount(cms.getFollowerCount() == null ? 0 : cms.getFollowerCount())
             .recordOn(Objects.nonNull(cms.getRecordOn())
                 ? DateTimeUtils.fromTimestamp(cms.getRecordOn())
                 : null)

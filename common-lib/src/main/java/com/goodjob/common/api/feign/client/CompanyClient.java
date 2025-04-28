@@ -30,7 +30,7 @@ public interface CompanyClient {
      * @return ApiResponse containing the company details
      */
     @GetMapping("/api/v1/companies/{id}")
-    ApiResponse<CompanyView> getCompanyById(@PathVariable("id") Long id);
+    ApiResponse<CompanyView> getCompanyById(@PathVariable("id") Integer id);
 
     /**
      * Get list company by list ID.

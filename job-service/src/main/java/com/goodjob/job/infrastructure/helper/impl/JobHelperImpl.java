@@ -38,7 +38,7 @@ public class JobHelperImpl implements JobHelper {
             try {
                 ResponseEntity<ApiResponse<List<BenefitView>>> benefitResponse = metadataClient.getBatchBenefits(ids);
                 if (benefitResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(benefitResponse.getBody())) {
-                    return CompletableFuture.supplyAsync(() -> benefitResponse.getBody().getData()
+                    return CompletableFuture.completedFuture(benefitResponse.getBody().getData()
                             .stream()
                             .map(bv -> JobBenefitView.builder()
                                     .id(bv.getId())
@@ -54,9 +54,10 @@ public class JobHelperImpl implements JobHelper {
             } catch (Exception e) {
                 // Ghi log lỗi nếu cần
                 System.err.println("Error fetching benefits: " + e.getMessage());
+                e.printStackTrace();
             }
         }
-        return CompletableFuture.supplyAsync(Collections::emptyList);
+        return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
     @Override
@@ -67,7 +68,7 @@ public class JobHelperImpl implements JobHelper {
             try {
                 ResponseEntity<ApiResponse<List<SkillView>>> skillResponse = metadataClient.getBatchSkills(ids);
                 if (skillResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(skillResponse.getBody())) {
-                    return CompletableFuture.supplyAsync(() -> skillResponse.getBody().getData()
+                    return CompletableFuture.completedFuture(skillResponse.getBody().getData()
                             .stream()
                             .map(sv -> JobSkillView.builder()
                                     .id(sv.getId())
@@ -84,9 +85,10 @@ public class JobHelperImpl implements JobHelper {
             } catch (Exception e) {
                 // Ghi log lỗi nếu cần
                 System.err.println("Error fetching skills: " + e.getMessage());
+                e.printStackTrace();
             }
         }
-        return CompletableFuture.supplyAsync(Collections::emptyList);
+        return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
     @Override
@@ -98,7 +100,7 @@ public class JobHelperImpl implements JobHelper {
             try {
                 ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataClient.getBatchIndustries(ids);
                 if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(industryResponse.getBody())) {
-                    return CompletableFuture.supplyAsync(() -> industryResponse.getBody().getData()
+                    return CompletableFuture.completedFuture(industryResponse.getBody().getData()
                             .stream()
                             .map(iv -> JobIndustryView.builder()
                                     .id(iv.getId())
@@ -114,32 +116,35 @@ public class JobHelperImpl implements JobHelper {
             } catch (Exception e) {
                 // Ghi log lỗi nếu cần
                 System.err.println("Error fetching industries: " + e.getMessage());
+                e.printStackTrace();
             }
         }
-        return CompletableFuture.supplyAsync(Collections::emptyList);
+        return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
     @Override
-    @Cacheable(value = "companies", key = "#companyId", unless = "#result == null")
+    @Cacheable(value = "companies", key = "#companyId", unless = "#result.name == null")
     public CompletableFuture<JobCompanyView> getCompany(Integer companyId) {
         JobCompanyView.JobCompanyViewBuilder companyBuilder = JobCompanyView.builder();
         if (Objects.nonNull(companyId)) {
             try {
-                ApiResponse<CompanyView> companyResponse = companyClient.getCompanyById(companyId.longValue());
+                ApiResponse<CompanyView> companyResponse = companyClient.getCompanyById(companyId);
                 if (companyResponse.isSuccess() && Objects.nonNull(companyResponse.getData())) {
                     CompanyView company = companyResponse.getData();
                     companyBuilder
                             .name(company.getName())
                             .description(company.getDescription())
-                            .companySize(company.getCompanySize() != null ? company.getCompanySize() : null)
+                            .companySize(company.getCompanySize())
                             .address(company.getAddress())
                             .url(company.getUrl());
                 }
+                return CompletableFuture.completedFuture(companyBuilder.build());
             } catch (Exception e) {
                 // Ghi log lỗi nếu cần
                 System.err.println("Error fetching company: " + e.getMessage());
+                e.printStackTrace();
             }
         }
-        return CompletableFuture.supplyAsync(companyBuilder::build);
+        return CompletableFuture.completedFuture(companyBuilder.build());
     }
 }

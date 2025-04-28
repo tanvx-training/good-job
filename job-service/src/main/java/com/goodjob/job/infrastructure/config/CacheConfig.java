@@ -67,7 +67,7 @@ public class CacheConfig {
 
     private RedisCacheConfiguration createCacheConfiguration(Duration ttl) {
         GenericJackson2JsonRedisSerializer redisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-        return RedisCacheConfiguration.defaultCacheConfig()
+        return RedisCacheConfiguration.defaultCacheConfig(Thread.currentThread().getContextClassLoader())
                 .entryTtl(ttl)
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))

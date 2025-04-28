@@ -1,7 +1,6 @@
 package com.goodjob.common.api.feign.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -28,12 +27,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FeignClientConfig {
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        return mapper;
-    }
+    private final ObjectMapper objectMapper;
 
     @Bean
     public HttpMessageConverters httpMessageConverters(ObjectMapper objectMapper) {
@@ -82,7 +76,7 @@ public class FeignClientConfig {
 
     @Bean
     public Decoder feignDecoder() {
-        return new ResponseEntityDecoder(new SpringDecoder(() -> httpMessageConverters(objectMapper())));
+        return new ResponseEntityDecoder(new SpringDecoder(() -> httpMessageConverters(objectMapper)));
     }
 
     /**

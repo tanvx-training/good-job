@@ -19,7 +19,7 @@ import java.util.List;
 public class CompanyClientFallback implements CompanyClient {
 
     @Override
-    public ApiResponse<CompanyView> getCompanyById(Long id) {
+    public ApiResponse<CompanyView> getCompanyById(Integer id) {
         log.error("Fallback: Unable to get company with ID {}", id);
         return ApiResponse.error("Company service is not available");
     }

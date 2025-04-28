@@ -41,13 +41,13 @@ public class IndustryController {
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_INDUSTRY')")
     public ResponseEntity<Void> createIndustry(@Valid @RequestBody CreateIndustryCommand command) {
         Integer industryId = industryCommandService.createIndustry(command);
-        
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(industryId)
                 .toUri();
-        
+
         return ResponseEntity.created(location).build();
     }
 
@@ -88,7 +88,7 @@ public class IndustryController {
     /**
      * Update an industry.
      *
-     * @param id the industry ID
+     * @param id      the industry ID
      * @param command the update industry command
      * @return no content
      */
@@ -115,14 +115,14 @@ public class IndustryController {
         return ResponseEntity.noContent().build();
     }
 
-        @GetMapping("/batch")
-        @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
-        public ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustry(
-                @RequestParam("ids") String ids
-        ) {
-            List<Integer> idList = Arrays.stream(ids.split(","))
-                    .map(Integer::parseInt)
-                    .toList();
-            return ResponseEntity.ok(ApiResponse.success(industryQueryService.getAllByIdList(idList)));
-        }
+    @GetMapping("/batch")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('READ_INDUSTRY')")
+    public ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustry(
+            @RequestParam("ids") String ids
+    ) {
+        List<Integer> idList = Arrays.stream(ids.split(","))
+                .map(Integer::parseInt)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(industryQueryService.getAllByIdList(idList)));
+    }
 } 

@@ -34,7 +34,7 @@ public class CompanyHelperImpl implements CompanyHelper {
             try {
                 ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataClient.getBatchIndustries(ids);
                 if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(industryResponse.getBody())) {
-                    return CompletableFuture.supplyAsync(() -> industryResponse.getBody().getData()
+                    return CompletableFuture.completedFuture(industryResponse.getBody().getData()
                             .stream()
                             .map(iv -> CompanyIndustryView.builder()
                                     .id(iv.getId())
@@ -50,9 +50,10 @@ public class CompanyHelperImpl implements CompanyHelper {
             } catch (Exception e) {
                 // Ghi log lỗi nếu cần
                 System.err.println("Error fetching industries: " + e.getMessage());
+                e.printStackTrace();
             }
         }
-        return CompletableFuture.supplyAsync(Collections::emptyList);
+        return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
     @Override
@@ -63,9 +64,9 @@ public class CompanyHelperImpl implements CompanyHelper {
                     .map(String::valueOf)
                     .toList());
             try {
-                ResponseEntity<ApiResponse<List<SpecialityView>>> industryResponse = metadataClient.getBatchSpecialities(ids);
-                if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(industryResponse.getBody())) {
-                    return CompletableFuture.supplyAsync(() -> industryResponse.getBody().getData()
+                ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = metadataClient.getBatchSpecialities(ids);
+                if (specialityResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(specialityResponse.getBody())) {
+                    return CompletableFuture.completedFuture(specialityResponse.getBody().getData()
                             .stream()
                             .map(sv -> CompanySpecialityView.builder()
                                     .id(sv.getId())
@@ -81,6 +82,7 @@ public class CompanyHelperImpl implements CompanyHelper {
             } catch (Exception e) {
                 // Ghi log lỗi nếu cần
                 System.err.println("Error fetching specialities: " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return CompletableFuture.supplyAsync(Collections::emptyList);
