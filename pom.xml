@@ -156,6 +156,9 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.11.0</version>
                     <configuration>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
                         <parameters>true</parameters>
                         <source>${java.version}</source>
                         <target>${java.version}</target>

@@ -1,9 +1,8 @@
 package com.goodjob.job.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +22,6 @@ import java.util.Map;
 
 @Slf4j
 @Configuration
-@RequiredArgsConstructor
 public class CacheConfig {
 
     @Value("${spring.data.redis.host}")
@@ -36,6 +34,10 @@ public class CacheConfig {
     private long defaultTTL;
 
     private final ObjectMapper objectMapper;
+
+    public CacheConfig(@Qualifier("redisObjectMapper") ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {

@@ -26,9 +26,6 @@ public interface MetadataClient {
     @GetMapping("/api/v1/metadata/industries/batch")
     ResponseEntity<ApiResponse<List<IndustryView>>> getBatchIndustries(@RequestParam("ids") String ids);
 
-    @GetMapping("/api/v1/companies/{id}")
-    ResponseEntity<ApiResponse<CompanyView>> getCompanyById(@PathVariable("id") Integer id);
-
     @GetMapping("/api/v1/metadata/benefits/batch")
     ResponseEntity<ApiResponse<List<BenefitView>>> getBatchBenefits(@RequestParam("ids") String ids);
 

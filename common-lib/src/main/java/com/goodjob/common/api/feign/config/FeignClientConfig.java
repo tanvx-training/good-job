@@ -8,6 +8,7 @@ import feign.codec.Decoder;
 import feign.codec.ErrorDecoder;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.context.annotation.Bean;
@@ -24,15 +25,18 @@ import java.util.Objects;
  * This configuration will be applied to all Feign clients defined in common-lib.
  */
 @Configuration
-@RequiredArgsConstructor
 public class FeignClientConfig {
 
     private final ObjectMapper objectMapper;
 
+    public FeignClientConfig(@Qualifier("feignObjectMapper") ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Bean
-    public HttpMessageConverters httpMessageConverters(ObjectMapper objectMapper) {
+    public HttpMessageConverters httpMessageConverters() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(objectMapper); // Link the ObjectMapper to the converter
+        converter.setObjectMapper(objectMapper);
         return new HttpMessageConverters(converter);
     }
 
@@ -76,7 +80,7 @@ public class FeignClientConfig {
 
     @Bean
     public Decoder feignDecoder() {
-        return new ResponseEntityDecoder(new SpringDecoder(() -> httpMessageConverters(objectMapper)));
+        return new ResponseEntityDecoder(new SpringDecoder(this::httpMessageConverters));
     }
 
     /**
