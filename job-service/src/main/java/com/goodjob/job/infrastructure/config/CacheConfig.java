@@ -54,12 +54,9 @@ public class CacheConfig {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
         RedisCacheConfiguration defaultCacheConfig = createCacheConfiguration(Duration.ofSeconds(defaultTTL));
-        // Cấu hình cho từng loại cache với TTL khác nhau
-        // Dữ liệu metadata (ít thay đổi) - cache lâu hơn
         cacheConfigurations.put("benefits", createCacheConfiguration(Duration.ofHours(24)));
         cacheConfigurations.put("skills", createCacheConfiguration(Duration.ofHours(24)));
         cacheConfigurations.put("industries", createCacheConfiguration(Duration.ofHours(24)));
-        // Dữ liệu company (thay đổi thường xuyên hơn) - cache ngắn hơn
         cacheConfigurations.put("companies", createCacheConfiguration(Duration.ofHours(6)));
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultCacheConfig)
@@ -74,7 +71,6 @@ public class CacheConfig {
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
                 .disableCachingNullValues()
-                .prefixCacheNameWith("job-service:")
-                .computePrefixWith(cacheName -> "cache:" + cacheName + ":");
+                .computePrefixWith(cacheName -> "job-service:" + cacheName + ":");
     }
 }

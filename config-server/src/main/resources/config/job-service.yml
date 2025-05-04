@@ -51,4 +51,4 @@ logging:
   level:
     org:
       springframework:
-        cache: DEBUG
+        cache: TRACE

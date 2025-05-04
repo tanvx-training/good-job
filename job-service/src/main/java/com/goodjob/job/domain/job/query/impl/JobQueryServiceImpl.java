@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -78,19 +79,22 @@ public class JobQueryServiceImpl implements JobQueryService {
     }
 
     private JobView convertFromEntityToView(Job job) throws ExecutionException, InterruptedException {
-        CompletableFuture<JobCompanyView> jcvFuture = jobHelper.getCompany(job.getCompanyId());
-        CompletableFuture<List<JobBenefitView>> jbvFuture = jobHelper.getBenefits(job.getJobBenefits()
+        CompletableFuture<JobCompanyView> jcvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getCompany(job.getCompanyId()));
+        CompletableFuture<List<JobBenefitView>> jbvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getBenefits(job.getJobBenefits()
                 .stream()
                 .map(JobBenefit::getBenefitId)
-                .toList());
-        CompletableFuture<List<JobSkillView>> jsvFuture = jobHelper.getSkills(job.getJobSkills()
+                .sorted()
+                .toList()));
+        CompletableFuture<List<JobSkillView>> jsvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getSkills(job.getJobSkills()
                 .stream()
                 .map(JobSkill::getSkillId)
-                .toList());
-        CompletableFuture<List<JobIndustryView>> jivFuture = jobHelper.getIndustries(job.getJobIndustries()
+                .sorted()
+                .toList()));
+        CompletableFuture<List<JobIndustryView>> jivFuture = CompletableFuture.supplyAsync(() -> jobHelper.getIndustries(job.getJobIndustries()
                 .stream()
                 .map(JobIndustry::getIndustryId)
-                .toList());
+                .sorted()
+                .toList()));
         CompletableFuture.allOf(jcvFuture, jbvFuture, jsvFuture, jivFuture).join();
         return JobView.builder()
                 .jobId(job.getJobId())
@@ -124,19 +128,22 @@ public class JobQueryServiceImpl implements JobQueryService {
     }
 
     private JobView convertFromSummaryToView(JobSummary summary) throws ExecutionException, InterruptedException {
-        CompletableFuture<JobCompanyView> jcvFuture = jobHelper.getCompany(summary.getCompanyId());
-        CompletableFuture<List<JobBenefitView>> jbvFuture = jobHelper.getBenefits(summary.getJobBenefits()
+        CompletableFuture<JobCompanyView> jcvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getCompany(summary.getCompanyId()));
+        CompletableFuture<List<JobBenefitView>> jbvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getBenefits(summary.getJobBenefits()
                 .stream()
                 .map(JobBenefitSummary::getBenefitId)
-                .toList());
-        CompletableFuture<List<JobSkillView>> jsvFuture = jobHelper.getSkills(summary.getJobSkills()
+                .sorted()
+                .toList()));
+        CompletableFuture<List<JobSkillView>> jsvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getSkills(summary.getJobSkills()
                 .stream()
                 .map(JobSkillSummary::getSkillId)
-                .toList());
-        CompletableFuture<List<JobIndustryView>> jivFuture = jobHelper.getIndustries(summary.getJobIndustries()
+                .sorted()
+                .toList()));
+        CompletableFuture<List<JobIndustryView>> jivFuture = CompletableFuture.supplyAsync(() -> jobHelper.getIndustries(summary.getJobIndustries()
                 .stream()
                 .map(JobIndustrySummary::getIndustryId)
-                .toList());
+                .sorted()
+                .toList()));
         CompletableFuture.allOf(jcvFuture, jbvFuture, jsvFuture, jivFuture).join();
         return JobView.builder()
                 .jobId(summary.getJobId())

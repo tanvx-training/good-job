@@ -4,11 +4,10 @@ import com.goodjob.company.domain.company.dto.CompanyIndustryView;
 import com.goodjob.company.domain.company.dto.CompanySpecialityView;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public interface CompanyHelper {
 
-    CompletableFuture<List<CompanyIndustryView>> getIndustries(List<Integer> idList);
+    List<CompanyIndustryView> getIndustries(List<Integer> idList);
 
-    CompletableFuture<List<CompanySpecialityView>> getSpecialities(List<Integer> idList);
+    List<CompanySpecialityView> getSpecialities(List<Integer> idList);
 }

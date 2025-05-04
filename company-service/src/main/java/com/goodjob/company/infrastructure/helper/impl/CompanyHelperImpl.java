@@ -16,7 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -26,65 +26,68 @@ public class CompanyHelperImpl implements CompanyHelper {
 
     @Override
     @Cacheable(value = "industries", key = "#idList.toString()", unless = "#result.isEmpty()")
-    public CompletableFuture<List<CompanyIndustryView>> getIndustries(List<Integer> idList) {
-        if (!CollectionUtils.isEmpty(idList)) {
-            String ids = String.join(",", idList.stream()
-                    .map(String::valueOf)
-                    .toList());
-            try {
-                ResponseEntity<ApiResponse<List<IndustryView>>> industryResponse = metadataClient.getBatchIndustries(ids);
-                if (industryResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(industryResponse.getBody())) {
-                    return CompletableFuture.completedFuture(industryResponse.getBody().getData()
-                            .stream()
-                            .map(iv -> CompanyIndustryView.builder()
-                                    .id(iv.getId())
-                                    .name(iv.getName())
-                                    .createdOn(iv.getCreatedOn())
-                                    .createdBy(iv.getCreatedBy())
-                                    .lastModifiedOn(iv.getLastModifiedOn())
-                                    .lastModifiedBy(iv.getLastModifiedBy())
-                                    .deleteFlg(iv.isDeleteFlg())
-                                    .build())
-                            .toList());
-                }
-            } catch (Exception e) {
-                // Ghi log lỗi nếu cần
-                System.err.println("Error fetching industries: " + e.getMessage());
-                e.printStackTrace();
-            }
+    public List<CompanyIndustryView> getIndustries(List<Integer> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return Collections.emptyList();
         }
-        return CompletableFuture.completedFuture(Collections.emptyList());
+        String ids = idList.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        return fetchAndMap(
+                metadataClient.getBatchIndustries(ids),
+                IndustryView.class,
+                this::toCompanyIndustryView
+        );
     }
 
     @Override
     @Cacheable(value = "specialities", key = "#idList.toString()", unless = "#result.isEmpty()")
-    public CompletableFuture<List<CompanySpecialityView>> getSpecialities(List<Integer> idList) {
-        if (!CollectionUtils.isEmpty(idList)) {
-            String ids = String.join(",", idList.stream()
-                    .map(String::valueOf)
-                    .toList());
-            try {
-                ResponseEntity<ApiResponse<List<SpecialityView>>> specialityResponse = metadataClient.getBatchSpecialities(ids);
-                if (specialityResponse.getStatusCode().is2xxSuccessful() && Objects.nonNull(specialityResponse.getBody())) {
-                    return CompletableFuture.completedFuture(specialityResponse.getBody().getData()
-                            .stream()
-                            .map(sv -> CompanySpecialityView.builder()
-                                    .id(sv.getId())
-                                    .name(sv.getName())
-                                    .createdOn(sv.getCreatedOn())
-                                    .createdBy(sv.getCreatedBy())
-                                    .lastModifiedOn(sv.getLastModifiedOn())
-                                    .lastModifiedBy(sv.getLastModifiedBy())
-                                    .deleteFlg(sv.isDeleteFlg())
-                                    .build())
-                            .toList());
-                }
-            } catch (Exception e) {
-                // Ghi log lỗi nếu cần
-                System.err.println("Error fetching specialities: " + e.getMessage());
-                e.printStackTrace();
-            }
+    public List<CompanySpecialityView> getSpecialities(List<Integer> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return Collections.emptyList();
         }
-        return CompletableFuture.supplyAsync(Collections::emptyList);
+        String ids = idList.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        return fetchAndMap(
+                metadataClient.getBatchSpecialities(ids),
+                SpecialityView.class,
+                this::toCompanySpecialityView
+        );
+    }
+
+    private <T, R> List<R> fetchAndMap(ResponseEntity<ApiResponse<List<T>>> responseEntity,
+                                       Class<T> type,
+                                       java.util.function.Function<T, R> mapper) {
+        if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+            return responseEntity.getBody().getData().stream()
+                    .map(mapper)
+                    .toList();
+        }
+        return Collections.emptyList();
+    }
+
+    private CompanyIndustryView toCompanyIndustryView(IndustryView iv) {
+        return CompanyIndustryView.builder()
+                .id(iv.getId())
+                .name(iv.getName())
+                .createdOn(iv.getCreatedOn())
+                .createdBy(iv.getCreatedBy())
+                .lastModifiedOn(iv.getLastModifiedOn())
+                .lastModifiedBy(iv.getLastModifiedBy())
+                .deleteFlg(iv.isDeleteFlg())
+                .build();
+    }
+
+    private CompanySpecialityView toCompanySpecialityView(SpecialityView sv) {
+        return CompanySpecialityView.builder()
+                .id(sv.getId())
+                .name(sv.getName())
+                .createdOn(sv.getCreatedOn())
+                .createdBy(sv.getCreatedBy())
+                .lastModifiedOn(sv.getLastModifiedOn())
+                .lastModifiedBy(sv.getLastModifiedBy())
+                .deleteFlg(sv.isDeleteFlg())
+                .build();
     }
 }

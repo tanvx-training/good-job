@@ -71,7 +71,6 @@ public class CacheConfig {
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
                 .disableCachingNullValues()
-                .prefixCacheNameWith("company-service:")
-                .computePrefixWith(cacheName -> "cache:" + cacheName + ":");
+                .computePrefixWith(cacheName -> "company-service:" + cacheName + ":");
     }
 }

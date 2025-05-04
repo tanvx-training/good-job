@@ -6,16 +6,15 @@ import com.goodjob.job.domain.job.dto.JobIndustryView;
 import com.goodjob.job.domain.job.dto.JobSkillView;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public interface JobHelper {
 
-    CompletableFuture<List<JobBenefitView>> getBenefits(List<Integer> idList);
+    List<JobBenefitView> getBenefits(List<Integer> idList);
 
-    CompletableFuture<List<JobSkillView>> getSkills(List<Integer> idList);
+    List<JobSkillView> getSkills(List<Integer> idList);
 
-    CompletableFuture<List<JobIndustryView>> getIndustries(List<Integer> idList);
+    List<JobIndustryView> getIndustries(List<Integer> idList);
 
-    CompletableFuture<JobCompanyView> getCompany(Integer companyId);
+    JobCompanyView getCompany(Integer companyId);
 }
