@@ -8,14 +8,12 @@ import com.goodjob.company.domain.company.dto.CompanyIndustryView;
 import com.goodjob.company.domain.company.dto.CompanySpecialityView;
 import com.goodjob.company.infrastructure.helper.CompanyHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -25,7 +23,6 @@ public class CompanyHelperImpl implements CompanyHelper {
     private final MetadataClient metadataClient;
 
     @Override
-    @Cacheable(value = "industries", key = "#idList.toString()", unless = "#result.isEmpty()")
     public List<CompanyIndustryView> getIndustries(List<Integer> idList) {
         if (CollectionUtils.isEmpty(idList)) {
             return Collections.emptyList();
@@ -41,7 +38,6 @@ public class CompanyHelperImpl implements CompanyHelper {
     }
 
     @Override
-    @Cacheable(value = "specialities", key = "#idList.toString()", unless = "#result.isEmpty()")
     public List<CompanySpecialityView> getSpecialities(List<Integer> idList) {
         if (CollectionUtils.isEmpty(idList)) {
             return Collections.emptyList();

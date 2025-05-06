@@ -17,19 +17,18 @@ import com.goodjob.job.domain.job.repository.*;
 import com.goodjob.job.domain.job.query.JobQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the JobQueryService interface.
@@ -45,26 +44,43 @@ public class JobQueryServiceImpl implements JobQueryService {
     private final JobHelper jobHelper;
 
     @Override
+    @Cacheable(value = "jobs", key = "#query.hashCode()", unless = "#result.content.isEmpty()")
     public PageResponseDTO<JobView> getAllJobs(JobQuery query) {
 
         String[] parts = query.getSort().split(",");
         Sort sort = Sort.by(Sort.Direction.fromString(parts[1]), parts[0]);
         Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
 
-        Page<JobView> jobViewPage = jobRepository.findByDeleteFlg(false, pageable)
-                .map((jobSummary -> {
+        Page<JobSummary> jobSummaryPage = jobRepository.findByDeleteFlg(false, pageable);
+
+        List<Integer> companyIds = jobSummaryPage.getContent().stream()
+                .map(JobSummary::getCompanyId)
+                .distinct()
+                .toList();
+        List<JobCompanyView> companies = jobHelper.getBatchCompanies(companyIds);
+        Map<Integer, JobCompanyView> companyMap = companies.stream()
+                .collect(
+                        Collectors.toMap(
+                                JobCompanyView::getId,
+                                Function.identity()
+                        )
+                );
+        List<JobView> jobViews = jobSummaryPage.getContent().stream()
+                .map(summary -> {
                     try {
-                        return this.convertFromSummaryToView(jobSummary);
+                        return this.convertFromSummaryToView(summary, companyMap);
                     } catch (ExecutionException | InterruptedException e) {
-                        Thread.currentThread().interrupt(); // Preserve interrupt status
+                        Thread.currentThread().interrupt();
                         throw new RuntimeException("Error converting summary to view", e);
                     }
-                }));
-
+                })
+                .toList();
+        Page<JobView> jobViewPage = new PageImpl<>(jobViews, pageable, jobSummaryPage.getTotalElements());
         return new PageResponseDTO<>(jobViewPage);
     }
 
     @Override
+    @Cacheable(value = "jobs", key = "#id.toString()", unless = "#result == null")
     public JobView getJobById(Long id) {
         return jobRepository.findById(id)
                 .map(job -> {
@@ -127,27 +143,31 @@ public class JobQueryServiceImpl implements JobQueryService {
                 .build();
     }
 
-    private JobView convertFromSummaryToView(JobSummary summary) throws ExecutionException, InterruptedException {
-        CompletableFuture<JobCompanyView> jcvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getCompany(summary.getCompanyId()));
-        CompletableFuture<List<JobBenefitView>> jbvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getBenefits(summary.getJobBenefits()
-                .stream()
-                .map(JobBenefitSummary::getBenefitId)
-                .sorted()
-                .toList()));
-        CompletableFuture<List<JobSkillView>> jsvFuture = CompletableFuture.supplyAsync(() -> jobHelper.getSkills(summary.getJobSkills()
-                .stream()
-                .map(JobSkillSummary::getSkillId)
-                .sorted()
-                .toList()));
-        CompletableFuture<List<JobIndustryView>> jivFuture = CompletableFuture.supplyAsync(() -> jobHelper.getIndustries(summary.getJobIndustries()
-                .stream()
-                .map(JobIndustrySummary::getIndustryId)
-                .sorted()
-                .toList()));
-        CompletableFuture.allOf(jcvFuture, jbvFuture, jsvFuture, jivFuture).join();
+    private JobView convertFromSummaryToView(JobSummary summary, Map<Integer, JobCompanyView> companyMap)
+            throws ExecutionException, InterruptedException {
+        JobCompanyView jcv = companyMap.getOrDefault(summary.getCompanyId(), JobCompanyView.builder().build());
+
+        CompletableFuture<List<JobBenefitView>> jbvFuture = CompletableFuture.supplyAsync(() ->
+                jobHelper.getBenefits(summary.getJobBenefits().stream()
+                        .map(JobBenefitSummary::getBenefitId)
+                        .sorted()
+                        .toList()));
+        CompletableFuture<List<JobSkillView>> jsvFuture = CompletableFuture.supplyAsync(() ->
+                jobHelper.getSkills(summary.getJobSkills().stream()
+                        .map(JobSkillSummary::getSkillId)
+                        .sorted()
+                        .toList()));
+        CompletableFuture<List<JobIndustryView>> jivFuture = CompletableFuture.supplyAsync(() ->
+                jobHelper.getIndustries(summary.getJobIndustries().stream()
+                        .map(JobIndustrySummary::getIndustryId)
+                        .sorted()
+                        .toList()));
+
+        CompletableFuture.allOf(jbvFuture, jsvFuture, jivFuture).join();
+
         return JobView.builder()
                 .jobId(summary.getJobId())
-                .company(jcvFuture.get())
+                .company(jcv)
                 .title(summary.getTitle())
                 .description(summary.getDescription())
                 .workType(WorkType.fromValue(summary.getWorkType()).getDescription())

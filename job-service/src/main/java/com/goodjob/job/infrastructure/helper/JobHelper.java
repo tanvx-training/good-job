@@ -16,5 +16,7 @@ public interface JobHelper {
 
     List<JobIndustryView> getIndustries(List<Integer> idList);
 
+    List<JobCompanyView> getBatchCompanies(List<Integer> companyIds);
+
     JobCompanyView getCompany(Integer companyId);
 }

@@ -13,7 +13,6 @@ import com.goodjob.job.domain.job.dto.JobIndustryView;
 import com.goodjob.job.domain.job.dto.JobSkillView;
 import com.goodjob.job.infrastructure.helper.JobHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -30,7 +29,6 @@ public class JobHelperImpl implements JobHelper {
     private final CompanyClient companyClient;
 
     @Override
-    @Cacheable(value = "benefits", key = "#idList.toString()", unless = "#result.isEmpty()")
     public List<JobBenefitView> getBenefits(List<Integer> idList) {
         if (CollectionUtils.isEmpty(idList)) {
             return Collections.emptyList();
@@ -40,7 +38,6 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
-    @Cacheable(value = "skills", key = "#idList.toString()", unless = "#result.isEmpty()")
     public List<JobSkillView> getSkills(List<Integer> idList) {
         if (CollectionUtils.isEmpty(idList)) {
             return Collections.emptyList();
@@ -50,7 +47,6 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
-    @Cacheable(value = "industries", key = "#idList.toString()", unless = "#result.isEmpty()")
     public List<JobIndustryView> getIndustries(List<Integer> idList) {
         if (CollectionUtils.isEmpty(idList)) {
             return Collections.emptyList();
@@ -60,14 +56,33 @@ public class JobHelperImpl implements JobHelper {
     }
 
     @Override
-    @Cacheable(value = "companies", key = "#companyId", unless = "#result.name == null")
+    public List<JobCompanyView> getBatchCompanies(List<Integer> companyIds) {
+        if (CollectionUtils.isEmpty(companyIds)) {
+            return Collections.emptyList();
+        }
+        String ids = companyIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+        return fetchAndMap(companyClient.getBatchCompanies(ids), CompanyView.class, this::toJobCompanyViewtoJobCompanyView);
+    }
+
+    private JobCompanyView toJobCompanyViewtoJobCompanyView(CompanyView cv) {
+        return JobCompanyView.builder()
+                .id(cv.getCompanyId()) // Giả sử CompanyView có trường id
+                .name(cv.getName())
+                .description(cv.getDescription())
+                .companySize(cv.getCompanySize())
+                .address(cv.getAddress())
+                .url(cv.getUrl())
+                .build();
+    }
+
+    @Override
     public JobCompanyView getCompany(Integer companyId) {
         if (companyId == null) {
             return JobCompanyView.builder().build();
         }
-        ApiResponse<CompanyView> companyResponse = companyClient.getCompanyById(companyId);
-        if (companyResponse.isSuccess() && companyResponse.getData() != null) {
-            CompanyView company = companyResponse.getData();
+        ResponseEntity<ApiResponse<CompanyView>> companyResponse = companyClient.getCompanyById(companyId);
+        if (companyResponse.getStatusCode().is2xxSuccessful() && companyResponse.getBody() != null) {
+            CompanyView company = companyResponse.getBody().getData();
             return JobCompanyView
                     .builder()
                     .name(company.getName())

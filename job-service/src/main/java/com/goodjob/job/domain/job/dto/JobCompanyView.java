@@ -15,7 +15,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JobCompanyView implements Serializable {
-
+  private Integer id;
   private String name;
   private String description;
   private String companySize;

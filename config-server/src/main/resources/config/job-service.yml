@@ -11,6 +11,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   cache:
     type: redis
@@ -50,5 +51,9 @@ spring:
 logging:
   level:
     org:
+      hibernate:
+        SQL: DEBUG
+        type.descriptor.sql.BasicBinder: TRACE
+        stat: DEBUG
       springframework:
         cache: TRACE

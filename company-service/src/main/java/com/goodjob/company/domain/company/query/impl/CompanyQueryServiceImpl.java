@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import com.goodjob.company.infrastructure.helper.CompanyHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +47,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     private final CompanyHelper companyHelper;
 
     @Override
+    @Cacheable(value = "companies", key = "#query.toString()", unless = "#result.content.isEmpty()")
     public PageResponseDTO<CompanyView> getAllCompanies(CompanyQuery query) {
 
         String[] parts = query.getSort().split(",");
@@ -67,6 +69,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
     }
 
     @Override
+    @Cacheable(value = "companies", key = "#id.toString()", unless = "#result == null")
     public CompanyView getCompanyById(Integer id) {
         return companyRepository.findById(id)
                 .map(company -> {

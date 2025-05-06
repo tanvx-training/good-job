@@ -5,6 +5,7 @@ import com.goodjob.common.application.dto.response.ApiResponse;
 import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.common.api.feign.client.CompanyClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -19,18 +20,18 @@ import java.util.List;
 public class CompanyClientFallback implements CompanyClient {
 
     @Override
-    public ApiResponse<CompanyView> getCompanyById(Integer id) {
+    public ResponseEntity<ApiResponse<CompanyView>> getCompanyById(Integer id) {
         log.error("Fallback: Unable to get company with ID {}", id);
-        return ApiResponse.error("Company service is not available");
+        return ResponseEntity.ok(ApiResponse.error("Company service is not available"));
     }
 
     @Override
-    public ApiResponse<List<CompanyView>> getBatchCompanies(String ids) {
-        return null;
+    public ResponseEntity<ApiResponse<List<CompanyView>>> getBatchCompanies(String ids) {
+        return ResponseEntity.ok(ApiResponse.error("Company service is not available"));
     }
 
     @Override
-    public ApiResponse<PageResponseDTO<CompanyView>> getAllCompanies(Integer page, Integer size, String sort) {
+    public ResponseEntity<ApiResponse<PageResponseDTO<CompanyView>>> getAllCompanies(Integer page, Integer size, String sort) {
         log.error("Fallback: Unable to get companies list (page={}, size={})", page, size);
         
         PageResponseDTO<CompanyView> emptyPage = new PageResponseDTO<>(
@@ -44,6 +45,6 @@ public class CompanyClientFallback implements CompanyClient {
             true
         );
         
-        return ApiResponse.error("Company service is not available", emptyPage);
+        return ResponseEntity.ok(ApiResponse.error("Company service is not available", emptyPage));
     }
 } 

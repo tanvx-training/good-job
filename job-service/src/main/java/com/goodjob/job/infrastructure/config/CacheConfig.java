@@ -54,10 +54,7 @@ public class CacheConfig {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
         RedisCacheConfiguration defaultCacheConfig = createCacheConfiguration(Duration.ofSeconds(defaultTTL));
-        cacheConfigurations.put("benefits", createCacheConfiguration(Duration.ofHours(24)));
-        cacheConfigurations.put("skills", createCacheConfiguration(Duration.ofHours(24)));
-        cacheConfigurations.put("industries", createCacheConfiguration(Duration.ofHours(24)));
-        cacheConfigurations.put("companies", createCacheConfiguration(Duration.ofHours(6)));
+        cacheConfigurations.put("jobs", createCacheConfiguration(Duration.ofHours(1)));
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultCacheConfig)
                 .withInitialCacheConfigurations(cacheConfigurations)

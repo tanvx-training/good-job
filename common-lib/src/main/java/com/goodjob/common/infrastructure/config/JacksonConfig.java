@@ -1,10 +1,12 @@
 package com.goodjob.common.infrastructure.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -26,16 +28,20 @@ public class JacksonConfig {
         return objectMapper;
     }
 
-    @Bean(name = "redisObjectMapper")
+    @Bean
+    @Qualifier("redisObjectMapper")
     public ObjectMapper redisObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        // 1) Support java.time
+        // Register module for Java 8 date/time support
         objectMapper.registerModule(new JavaTimeModule());
-        // 2) Disable writing dates as timestamps
+        // Disable timestamps for dates to use ISO format
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // 3) Ignore unknown properties during deserialization
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        objectMapper.enable(JsonGenerator.Feature.IGNORE_UNKNOWN);
+        // Enable default typing to include type information
+        objectMapper.activateDefaultTyping(
+                objectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+        );
         return objectMapper;
     }
 }

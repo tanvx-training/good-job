@@ -75,12 +75,12 @@ public class Job extends BaseEntity {
     @OneToOne(mappedBy = "job")
     private JobSalary jobSalary;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JobBenefit> jobBenefits;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JobSkill> jobSkills;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JobIndustry> jobIndustries;
 } 

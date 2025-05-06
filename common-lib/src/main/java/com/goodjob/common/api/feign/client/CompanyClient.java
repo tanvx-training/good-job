@@ -6,6 +6,7 @@ import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.common.api.feign.config.FeignClientConfig;
 import com.goodjob.common.api.feign.fallback.CompanyClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +31,7 @@ public interface CompanyClient {
      * @return ApiResponse containing the company details
      */
     @GetMapping("/api/v1/companies/{id}")
-    ApiResponse<CompanyView> getCompanyById(@PathVariable("id") Integer id);
+    ResponseEntity<ApiResponse<CompanyView>> getCompanyById(@PathVariable("id") Integer id);
 
     /**
      * Get list company by list ID.
@@ -39,7 +40,7 @@ public interface CompanyClient {
      * @return ApiResponse containing the list company details
      */
     @GetMapping("/api/v1/companies/batch")
-    ApiResponse<List<CompanyView>> getBatchCompanies(@RequestParam("ids") String ids);
+    ResponseEntity<ApiResponse<List<CompanyView>>> getBatchCompanies(@RequestParam("ids") String ids);
 
     /**
      * Get all companies with pagination.
@@ -50,7 +51,7 @@ public interface CompanyClient {
      * @return ApiResponse containing paginated company list
      */
     @GetMapping("/api/v1/companies")
-    ApiResponse<PageResponseDTO<CompanyView>> getAllCompanies(
+    ResponseEntity<ApiResponse<PageResponseDTO<CompanyView>>> getAllCompanies(
         @RequestParam(value = "page", defaultValue = "0") Integer page,
         @RequestParam(value = "size", defaultValue = "20") Integer size,
         @RequestParam(value = "sort", defaultValue = "companyId,asc") String sort
