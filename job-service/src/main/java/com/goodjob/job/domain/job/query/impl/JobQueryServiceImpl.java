@@ -22,13 +22,13 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import java.math.BigDecimal;
 
 /**
  * Implementation of the JobQueryService interface.
@@ -150,16 +150,19 @@ public class JobQueryServiceImpl implements JobQueryService {
         CompletableFuture<List<JobBenefitView>> jbvFuture = CompletableFuture.supplyAsync(() ->
                 jobHelper.getBenefits(summary.getJobBenefits().stream()
                         .map(JobBenefitSummary::getBenefitId)
+                        .distinct()
                         .sorted()
                         .toList()));
         CompletableFuture<List<JobSkillView>> jsvFuture = CompletableFuture.supplyAsync(() ->
                 jobHelper.getSkills(summary.getJobSkills().stream()
                         .map(JobSkillSummary::getSkillId)
+                        .distinct()
                         .sorted()
                         .toList()));
         CompletableFuture<List<JobIndustryView>> jivFuture = CompletableFuture.supplyAsync(() ->
                 jobHelper.getIndustries(summary.getJobIndustries().stream()
                         .map(JobIndustrySummary::getIndustryId)
+                        .distinct()
                         .sorted()
                         .toList()));
 
@@ -186,5 +189,80 @@ public class JobQueryServiceImpl implements JobQueryService {
                 .skills(jsvFuture.get())
                 .industries(jivFuture.get())
                 .build();
+    }
+
+    public Page<JobSummary> getJobSummaries(boolean deleteFlg, Pageable pageable) {
+        int limit = pageable.getPageSize();
+        int offset = pageable.getPageNumber() * pageable.getPageSize();
+
+        List<Object[]> rows = jobRepository.findJobSummaries(deleteFlg, limit, offset);
+        Map<Long, JobSummaryImpl> jobMap = new HashMap<>();
+
+        for (Object[] row : rows) {
+            Long jobId = Objects.isNull(row[0]) ? 0L : ((Number) row[0]).longValue();
+            JobSummaryImpl jobSummary = jobMap.get(jobId);
+
+            if (jobSummary == null) {
+                jobSummary = new JobSummaryImpl();
+                jobSummary.setJobId(jobId);
+                jobSummary.setCompanyId(Objects.isNull(row[1]) ? 0 : (Integer) row[1]);
+                jobSummary.setTitle(Objects.isNull(row[2]) ? "" : (String) row[2]);
+                jobSummary.setDescription(Objects.isNull(row[3]) ? "" : (String) row[3]);
+                jobSummary.setWorkType(Objects.isNull(row[4]) ? 0 : (Integer) row[4]);
+                jobSummary.setEducationLevel(Objects.isNull(row[5]) ? 0 : (Integer) row[5]);
+                jobSummary.setExperienceLevel(Objects.isNull(row[6]) ? 0 : (Integer) row[6]);
+                jobSummary.setRemoteAllowed(!Objects.isNull(row[7]) && (Boolean) row[7]);
+                jobSummary.setLocation(Objects.isNull(row[8]) ? "" : (String) row[8]);
+                jobSummary.setZipCode(Objects.isNull(row[9]) ? "" : (String) row[9]);
+                jobSummary.setSkillsDesc(Objects.isNull(row[10]) ? "" : (String) row[10]);
+                jobSummary.setExpiry(Objects.isNull(row[11]) ? null : ((Number) row[11]).longValue());
+                jobSummary.setClosedTime(Objects.isNull(row[12]) ? null : ((Number) row[12]).longValue());
+                jobSummary.setJobStatus(Objects.isNull(row[13]) ? 0 : (Integer) row[13]);
+                jobSummary.setViews(Objects.isNull(row[14]) ? 0 : (Integer) row[14]);
+                jobSummary.setApplies(Objects.isNull(row[15]) ? 0 : (Integer) row[15]);
+                jobSummary.setJobBenefits(new ArrayList<>());
+                jobSummary.setJobSkills(new ArrayList<>());
+                jobSummary.setJobIndustries(new ArrayList<>());
+                jobMap.put(jobId, jobSummary);
+            }
+
+            // Xử lý JobSalary
+            if (!Objects.isNull(row[16])) {
+                JobSalarySummaryImpl salary = new JobSalarySummaryImpl();
+                salary.setSalaryId((Integer) row[16]);
+                salary.setMinSalary(Objects.isNull(row[17]) ? BigDecimal.ZERO : (BigDecimal) row[17]);
+                salary.setMedSalary(Objects.isNull(row[18]) ? BigDecimal.ZERO : (BigDecimal) row[18]);
+                salary.setMaxSalary(Objects.isNull(row[19]) ? BigDecimal.ZERO : (BigDecimal) row[19]);
+                salary.setPayPeriod(Objects.isNull(row[20]) ? 0 : (Integer) row[20]);
+                salary.setCurrency(Objects.isNull(row[21]) ? "" : (String) row[21]);
+                salary.setCompensationType(Objects.isNull(row[22]) ? 0 : (Integer) row[22]);
+                jobSummary.setJobSalary(salary);
+            }
+
+            // Xử lý JobBenefit
+            if (!Objects.isNull(row[23])) {
+                JobBenefitSummaryImpl benefit = new JobBenefitSummaryImpl();
+                benefit.setBenefitId((Integer) row[23]);
+                jobSummary.getJobBenefits().add(benefit);
+            }
+
+            // Xử lý JobSkill
+            if (!Objects.isNull(row[24])) {
+                JobSkillSummaryImpl skill = new JobSkillSummaryImpl();
+                skill.setSkillId((Integer) row[24]);
+                jobSummary.getJobSkills().add(skill);
+            }
+
+            // Xử lý JobIndustry
+            if (!Objects.isNull(row[25])) {
+                JobIndustrySummaryImpl industry = new JobIndustrySummaryImpl();
+                industry.setIndustryId((Integer) row[25]);
+                jobSummary.getJobIndustries().add(industry);
+            }
+        }
+
+        List<JobSummary> jobSummaries = new ArrayList<>(jobMap.values());
+        long total = jobRepository.countByDeleteFlg(deleteFlg);
+        return new PageImpl<>(jobSummaries, pageable, total);
     }
 }

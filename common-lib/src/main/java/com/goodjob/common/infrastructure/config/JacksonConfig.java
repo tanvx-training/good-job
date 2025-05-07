@@ -20,11 +20,11 @@ public class JacksonConfig {
         return new ObjectMapper();
     }
 
-    @Bean(name = "feignObjectMapper")
+    @Bean
+    @Qualifier("feignObjectMapper")
     public ObjectMapper feignObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Hỗ trợ định dạng Java 8 Date/Time
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Ghi ngày tháng dạng ISO
+        objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
 
