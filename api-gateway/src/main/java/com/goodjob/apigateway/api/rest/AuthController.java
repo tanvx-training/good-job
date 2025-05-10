@@ -1,11 +1,11 @@
 package com.goodjob.apigateway.api.rest;
 
-import com.goodjob.apigateway.application.dto.request.LoginRequest;
-import com.goodjob.apigateway.application.dto.request.RefreshTokenRequest;
-import com.goodjob.apigateway.application.dto.request.RegisterRequest;
-import com.goodjob.apigateway.application.dto.response.LoginResponse;
-import com.goodjob.apigateway.application.dto.response.UserDTO;
-import com.goodjob.apigateway.application.service.AuthService;
+import com.goodjob.apigateway.domain.dto.request.LoginRequest;
+import com.goodjob.apigateway.domain.dto.request.RefreshTokenRequest;
+import com.goodjob.apigateway.domain.dto.request.RegisterRequest;
+import com.goodjob.apigateway.domain.dto.response.LoginResponse;
+import com.goodjob.apigateway.domain.dto.response.UserDTO;
+import com.goodjob.apigateway.domain.service.AuthService;
 import com.goodjob.common.application.dto.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -174,3 +174,20 @@ services:
 #      - config-server
 #    networks:
 #      - backend-network
+#
+#  auth-service:
+#    image: tanvx308/auth-service:latest
+#    container_name: auth-service
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      - EUREKA_HOST=eureka-server
+#      - CONFIG_SERVER_HOST=config-server
+#      - DATASOURCE_HOST=postgres
+#      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://tempo:9411/api/v2/spans
+#    depends_on:
+#      - postgres
+#      - eureka-server
+#      - config-server
+#    networks:
+#      - backend-network

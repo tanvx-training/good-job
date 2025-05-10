@@ -1,7 +1,7 @@
 package com.goodjob.apigateway.infrastructure.security.service;
 
 import com.goodjob.apigateway.domain.entity.User;
-import com.goodjob.apigateway.application.repository.UserRepository;
+import com.goodjob.apigateway.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;

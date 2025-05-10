@@ -17,7 +17,7 @@
         <module>eureka-server</module>
         <module>notification-service</module>
         <module>company-service</module>
-        <module>candidate-service</module>
+        <module>profile-service</module>
         <module>job-service</module>
         <module>metadata-service</module>
         <module>api-gateway</module>
