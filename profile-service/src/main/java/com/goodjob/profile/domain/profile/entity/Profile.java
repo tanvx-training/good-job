@@ -28,7 +28,7 @@ public class Profile extends BaseEntity {
     private Long profileId;
 
     @Column(name = "user_id", nullable = false, unique = true)
-    private String userId;
+    private Long userId;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -68,7 +68,4 @@ public class Profile extends BaseEntity {
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Certification> certifications;
-
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Project> projects;
 } 
