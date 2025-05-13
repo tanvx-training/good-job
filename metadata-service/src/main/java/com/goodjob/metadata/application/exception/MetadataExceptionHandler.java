@@ -23,7 +23,7 @@ import java.util.Map;
  * Global exception handler for the Benefit Service.
  */
 @RestControllerAdvice
-public class JobExceptionHandler {
+public class MetadataExceptionHandler {
 
   /**
    * Handle validation exceptions.

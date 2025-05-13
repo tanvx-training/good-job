@@ -1,6 +1,6 @@
-package com.goodjob.job.application.security.config;
+package com.goodjob.profile.application.security.config;
 
-import com.goodjob.job.application.security.filter.AuthenticationFilter;
+import com.goodjob.profile.application.security.filter.AuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

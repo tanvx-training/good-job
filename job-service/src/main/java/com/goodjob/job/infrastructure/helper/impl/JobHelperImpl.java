@@ -61,10 +61,10 @@ public class JobHelperImpl implements JobHelper {
             return Collections.emptyList();
         }
         String ids = companyIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-        return fetchAndMap(companyClient.getBatchCompanies(ids), CompanyView.class, this::toJobCompanyViewtoJobCompanyView);
+        return fetchAndMap(companyClient.getBatchCompanies(ids), CompanyView.class, this::toJobCompanyView);
     }
 
-    private JobCompanyView toJobCompanyViewtoJobCompanyView(CompanyView cv) {
+    private JobCompanyView toJobCompanyView(CompanyView cv) {
         return JobCompanyView.builder()
                 .id(cv.getCompanyId()) // Giả sử CompanyView có trường id
                 .name(cv.getName())

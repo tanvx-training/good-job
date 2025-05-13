@@ -25,9 +25,14 @@ public class ProfileSkill extends BaseEntity {
     private ProfileSkillId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", nullable = false)
+    @MapsId("profileId")
+    @JoinColumn(name = "profile_id")
     private Profile profile;
 
     @Column(name = "proficiency_level")
     private Integer proficiencyLevel; // 1-5 scale
+
+    public Integer getSkillId() {
+        return id.getSkillId();
+    }
 } 

@@ -3,6 +3,7 @@ package com.goodjob.job.domain.job.query.impl;
 import com.goodjob.common.application.dto.response.PageResponseDTO;
 import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.common.infrastructure.util.DateTimeUtils;
+import com.goodjob.job.domain.job.repository.projection.*;
 import com.goodjob.job.infrastructure.helper.JobHelper;
 import com.goodjob.job.domain.job.entity.Job;
 import com.goodjob.job.domain.job.entity.JobBenefit;
@@ -51,7 +52,7 @@ public class JobQueryServiceImpl implements JobQueryService {
         Sort sort = Sort.by(Sort.Direction.fromString(parts[1]), parts[0]);
         Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
 
-        Page<JobSummary> jobSummaryPage = jobRepository.findByDeleteFlg(false, pageable);
+        Page<JobSummary> jobSummaryPage = getJobSummaries(false, pageable);
 
         List<Integer> companyIds = jobSummaryPage.getContent().stream()
                 .map(JobSummary::getCompanyId)

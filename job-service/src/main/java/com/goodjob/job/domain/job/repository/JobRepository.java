@@ -1,6 +1,7 @@
 package com.goodjob.job.domain.job.repository;
 
 import com.goodjob.job.domain.job.entity.Job;
+import com.goodjob.job.domain.job.repository.projection.JobSummary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

@@ -15,24 +15,4 @@ public interface ProfileQueryService {
     ProfileDTO getProfileByUserId(String userId);
     
     PageResponseDTO<ProfileDTO> searchProfiles(ProfileSearchQuery query);
-    
-    ExperienceDTO getExperienceById(Long experienceId);
-    
-    List<ExperienceDTO> getExperiencesByProfileId(Long profileId);
-    
-    EducationDTO getEducationById(Long educationId);
-    
-    List<EducationDTO> getEducationsByProfileId(Long profileId);
-    
-    List<SkillDTO> getSkillsByProfileId(Long profileId);
-    
-    CertificationDTO getCertificationById(Long certificationId);
-    
-    List<CertificationDTO> getCertificationsByProfileId(Long profileId);
-    
-    ProjectDTO getProjectById(Long projectId);
-    
-    List<ProjectDTO> getProjectsByProfileId(Long profileId);
-    
-    List<JobRecommendationDTO> getJobRecommendations(Long profileId);
 } 

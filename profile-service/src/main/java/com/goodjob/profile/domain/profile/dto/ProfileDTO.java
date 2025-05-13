@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,22 +15,20 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileDTO {
+public class ProfileDTO implements Serializable {
     
     private Long profileId;
-    private String userId;
-    private String firstName;
-    private String lastName;
+    private Long userId;
+    private String fullName;
     private String headline;
     private String summary;
     private String email;
     private String phone;
     private String location;
     private String profileImageUrl;
-    private Integer profileStatus;
-    private List<ExperienceDTO> experiences;
-    private List<EducationDTO> educations;
-    private List<SkillDTO> skills;
-    private List<CertificationDTO> certifications;
-    private List<ProjectDTO> projects;
+    private String status;
+    private List<String> experiences;
+    private List<String> educations;
+    private List<String> skills;
+    private List<String> certifications;
 } 

@@ -1,4 +1,4 @@
-package com.goodjob.job.domain.job.repository;
+package com.goodjob.job.domain.job.repository.projection;
 
 import java.util.List;
 

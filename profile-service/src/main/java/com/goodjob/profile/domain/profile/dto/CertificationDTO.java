@@ -1,5 +1,7 @@
 package com.goodjob.profile.domain.profile.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,14 +14,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CertificationDTO {
-    
-    private Long certificationId;
-    private Long profileId;
+
     private String name;
     private String organization;
     private Long issueDate;
     private Long expirationDate;
-    private String credentialId;
     private String credentialUrl;
 } 
