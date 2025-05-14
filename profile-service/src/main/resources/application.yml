@@ -3,45 +3,5 @@ spring:
     name: profile-service
   config:
     import: 'configserver:http://${CONFIG_SERVER_HOST:localhost}:8888/'
-  datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:profile}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://${AUTH_HOST:localhost}:9000
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus
-  endpoint:
-    health:
-      show-details: always
-
-logging:
-  level:
-    com.goodjob: INFO
-    org.springframework: INFO
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
-  instance:
-    preferIpAddress: true
-
 server:
-  port: 8087
+  port: 8081
