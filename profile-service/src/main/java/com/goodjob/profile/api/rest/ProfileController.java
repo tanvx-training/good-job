@@ -23,7 +23,7 @@ public class ProfileController {
     private final ProfileQueryService profileQueryService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('READ_PROFILE')")
+    @PreAuthorize("hasRole('ROLE_USER') and hasAuthority('READ_PROFILE')")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProfileDTO>>> searchProfiles(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "20") Integer size,

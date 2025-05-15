@@ -1,5 +1,6 @@
 package com.goodjob.profile.application.exception;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.goodjob.common.application.exception.ResourceExistedException;
 import com.goodjob.common.application.exception.ResourceNotFoundException;
@@ -131,7 +132,7 @@ public class ProfileExceptionHandler {
     @Builder
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ErrorResponse {
-
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime timestamp;
         private int status;
         private String error;

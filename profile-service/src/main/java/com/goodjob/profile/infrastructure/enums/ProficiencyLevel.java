@@ -10,7 +10,8 @@ public enum ProficiencyLevel implements BaseEnum<ProficiencyLevel> {
     BEGINNER(1, "BEGINNER"),
     INTERMEDIATE(2, "INTERMEDIATE"),
     ADVANCED(3, "ADVANCED"),
-    EXPERT(4, "EXPERT");
+    EXPERT(4, "EXPERT"),
+    MASTER(5, "MASTER");
 
     private final Integer code;
 

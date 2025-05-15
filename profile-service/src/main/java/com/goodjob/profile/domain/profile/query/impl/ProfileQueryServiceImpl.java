@@ -5,6 +5,7 @@ import com.goodjob.common.application.exception.ResourceNotFoundException;
 import com.goodjob.profile.domain.client.ExperienceCompanyView;
 import com.goodjob.profile.domain.client.ProfileSkillView;
 import com.goodjob.profile.domain.profile.dto.*;
+import com.goodjob.profile.domain.profile.entity.Education;
 import com.goodjob.profile.domain.profile.entity.Experience;
 import com.goodjob.profile.domain.profile.entity.Profile;
 import com.goodjob.profile.domain.profile.entity.ProfileSkill;
@@ -13,10 +14,18 @@ import com.goodjob.profile.domain.profile.repository.ProfileRepository;
 import com.goodjob.profile.infrastructure.enums.ProficiencyLevel;
 import com.goodjob.profile.infrastructure.enums.ProfileStatus;
 import com.goodjob.profile.infrastructure.helper.ProfileHelper;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -44,7 +53,55 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 
     @Override
     public PageResponseDTO<ProfileDTO> searchProfiles(ProfileSearchQuery query) {
-        return null;
+        Specification<Profile> spec = Specification.where(null);
+        String keyword = query.getKeyword();
+        if (StringUtils.hasText(keyword)) {
+            String likePattern = "%" + query.getKeyword().toLowerCase() + "%";
+
+            spec = spec.or((root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")), likePattern));
+
+            spec = spec.or((root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), likePattern));
+
+            spec = spec.or((root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.like(
+                            criteriaBuilder.lower(criteriaBuilder.concat(
+                                    criteriaBuilder.concat(root.get("firstName"), " "),
+                                    root.get("lastName"))),
+                            likePattern));
+
+            spec = spec.or((root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("headline")), likePattern));
+
+            spec = spec.or((root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("location")), likePattern));
+
+            spec = spec.or((root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("summary")), likePattern));
+
+            // Mở rộng tìm kiếm thông qua các mối quan hệ
+            spec = spec.or((root, criteriaQuery, criteriaBuilder) -> {
+                Join<Profile, Experience> experienceJoin = root.join("experiences", JoinType.LEFT);
+                return criteriaBuilder.like(criteriaBuilder.lower(experienceJoin.get("title")), likePattern);
+            });
+
+            spec = spec.or((root, criteriaQuery, criteriaBuilder) -> {
+                Join<Profile, Education> educationJoin = root.join("educations", JoinType.LEFT);
+                return criteriaBuilder.like(criteriaBuilder.lower(educationJoin.get("schoolName")), likePattern);
+            });
+        }
+
+        // Tạo đối tượng Pageable từ thông tin query
+        String[] sortParams = query.getSort().split(",");
+        String sortField = sortParams[0];
+        Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sort = Sort.by(direction, sortField);
+        Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
+
+        Page<Profile> profilePage = profileRepository.findAll(spec, pageable);
+        return new PageResponseDTO<>(profilePage.map(this::convertFromEntity));
     }
 
     private ProfileDTO convertFromEntity(Profile profile) {
